@@ -1,0 +1,59 @@
+{
+  "name": "recipes",
+  "private": true,
+  "scripts": {
+    "test": "jest",
+    "test:watch": "npm test -- --watch",
+    "lint": "./node_modules/.bin/eslint **/*.js* ./"
+  },
+  "dependencies": {
+    "@rails/webpacker": "3.5",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "humps": "^2.0.1",
+    "lodash": "^4.17.10",
+    "material-ui": "^1.0.0-beta.47",
+    "prop-types": "^15.6.1",
+    "query-string": "^6.1.0",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-redux": "^5.0.7",
+    "react-router-dom": "^4.2.2",
+    "redux": "^4.0.0",
+    "redux-form": "^7.3.0",
+    "redux-saga": "^0.16.0",
+    "styled-components": "^3.2.6",
+    "superagent": "^3.8.3"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^8.2.3",
+    "babel-jest": "^22.4.4",
+    "babel-loader": "^7.1.4",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.8.2",
+    "jest": "^22.4.4",
+    "jest-enzyme": "^6.0.0",
+    "react-hot-loader": "^4.2.0",
+    "regenerator-runtime": "^0.11.1",
+    "webpack-cli": "^2.0.9",
+    "webpack-dev-server": "^2.11.2"
+  },
+  "jest": {
+    "roots": [
+      "test/javascript"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "app/javascript"
+    ],
+    "setupTestFrameworkScriptFile": "./node_modules/jest-enzyme/lib/index.js"
+  }
+}
