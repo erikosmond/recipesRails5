@@ -9,7 +9,7 @@ import Home from '../components/recipes/Home'
 require('react-hot-loader/patch')
 require('babel-polyfill')
 
-const recipes = document.querySelector('#recipes')
+const recipes = document.querySelector('#home')
 
 const render = () => {
   ReactDOM.render(
@@ -23,6 +23,5 @@ const render = () => {
 render(Home)
 
 if (module.hot) {
-  console.log("it's hot")
   module.hot.accept('../components/recipes/Home', () => { render(Home) })
 }

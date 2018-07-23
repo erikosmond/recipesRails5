@@ -1,4 +1,4 @@
 class PagesController < ApplicationController
-  def recipes
+  def home
   end
 end

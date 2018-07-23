@@ -3,17 +3,17 @@ import PropTypes from 'prop-types'
 
 class Home extends React.Component {
   static propTypes = {
-    loadQuotes: PropTypes.func.isRequired,
+    recipesLoaded: PropTypes.bool,
   }
 
   static defaultProps = {
-    quotesLoaded: false,
+    recipesLoaded: false,
   }
 
   render() {
     return (
       <div>
-        Welcomes
+        Welcome
       </div>
     )
   }
