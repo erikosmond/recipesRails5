@@ -3,19 +3,21 @@ require 'rails_helper'
 describe TagAttribute do
   subject { create :tag_attribute }
   let(:tag) { create(:tag) }
+  let(:tag_attr) { build(:tag_attribute, tag_attributable: tag, property: nil) }
 
   it 'has a valid factory' do
     expect(subject).to be_valid
   end
 
   it 'must have a property' do
-    tag_attr = TagAttribute.new(tag_attributable: tag)
     expect(tag_attr).not_to be_valid
   end
 
-  it 'validates unqiue property per tag attributable' do
-    TagAttribute.create(tag_attributable: tag, property: 'Same Prop')
-    tag_attr = TagAttribute.new(tag_attributable: tag, property: 'Same Prop')
-    expect(tag_attr).not_to be_valid
+  describe 'unique scope validations' do
+    let!(:ta1) { create(:tag_attribute, tag_attributable: tag, property: 'Same Prop') }
+    let(:ta2) { build(:tag_attribute, tag_attributable: tag, property: 'Same Prop') }
+    it 'validates unqiue property per tag attributable' do
+      expect(ta2).not_to be_valid
+    end
   end
 end

@@ -38,18 +38,18 @@ describe TagSelection do
   describe '#validations' do
     let(:recipe) { create(:recipe) }
     let(:tag) { create(:tag) }
+    let(:tsa) { build(:tag_selection, tag_id: nil) }
+    let(:tsb) { build(:tag_selection, taggable: nil) }
+    let!(:ts1) { create(:tag_selection, tag: tag, taggable: recipe) }
+    let!(:ts2) { build(:tag_selection, tag: tag, taggable: recipe) }
     it 'validates present tag_id' do
-      ts = TagSelection.new(taggable: recipe)
-      expect(ts).not_to be_valid
+      expect(tsa).not_to be_valid
     end
     it 'validates present taggable' do
-      ts = TagSelection.new(tag: tag)
-      expect(ts).not_to be_valid
+      expect(tsb).not_to be_valid
     end
     it 'validates unique tags by taggable entity' do
-      TagSelection.create!(tag: tag, taggable: recipe)
-      ts = TagSelection.new(tag: tag, taggable: recipe)
-      expect(ts).not_to be_valid
+      expect(ts2).not_to be_valid
     end
   end
 end

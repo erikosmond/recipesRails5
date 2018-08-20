@@ -43,7 +43,7 @@ describe Recipe do
   describe '#accesses' do
     let!(:access) { create :access, accessible: subject }
     it 'creates ingredients' do
-      expect(subject.accesses).to eq([access].sort)
+      expect(subject.access).to eq(access)
     end
   end
 

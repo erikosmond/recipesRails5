@@ -60,18 +60,19 @@ describe Tag do
   describe '#validations' do
     let(:tag_type) { create(:tag_type) }
     let(:recipe) { create(:recipe) }
+    let(:taga) { build(:tag, name: nil) }
+    let(:tagb) { build(:tag, tag_type: nil) }
+    let!(:tag1) { create(:tag, tag_type: tag_type, name: 'Same Name') }
+    let!(:tag2) { build(:tag, tag_type: tag_type, name: 'Same Name') }
+
     it 'validates present name' do
-      tag = Tag.new(tag_type: tag_type)
-      expect(tag).not_to be_valid
+      expect(taga).not_to be_valid
     end
     it 'validates present tag type' do
-      tag = Tag.new(name: 'Tag Name')
-      expect(tag).not_to be_valid
+      expect(tagb).not_to be_valid
     end
     it 'validates unique tags by taggable entity' do
-      Tag.create!(tag_type: tag_type, name: recipe)
-      tag = Tag.new(tag_type: tag, name: recipe)
-      expect(tag).not_to be_valid
+      expect(tag2).not_to be_valid
     end
   end
 end

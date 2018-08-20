@@ -7,9 +7,11 @@ describe Role do
     expect(subject).to be_valid
   end
 
-  it 'validates a unique name' do
-    Role.create!(name: 'Same Name')
-    role = Role.new(name: 'Same Name')
-    expect(role).not_to be_valid
+  describe 'validations' do
+    let!(:role1) { create(:role, name: 'Same Name') }
+    let!(:role2) { build(:role, name: 'Same Name') }
+    it 'validates a unique name' do
+      expect(role2).not_to be_valid
+    end
   end
 end
