@@ -68,16 +68,16 @@ describe Recipe do
     let(:plate) { create :tag, tag_type: tag_type, name: 'Hot Plate' }
     it 'creates vessel' do
       subject.tag_selections.create(tag: plate)
-      expect(subject.vessel).to eq(plate)
+      expect(subject.vessels).to eq([plate])
     end
   end
 
   describe '#source' do
     let(:tag_type) { create :tag_type, name: 'Source' }
-    let(:plate) { create :tag, tag_type: tag_type, name: 'Hot Plate' }
+    let(:chef) { create :tag, tag_type: tag_type, name: 'Top Chef' }
     it 'shows vessel' do
-      subject.tag_selections.create(tag: plate)
-      expect(subject.source).to eq(plate)
+      subject.tag_selections.create(tag: chef)
+      expect(subject.sources).to eq([chef])
     end
   end
 end

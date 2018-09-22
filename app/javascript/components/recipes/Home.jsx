@@ -1,22 +1,20 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import {
+  BrowserRouter as Router,
+  Route,
+} from 'react-router-dom'
+import RecipesContainer from 'containers/RecipesContainer'
 
-class Home extends React.Component {
-  static propTypes = {
-    recipesLoaded: PropTypes.bool,
-  }
-
-  static defaultProps = {
-    recipesLoaded: false,
-  }
-
-  render() {
-    return (
-      <div>
-        Welcome
-      </div>
-    )
-  }
-}
+const Home = props => (
+  <Router startingTagId={props.startingTagId}>
+    <div>
+      <Route
+        path="/"
+        startingTagId={props.startingTagId}
+        render={routeProps => <RecipesContainer {...props} {...routeProps} />}
+      />
+    </div>
+  </Router>
+)
 
 export default Home

@@ -20,12 +20,12 @@ class Recipe < ApplicationRecord
     props_with_detail('Ingredient')
   end
 
-  def source
-    prop('Source')
+  def sources
+    props('Source')
   end
 
-  def vessel
-    prop('Vessel')
+  def vessels
+    props('Vessel')
   end
 
   private
@@ -37,9 +37,5 @@ class Recipe < ApplicationRecord
 
     def props(name)
       tags.joins(:tag_type).where("tag_types.name = '#{name}'")
-    end
-
-    def prop(name)
-      props(name).first
     end
 end
