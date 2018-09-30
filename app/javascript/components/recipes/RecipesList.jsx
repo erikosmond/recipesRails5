@@ -1,6 +1,7 @@
 import React from 'react'
-import queryString from 'query-string'
 import PropTypes from 'prop-types'
+import RecipeListItem from 'components/recipes/RecipeListItem'
+import Paper from '@material-ui/core/Paper'
 
 class RecipesList extends React.Component {
   static propTypes = {
@@ -27,14 +28,18 @@ class RecipesList extends React.Component {
   }
 
   render() {
-    const { recipesLoaded } = this.props
+    const { recipesLoaded, selectedRecipes } = this.props
 
     if (!recipesLoaded) {
       return null
     }
     return (
       <div>
-        Recipes Loaded
+        <Paper>
+          {selectedRecipes.map(r => (
+            <RecipeListItem key={r.id} recipe={r} />
+          ))}
+        </Paper>
       </div>
     )
   }

@@ -6,7 +6,7 @@ import {
 import RecipesContainer from 'containers/RecipesContainer'
 
 const Home = props => (
-  <Router startingTagId={props.startingTagId}>
+  <Router>
     <div>
       <Route
         path="/"
