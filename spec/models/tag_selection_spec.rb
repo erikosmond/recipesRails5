@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 describe TagSelection do
@@ -32,6 +34,15 @@ describe TagSelection do
   describe '#tag' do
     it 'belongs to valid tag' do
       expect(subject.tag).to be_valid
+    end
+  end
+
+  describe '#recipe' do
+    let(:recipe) { create(:recipe) }
+    let(:tag) { create(:tag) }
+    let!(:tag_selection) { create(:tag_selection, tag: tag, taggable: recipe) }
+    it 'belongs to valid tag' do
+      expect(tag_selection.recipe).to eq(recipe)
     end
   end
 

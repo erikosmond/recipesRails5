@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :recipe do
-    name 'Pesto'
-    instructions 'Mix everything together'
+    name 'Lasagna'
+    instructions 'Layer everything together'
   end
 end

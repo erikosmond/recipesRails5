@@ -32,10 +32,25 @@ class Recipe < ApplicationRecord
 
     def props_with_detail(name)
       tag_selections.left_outer_joins([:tag_attributes, tag: [:tag_type]]).
+        left_outer_joins([:modifications]).
+        select(props_with_detail_select).
         where("tag_types.name = '#{name}'")
+        .group_by(&:tag_id)
     end
 
     def props(name)
       tags.joins(:tag_type).where("tag_types.name = '#{name}'")
+    end
+
+    def props_with_detail_select
+      [
+        'tag_selections.id',
+        'tags.name',
+        'tag_selections.id AS tag_selection_id',
+        'tags.id AS tag_id',
+        'tag_attributes.value',
+        'tag_attributes.property',
+        'modifications_tag_selections.name AS modification_name'
+      ]
     end
 end

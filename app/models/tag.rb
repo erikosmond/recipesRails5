@@ -1,4 +1,8 @@
+# frozen_string_literal: true
+
 class Tag < ApplicationRecord
+  include AssociatedRecipesService
+
   belongs_to :tag_type
   belongs_to :recipe, optional: true
   has_many :tag_attributes, as: :tag_attributable, dependent: :destroy # i.e. Brand, Year
@@ -12,7 +16,8 @@ class Tag < ApplicationRecord
            through: :tag_selections,
            source: :taggable,
            source_type: 'Recipe',
-           inverse_of: :tags
+           inverse_of: :tags,
+           foreign_key: 'Recipe'
 
   # Tags that are assigned to this tag, like Ingredient Type
   has_many :taggings,

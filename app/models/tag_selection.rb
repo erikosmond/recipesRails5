@@ -12,8 +12,12 @@ class TagSelection < ApplicationRecord
   belongs_to :taggable,
              class_name: 'Tag',
              polymorphic: true,
-             optional: true,
-             inverse_of: :tag_selections
+             optional: true
+  belongs_to :recipe,
+             class_name: 'Recipe',
+             foreign_key: 'taggable_id',
+             foreign_type: 'Recipe',
+             optional: true
 
   validates :tag_id, presence: true
   validates :taggable_type, presence: true

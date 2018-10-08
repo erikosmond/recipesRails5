@@ -56,10 +56,12 @@ describe Recipe do
     let!(:mustard_amount) { build :tag_attribute, property: 'Amount', value: 'One Squeeze'}
     it 'creates ingredients with detail' do
       subject.tag_selections.create([{ tag: ketchup, tag_attributes: [ketchup_amount, ketchup_display] }, { tag: mustard, tag_attributes: [mustard_amount] }])
-      expect(subject.ingredients_with_detail.count).to eq(3)
-      expect(subject.ingredients_with_detail.first.tag).to eq(ketchup)
-      expect(subject.ingredients_with_detail.first.tag_attributes.sort).to eq([ketchup_amount, ketchup_display].sort)
-      expect(subject.ingredients_with_detail.third.tag_attributes).to eq([mustard_amount])
+      expect(subject.ingredients_with_detail.length).to eq(2)
+      expect(subject.ingredients_with_detail[ketchup.id].length).to eq(2)
+      expect(subject.ingredients_with_detail[ketchup.id].first.name).to eq(ketchup.name)
+      expect(subject.ingredients_with_detail[mustard.id].length).to eq(1)
+      expect(subject.ingredients_with_detail[mustard.id].first.property).to eq(mustard_amount.property)
+      expect(subject.ingredients_with_detail[mustard.id].first.value).to eq(mustard_amount.value)
     end
   end
 
