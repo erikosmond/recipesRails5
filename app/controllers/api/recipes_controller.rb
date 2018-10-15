@@ -2,13 +2,11 @@ class Api::RecipesController < ApplicationController
   def index
     recipe_params = params.permit(:tag_id)
     tag = Tag.find_by_id(recipe_params[:tag_id])
-    @recipes =
-      if tag
-        tag.recipes_with_grouped_detail
-      else
-        Recipe.all.as_json(recipes_response_json)
-      end
-    # group_recipe_properties
+    @recipes = if tag
+                 { name: tag, recipes: tag.recipes_with_grouped_detail }
+               else
+                 { name: 'All', recipes: Recipe.all.as_json(recipes_response) }
+               end
     render json: @recipes
   end
 
@@ -23,7 +21,7 @@ class Api::RecipesController < ApplicationController
       }
     end
 
-    def recipes_as_json
+    def recipes_response
       {
         only: %i[name instructions description],
         include: {

@@ -9,11 +9,11 @@ import Collapse from '@material-ui/core/Collapse'
 import Typography from '@material-ui/core/Typography'
 import CardActions from '@material-ui/core/CardActions'
 import IconButton from '@material-ui/core/IconButton'
+import IngredientListItem from 'components/recipes/IngredientListItem'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 
 const styles = () => ({
-// const styles = theme => ({
   card: {
     maxWidth: 400,
   },
@@ -27,16 +27,17 @@ class RecipeListItem extends React.Component {
   };
 
   render() {
-    const { recipe, classes } = this.props
+    const { recipe, classes, navigateTags } = this.props
+    const ingredientNames = Object.values(recipe.ingredients).map(ingredient => (
+      ingredient.tagName
+    ))
 
     return (
       <Card className={classes.card}>
         <CardHeader
           title={recipe.name}
+          subheader={ingredientNames.join(', ')}
         />
-        <CardContent>
-          {recipe.instructions}
-        </CardContent>
         <CardActions className={classes.actions} disableActionSpacing>
           <IconButton
             className={classnames(classes.expand, {
@@ -51,6 +52,16 @@ class RecipeListItem extends React.Component {
         </CardActions>
         <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
           <CardContent>
+            <Typography paragraph variant="body2">
+              Ingredients:
+            </Typography>
+            <Typography paragraph>
+              <ul>
+                {Object.values(recipe.ingredients).map(ingredient => (
+                  <IngredientListItem ingredient={ingredient} navigateTags={navigateTags} />
+                ))}
+              </ul>
+            </Typography>
             <Typography paragraph variant="body2">
               Instructions:
             </Typography>
@@ -73,6 +84,7 @@ RecipeListItem.propTypes = {
   classes: PropTypes.shape({
     card: PropTypes.shape({}).isRequired,
   }).isRequired,
+  navigateTags: PropTypes.func.isRequired,
 }
 
 export default withStyles(styles)(RecipeListItem)
