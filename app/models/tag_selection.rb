@@ -10,14 +10,17 @@ class TagSelection < ApplicationRecord
 
   belongs_to :tag, inverse_of: :tag_selections
   belongs_to :taggable,
-             class_name: 'Tag',
              polymorphic: true,
              optional: true
-  belongs_to :recipe,
-             class_name: 'Recipe',
+
+  belongs_to :recipe, # -> { where(tag_selections: { taggable_type: 'Recipe' }) },
+             optional: true,
              foreign_key: 'taggable_id',
-             foreign_type: 'Recipe',
-             optional: true
+             foreign_type: 'taggable_type',
+             class_name: 'Recipe'
+
+  # belongs_to :recipe, -> { where('tag_selections.taggable_type = ?', 'Recipe') },
+  #            foreign_key: 'taggable_id'
 
   validates :tag_id, presence: true
   validates :taggable_type, presence: true
@@ -26,4 +29,5 @@ class TagSelection < ApplicationRecord
   validates_uniqueness_of :tag_id, scope: %i[taggable_id taggable_type]
 
   accepts_nested_attributes_for :tag_attributes
+
 end

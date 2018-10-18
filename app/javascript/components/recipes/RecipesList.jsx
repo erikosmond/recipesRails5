@@ -11,7 +11,7 @@ class RecipesList extends React.Component {
     recipesLoaded: PropTypes.bool,
     initialLoad: PropTypes.bool.isRequired,
     startingTagId: PropTypes.string.isRequired,
-    selectedTagName: PropTypes.string.isRequired,
+    selectedTag: PropTypes.shape({}).isRequired,
     history: PropTypes.shape({
       push: PropTypes.func,
     }).isRequired,
@@ -71,7 +71,7 @@ class RecipesList extends React.Component {
     const {
       recipesLoaded,
       selectedRecipes,
-      selectedTagName,
+      selectedTag,
       initialLoadOccurred,
     } = this.props
 
@@ -83,7 +83,7 @@ class RecipesList extends React.Component {
     initialLoadOccurred()
     return (
       <div>
-        {selectedTagName.name}
+        {selectedTag.name}
         <Paper>
           {selectedRecipes.map(r => (
             <RecipeListItem key={r.id} recipe={r} navigateTags={this.navigateTags} />

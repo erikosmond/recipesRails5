@@ -37,6 +37,15 @@ describe TagSelection do
     end
   end
 
+  describe '#taggable' do
+    let(:recipe) { create(:recipe) }
+    let(:tag) { create(:tag) }
+    let!(:tag_selection) { create(:tag_selection, tag: tag, taggable: recipe) }
+    it 'belongs to valid tag' do
+      expect(tag_selection.taggable).to eq(recipe)
+    end
+  end
+
   describe '#recipe' do
     let(:recipe) { create(:recipe) }
     let(:tag) { create(:tag) }

@@ -10,7 +10,7 @@ const INITIAL_LOAD_OCCURRED = 'recipes/initialLoadOccurred'
 // Reducer
 const initialState = {
   selectedRecipes: [],
-  selectedTagName: '',
+  selectedTag: {},
   recipesLoaded: false,
   initialLoad: true,
 }
@@ -21,13 +21,13 @@ export default function recipesReducer(state = initialState, action = {}) {
       return {
         ...state,
         selectedRecipes: [],
-        selectedTagName: '',
+        selectedTag: '',
       }
     case LOAD_RECIPES_SUCCESS:
       return {
         ...state,
         selectedRecipes: action.payload.recipes.recipes,
-        selectedTagName: action.payload.recipes.name,
+        selectedTag: action.payload.recipes.tag,
         recipesLoaded: true,
       }
     case INITIAL_LOAD_OCCURRED:

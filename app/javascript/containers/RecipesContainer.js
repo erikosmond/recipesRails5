@@ -9,7 +9,7 @@ export default withRouter(connect(
   state => ({
     selectedRecipes: state.recipesReducer.selectedRecipes,
     recipesLoaded: state.recipesReducer.recipesLoaded,
-    selectedTagName: state.recipesReducer.selectedTagName,
+    selectedTag: state.recipesReducer.selectedTag,
     initialLoad: state.recipesReducer.initialLoad,
   }),
   {
