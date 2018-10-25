@@ -12,8 +12,7 @@ import configureStore from 'store'
 import Home from '../components/recipes/Home'
 
 require('react-hot-loader/patch')
-require('babel-polyfill')
-
+require('idempotent-babel-polyfill')
 
 const home = document.querySelector('#home')
 

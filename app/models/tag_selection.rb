@@ -1,6 +1,11 @@
+# frozen_string_literal: true
+
 class TagSelection < ApplicationRecord
-  has_many :tag_attributes, as: :tag_attributable, dependent: :destroy # i.e. Amount
+  has_many :tag_attributes, # i.e. Amount
+           -> { where(tag_attributable_type: 'TagSelection') },
+           as: :tag_attributable, dependent: :destroy
   has_many :modification_selections,
+           -> { where(taggable_type: 'TagSelection') },
            class_name: 'TagSelection',
            as: :taggable,
            dependent: :destroy
@@ -13,14 +18,11 @@ class TagSelection < ApplicationRecord
              polymorphic: true,
              optional: true
 
-  belongs_to :recipe, # -> { where(tag_selections: { taggable_type: 'Recipe' }) },
+  belongs_to :recipe,
              optional: true,
              foreign_key: 'taggable_id',
              foreign_type: 'taggable_type',
              class_name: 'Recipe'
-
-  # belongs_to :recipe, -> { where('tag_selections.taggable_type = ?', 'Recipe') },
-  #            foreign_key: 'taggable_id'
 
   validates :tag_id, presence: true
   validates :taggable_type, presence: true

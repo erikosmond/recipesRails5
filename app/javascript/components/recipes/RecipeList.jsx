@@ -3,20 +3,21 @@ import PropTypes from 'prop-types'
 import RecipeListItem from 'components/recipes/RecipeListItem'
 import Paper from '@material-ui/core/Paper'
 
-class RecipesList extends React.Component {
+class RecipeList extends React.Component {
   static propTypes = {
     loadRecipes: PropTypes.func.isRequired,
-    initialLoadOccurred: PropTypes.func.isRequired,
     selectedRecipes: PropTypes.arrayOf(PropTypes.shape({})),
     recipesLoaded: PropTypes.bool,
-    initialLoad: PropTypes.bool.isRequired,
+    noRecipes: PropTypes.bool.isRequired,
     startingTagId: PropTypes.string.isRequired,
     selectedTag: PropTypes.shape({}).isRequired,
-    history: PropTypes.shape({
-      push: PropTypes.func,
-    }).isRequired,
     location: PropTypes.shape({
       search: PropTypes.func,
+    }).isRequired,
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        tagId: PropTypes.string,
+      }),
     }).isRequired,
   }
 
@@ -25,27 +26,20 @@ class RecipesList extends React.Component {
     selectedRecipes: [],
   }
 
-  static getTagId(location) {
-    const tagPresent = location.pathname.match(/tags\/\d*\//)
-    return tagPresent && tagPresent[0].split('/')[1]
-  }
-
   constructor(props) {
     super(props)
     this.noRecipes = false
-    this.navigateTags = this.navigateTags.bind(this)
   }
 
   componentDidMount() {
     const {
       loadRecipes,
       startingTagId,
-      location,
-      initialLoad,
+      match,
     } = this.props
-    const tagId = RecipesList.getTagId(location)
-    if (tagId && initialLoad) {
-      loadRecipes(startingTagId)
+    const { tagId } = match.params
+    if (tagId) {
+      loadRecipes(tagId)
     } else if (startingTagId) {
       loadRecipes(startingTagId)
     } else {
@@ -55,16 +49,11 @@ class RecipesList extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.location !== this.props.location) {
-      const tagId = RecipesList.getTagId(nextProps.location)
-      if (tagId && !nextProps.initialLoad) {
+      const { tagId } = nextProps.match.params
+      if (tagId) {
         nextProps.loadRecipes(tagId)
       }
     }
-  }
-
-  navigateTags(tagId) {
-    const { history } = this.props
-    history.push(`/tags/${tagId}/recipes`)
   }
 
   render() {
@@ -72,21 +61,28 @@ class RecipesList extends React.Component {
       recipesLoaded,
       selectedRecipes,
       selectedTag,
-      initialLoadOccurred,
+      noRecipes,
     } = this.props
 
-    if (this.noRecipes) {
-      return (<div> The recipes you seek do not exist </div>)
+    if (this.noRecipes || noRecipes) {
+      return (<div> {"We don't have any recipes like that."} </div>)
     } else if (!recipesLoaded) {
       return null
     }
-    initialLoadOccurred()
     return (
       <div>
-        {selectedTag.name}
+        <h2>{selectedTag.name}</h2>
+        {selectedTag.description && selectedTag.description.length > 0 &&
+          <div>
+            {selectedTag.description}
+            <br /><br />
+          </div>
+        }
+        {`${selectedRecipes.length} recipes`}
+
         <Paper>
           {selectedRecipes.map(r => (
-            <RecipeListItem key={r.id} recipe={r} navigateTags={this.navigateTags} />
+            <RecipeListItem key={r.id} recipe={r} />
           ))}
         </Paper>
       </div>
@@ -94,4 +90,4 @@ class RecipesList extends React.Component {
   }
 }
 
-export default RecipesList
+export default RecipeList

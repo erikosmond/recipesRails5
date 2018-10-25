@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
+// import { Link } from 'react-router-dom'
 import CardContent from '@material-ui/core/CardContent'
 import Collapse from '@material-ui/core/Collapse'
 import Typography from '@material-ui/core/Typography'
@@ -27,15 +28,16 @@ class RecipeListItem extends React.Component {
   };
 
   render() {
-    const { recipe, classes, navigateTags } = this.props
+    const { recipe, classes } = this.props
     const ingredientNames = Object.values(recipe.ingredients).map(ingredient => (
       ingredient.tagName
     ))
 
     return (
       <Card className={classes.card}>
+        {/* <Link to={`/recipes/${recipe.id}`}> <h2> {recipe.name} </h2> </Link> */}
         <CardHeader
-          title={recipe.name}
+          title={<a href={`/recipes/${recipe.id}`}>{recipe.name}</a>}
           subheader={ingredientNames.join(', ')}
         />
         <CardActions className={classes.actions} disableActionSpacing>
@@ -55,19 +57,27 @@ class RecipeListItem extends React.Component {
             <Typography paragraph variant="body2">
               Ingredients:
             </Typography>
-            <Typography paragraph>
-              <ul>
-                {Object.values(recipe.ingredients).map(ingredient => (
-                  <IngredientListItem ingredient={ingredient} navigateTags={navigateTags} />
-                ))}
-              </ul>
-            </Typography>
+            <ul>
+              {Object.values(recipe.ingredients).map(ingredient => (
+                <IngredientListItem key={ingredient.id} ingredient={ingredient} />
+              ))}
+            </ul>
             <Typography paragraph variant="body2">
               Instructions:
             </Typography>
             <Typography paragraph>
               {recipe.instructions}
             </Typography>
+            {recipe.description && recipe.description.length > 0 &&
+              <div>
+                <Typography paragraph variant="body2">
+                  Description:
+                </Typography>
+                <Typography paragraph>
+                  {recipe.description}
+                </Typography>
+              </div>
+            }
           </CardContent>
         </Collapse>
       </Card>
@@ -84,7 +94,6 @@ RecipeListItem.propTypes = {
   classes: PropTypes.shape({
     card: PropTypes.shape({}).isRequired,
   }).isRequired,
-  navigateTags: PropTypes.func.isRequired,
 }
 
 export default withStyles(styles)(RecipeListItem)

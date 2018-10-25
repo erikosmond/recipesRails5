@@ -94,9 +94,9 @@ describe Tag do
     let!(:recipes) { subject.recipes_with_detail }
 
     describe '#collect_tag_ids' do
-      let(:list) { [ingredient1.id, ingredient1_type.id, ingredient1_family.id] }
+      let(:hash) { { ingredient1.id => true, ingredient1_type.id => true, ingredient1_family.id => true } }
       it 'returns collected tag ids' do
-        expect(subject.filter_tags(recipes)).to eq(list)
+        expect(subject.filter_tags(recipes)).to eq(hash)
       end
     end
 

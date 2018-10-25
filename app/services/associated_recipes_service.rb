@@ -2,24 +2,23 @@ module AssociatedRecipesService
   def recipes_with_grouped_detail(recipe_details)
     recipes = group_by_recipe_details(recipe_details.dup)
     collect_tags_by_recipe!(recipes)
-    recipes = group_by_recipe_tag_type(recipes)
+    recipes = group_by_recipe_tag_type(recipes) # Ingredients, vs Menus, etc.
     recipes = merge_recipe_data(recipes)
     hash_ingredients_by_tag_id!(recipes)
   end
 
   def filter_tags(recipe_details)
-    recipe_details.each_with_object([]) do |r, tags|
-      tags << [r.tag_id, r.ingredient_type_id, r.ingredient_family_id]
-    end.flatten
+    recipe_details.each_with_object({}) do |r, tags|
+      tags[r.tag_id] = true
+      tags[r.ingredient_type_id] = true
+      tags[r.ingredient_family_id] = true
+    end
   end
 
   def recipes_with_detail
     tag_selections.
       select(recipes_with_detail_select).
       left_outer_joins(recipes_with_parent_detail_joins).
-      where('tag_selections.taggable_type = ?', 'Recipe').
-      where('taggings_tags_join.taggable_type = ?', 'Tag').
-      where('taggings_tags_join_2.taggable_type = ?', 'Tag').
       where('tag_types_tags.name = ?', 'IngredientType').
       where('tag_types_tags_2.name = ?', 'IngredientFamily')
   end
@@ -37,19 +36,21 @@ module AssociatedRecipesService
       end
     end
 
-    def group_by_recipe_tag_type(recipes)
-      recipes.each_with_object({}) do |(k, v), new_recipes|
-         new_recipes[k] = v.group_by { |g| g['tag_type'].to_s.downcase.pluralize }
+    def group_by_recipe_tag_type(ungrouped_recipes)
+      ungrouped_recipes.each_with_object({}) do |(k, v), recipes|
+        recipes[k] = v.group_by { |g| g['tag_type'].to_s.downcase.pluralize }
       end
     end
 
     def collect_tags_by_recipe!(recipes)
       # mutates recipes object
       recipes.each do |k, v|
-        ids = v.each_with_object([]) do |r, tag_ids|
-          tag_ids << [r.tag_id, r.ingredient_type_id, r.ingredient_family_id]
+        ids = v.each_with_object({}) do |r, tag_ids|
+          tag_ids[r.tag_id] = true
+          tag_ids[r.ingredient_type_id] = true
+          tag_ids[r.ingredient_family_id] = true
         end
-        k['tag_ids'] = ids.flatten
+        k['tag_ids'] = ids
       end
     end
 
@@ -66,16 +67,6 @@ module AssociatedRecipesService
       recipes.each_with_object([]) do |(k, v), new_recipes|
         new_recipes << k.merge(v)
       end
-    end
-
-    def recipes_with_detail_joins
-      [
-        tag_selections: [
-          { tag: :tag_type },
-          :tag_attributes,
-          :modifications
-        ]
-      ]
     end
 
     def recipes_with_parent_detail_joins

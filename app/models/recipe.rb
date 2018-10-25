@@ -1,5 +1,6 @@
 class Recipe < ApplicationRecord
   has_many :tag_selections,
+           -> { where(taggable_type: 'Recipe') },
            as: :taggable,
            dependent: :destroy,
            inverse_of: :taggable

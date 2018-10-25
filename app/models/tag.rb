@@ -5,9 +5,13 @@ class Tag < ApplicationRecord
 
   belongs_to :tag_type
   belongs_to :recipe, optional: true, inverse_of: :ingredient
-  has_many :tag_attributes, as: :tag_attributable, dependent: :destroy # i.e. Brand, Year
+  has_many :tag_attributes, # i.e. Brand, Year
+           -> { where(tag_attributable_type: 'Tag') },
+           as: :tag_attributable,
+           dependent: :destroy
 
-  has_many :tag_selections, dependent: :destroy
+  has_many :tag_selections,
+           dependent: :destroy
   has_many :child_tags,
            through: :tag_selections,
            source: :taggable,
@@ -19,6 +23,7 @@ class Tag < ApplicationRecord
 
   # Tags that are assigned to this tag, like Ingredient Type
   has_many :taggings,
+           -> { where(taggable_type: 'Tag') },
            foreign_key: :taggable_id,
            foreign_type: 'Tag',
            class_name: 'TagSelection',

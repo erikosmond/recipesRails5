@@ -8,19 +8,24 @@ import {
   Route,
   Switch,
 } from 'react-router-dom'
-import RecipesContainer from 'containers/RecipesContainer'
+import RecipeContainer from 'containers/RecipeContainer'
+import RecipeListContainer from 'containers/RecipeListContainer'
 
 const Home = props => (
   <Router>
     <Switch>
       <Route
-        path="/"
-        startingTagId={props.startingTagId}
-        render={routeProps => <RecipesContainer {...props} {...routeProps} />}
+        path="/tags/:tagId/recipes"
+        render={routeProps => <RecipeListContainer {...props} {...routeProps} />}
       />
       <Route
-        path="/tags/:tagId/recipes"
-        render={routeProps => <RecipesContainer {...props} {...routeProps} />}
+        path="/recipes/:recipeId"
+        render={routeProps => <RecipeContainer {...props} {...routeProps} />}
+      />
+      <Route
+        path="/"
+        startingTagId={props.startingTagId}
+        render={routeProps => <RecipeListContainer {...props} {...routeProps} />}
       />
     </Switch>
   </Router>
