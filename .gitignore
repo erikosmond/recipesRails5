@@ -18,6 +18,8 @@
 
 .env
 21
+55
+migrate_*
 
 .byebug_history
 /public/packs
