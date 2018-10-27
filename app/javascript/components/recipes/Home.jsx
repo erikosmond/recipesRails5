@@ -17,14 +17,17 @@ const Home = props => (
       <Route
         path="/tags/:tagId/recipes"
         render={routeProps => <RecipeListContainer {...props} {...routeProps} />}
+        // component={RecipeListContainer}
       />
       <Route
         path="/recipes/:recipeId"
+        // component={RecipeContainer}
         render={routeProps => <RecipeContainer {...props} {...routeProps} />}
       />
       <Route
         path="/"
         startingTagId={props.startingTagId}
+        // component={RecipeListContainer}
         render={routeProps => <RecipeListContainer {...props} {...routeProps} />}
       />
     </Switch>

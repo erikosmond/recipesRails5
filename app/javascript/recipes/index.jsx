@@ -24,7 +24,7 @@ const render = (Component) => {
   ReactDOM.render(
     <AppContainer>
       <Provider store={store}>
-        <Home startingTagId={home.dataset.startingTagId} />
+        <Component startingTagId={home.dataset.startingTagId} />
       </Provider>
     </AppContainer>,
     home,
