@@ -10,8 +10,8 @@ class Recipe extends React.Component {
       name: PropTypes.string.isRequired,
       ingredients: PropTypes.string.isRequired,
     }),
-    location: PropTypes.shape({
-      search: PropTypes.func,
+    history: PropTypes.shape({
+      pop: PropTypes.func,
     }).isRequired,
     match: PropTypes.shape({
       params: PropTypes.shape({
@@ -24,10 +24,20 @@ class Recipe extends React.Component {
     recipe: {},
   }
 
+  constructor(props) {
+    super(props)
+    this.goBack = this.goBack.bind(this)
+  }
+
   componentDidMount() {
     const { loadRecipe, match } = this.props
     const { recipeId } = match.params
     loadRecipe(recipeId)
+  }
+
+  goBack() {
+    const { history } = this.props
+    history.goBack()
   }
 
   render() {
@@ -36,10 +46,16 @@ class Recipe extends React.Component {
       return null
     }
     if (noRecipe) {
-      return (<div> {"We don't have a recipe like that"} </div>)
+      return (
+        <div>
+          <button onClick={this.goBack}> Go Back </button>
+          <div> {"We don't have a recipe like that"} </div>
+        </div>
+      )
     }
     return (
       <div>
+        <button onClick={this.goBack}> Go Back </button>
         {recipe.name}
       </div>
     )

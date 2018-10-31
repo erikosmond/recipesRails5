@@ -42,7 +42,10 @@ module Api
       end
 
       def all_recipe_json
-        Recipe.all.as_json(only: %i[id name])
+        recipe_json = Recipe.all.sort_by(&:name).as_json(only: %i[id name])
+        recipe_json.each_with_object([]) do |recipe, recipes|
+          recipes << { 'Label' => recipe['name'], 'Value' => recipe['id'] }
+        end
       end
   end
 end
