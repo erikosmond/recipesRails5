@@ -16,6 +16,7 @@ class RecipeDropdown extends React.Component {
   }
 
   componentDidMount() {
+    debugger
     const { loadRecipeOptions } = this.props
     loadRecipeOptions()
   }

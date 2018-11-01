@@ -13,6 +13,7 @@ class Recipe extends React.Component {
     history: PropTypes.shape({
       pop: PropTypes.func,
     }).isRequired,
+    location: PropTypes.shape().isRequired,
     match: PropTypes.shape({
       params: PropTypes.shape({
         recipeId: PropTypes.string,
@@ -33,6 +34,15 @@ class Recipe extends React.Component {
     const { loadRecipe, match } = this.props
     const { recipeId } = match.params
     loadRecipe(recipeId)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.location !== this.props.location) {
+      const { recipeId } = nextProps.match.params
+      if (recipeId) {
+        nextProps.loadRecipe(recipeId)
+      }
+    }
   }
 
   goBack() {

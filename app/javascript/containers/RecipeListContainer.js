@@ -1,11 +1,12 @@
 import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
+// import { withRouter } from 'react-router-dom'
 
 import RecipeList from 'components/recipes/RecipeList'
 
 import { loadRecipes } from 'bundles/recipes'
 
-export default withRouter(connect(
+// export default withRouter(connect(
+export default connect(
   state => ({
     selectedRecipes: state.recipesReducer.selectedRecipes,
     recipesLoaded: state.recipesReducer.recipesLoaded,
@@ -16,4 +17,4 @@ export default withRouter(connect(
   {
     loadRecipes,
   },
-)(RecipeList))
+)(RecipeList)
