@@ -10,8 +10,9 @@ const LOAD_RECIPE = 'recipes/loadRecipe'
 const LOAD_RECIPE_SUCCESS = 'recipes/loadRecipeSuccess'
 const LOAD_RECIPE_OPTIONS = 'recipes/loadRecipeOptions'
 const LOAD_RECIPE_OPTIONS_SUCCESS = 'recipes/loadRecipeOptionsSuccess'
+const LOAD_INGREDIENT_OPTIONS = 'recipes/loadIngredientOptions'
+const LOAD_INGREDIENT_OPTIONS_SUCCESS = 'recipes/loadIngredientOptionsSuccess'
 const NO_RECIPE_FOUND = 'recipes/noRecipeFound'
-const NO_RECIPE_OPTIONS_FOUND = 'recipes/noRecipeOptionsFound'
 
 // Reducer
 const initialState = {
@@ -20,7 +21,6 @@ const initialState = {
   recipeOptions: [],
   recipesLoaded: false,
   noRecipes: false,
-  noRecipeOptions: false,
 }
 
 export default function recipesReducer(state = initialState, action = {}) {
@@ -58,15 +58,15 @@ export default function recipesReducer(state = initialState, action = {}) {
         ...state,
         recipeOptions: action.payload.recipeOptions.recipes,
       }
+    case LOAD_INGREDIENT_OPTIONS_SUCCESS:
+      return {
+        ...state,
+        ingredientOptions: action.payload.ingredientOptions,
+      }
     case NO_RECIPE_FOUND:
       return {
         ...state,
         noRecipe: true,
-      }
-    case NO_RECIPE_OPTIONS_FOUND:
-      return {
-        ...state,
-        noRecipeOptions: true,
       }
     default:
       return state
@@ -127,17 +127,27 @@ export function loadRecipeOptionsSuccess({ recipeOptions }) {
   }
 }
 
+export function loadIngredientOptions() {
+  return {
+    type: LOAD_INGREDIENT_OPTIONS,
+  }
+}
+
+export function loadIngredientOptionsSuccess({ ingredientOptions }) {
+  return {
+    type: LOAD_INGREDIENT_OPTIONS_SUCCESS,
+    payload: {
+      ingredientOptions,
+    },
+  }
+}
+
 export function noRecipeFound() {
   return {
     type: NO_RECIPE_FOUND,
   }
 }
 
-export function noRecipeOptionsFound() {
-  return {
-    type: NO_RECIPE_OPTIONS_FOUND,
-  }
-}
 // Saga
 
 export function* loadRecipesTask({ payload }) {
@@ -165,8 +175,14 @@ export function* loadRecipeOptionsTask() {
   const result = yield call(callApi, url)
   if (result.success) {
     yield put(loadRecipeOptionsSuccess({ recipeOptions: result.data }))
-  } else {
-    yield put(noRecipeOptionsFound())
+  }
+}
+
+export function* loadIngredientOptionsTask() {
+  const url = '/api/tags?type=ingredients'
+  const result = yield call(callApi, url)
+  if (result.success) {
+    yield put(loadIngredientOptionsSuccess({ ingredientOptions: result.data }))
   }
 }
 /* recipes */
@@ -175,4 +191,5 @@ export function* recipesSaga() {
   yield takeLatest(LOAD_RECIPES, loadRecipesTask)
   yield takeLatest(LOAD_RECIPE, loadRecipeTask)
   yield takeLatest(LOAD_RECIPE_OPTIONS, loadRecipeOptionsTask)
+  yield takeLatest(LOAD_INGREDIENT_OPTIONS, loadIngredientOptionsTask)
 }

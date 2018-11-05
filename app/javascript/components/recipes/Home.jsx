@@ -10,12 +10,12 @@ import {
 
 import Recipe from 'containers/RecipeContainer'
 import RecipeList from 'containers/RecipeListContainer'
-import RecipeDropdown from 'containers/RecipeDropdownContainer'
+import RecipeHeader from 'containers/RecipeHeaderContainer'
 
 const Home = () => (
   <Router>
     <div>
-      <RecipeDropdown />
+      <RecipeHeader />
       <Switch>
         <Route
           path="/tags/:tagId/recipes"

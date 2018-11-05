@@ -23,7 +23,6 @@ const myStore = {
 }
 
 const store = configureStore(rootReducer, rootSaga, myStore)
-debugger
 const render = (Component) => {
   ReactDOM.render(
     <AppContainer>

@@ -11,26 +11,26 @@ class RecipeDropdown extends React.Component {
   }
 
   componentDidMount() {
-    const { loadRecipeOptions } = this.props
-    loadRecipeOptions()
+    const { loadIngredientOptions } = this.props
+    loadIngredientOptions()
   }
 
   handleChange = (selectedOption) => {
     const { history } = this.props
     this.setState({ selectedOption })
-    history.push(`/recipes/${selectedOption.value}`)
+    history.push(`/tags/${selectedOption.value}/recipes`)
   }
 
   render() {
     const { selectedOption } = this.state
-    const { recipeOptions } = this.props
-    const options = recipeOptions || []
+    const { ingredientOptions } = this.props
+    const options = ingredientOptions || []
     return (
       <StyledSelect
         value={selectedOption}
         onChange={this.handleChange}
         options={options}
-        placeholder="Recipes"
+        placeholder="Ingredients"
         isSearchable
       />
     )
@@ -40,8 +40,8 @@ class RecipeDropdown extends React.Component {
 export default RecipeDropdown
 
 RecipeDropdown.propTypes = {
-  loadRecipeOptions: PropTypes.func.isRequired,
-  recipeOptions: PropTypes.shape.isRequired,
+  loadIngredientOptions: PropTypes.func.isRequired,
+  ingredientOptions: PropTypes.shape.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
