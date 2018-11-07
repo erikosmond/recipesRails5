@@ -13,16 +13,19 @@ class TagSelection < ApplicationRecord
 
   has_one :access, as: :accessible
 
-  belongs_to :tag, inverse_of: :tag_selections
+  belongs_to :tag,
+             # optional: true,
+             inverse_of: :tag_selections
   belongs_to :taggable,
              polymorphic: true,
              optional: true
-
   belongs_to :recipe,
+             # inverse_of: :tag_selections,
              optional: true,
              foreign_key: 'taggable_id',
              foreign_type: 'taggable_type',
              class_name: 'Recipe'
+
 
   validates :tag_id, presence: true
   validates :taggable_type, presence: true

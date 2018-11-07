@@ -32,6 +32,7 @@ class RecipeDropdown extends React.Component {
         options={options}
         placeholder="Recipes"
         isSearchable
+        isClearable
       />
     )
   }
