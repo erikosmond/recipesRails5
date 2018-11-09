@@ -24,9 +24,8 @@ describe Recipe do
 
   describe '#tags' do
     let(:tag) { create :tag, name: 'Salt' }
-    let(:tag_selection) { create :tag_selection, tag: tag, taggable: subject }
+    let!(:tag_selection) { create :tag_selection, tag: tag, taggable: subject }
     it 'has correct tag' do
-      tag_selection
       expect(subject.tags).to eq([tag])
     end
   end

@@ -1,5 +1,11 @@
 # frozen_string_literal: true
+=begin
+parent class would be tag
+i should just try this
+add type
 
+
+=end
 class Tag < ApplicationRecord
   include AssociatedRecipesService
 

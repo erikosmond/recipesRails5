@@ -33,12 +33,23 @@ module Api
       end
 
       def tagged_recipes(tag)
-        recipes = tag.recipes_with_detail.to_a
+        recipes = with_detail(tag)
         {
           tag: tag,
           recipes: tag.recipes_with_grouped_detail(recipes),
           filter_tags: tag.filter_tags(recipes)
         }
+      end
+
+      def with_detail(tag)
+        case tag.tag_type.name
+        when 'Ingredient'
+          tag.recipes_with_detail.to_a
+        when 'IngredientType'
+          tag.child_recipes_with_detail.to_a
+        when 'IngredientFamily'
+          tag.child_child_recipes_with_detail.to_a
+        end
       end
 
       def all_recipe_json

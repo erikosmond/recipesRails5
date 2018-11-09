@@ -46,6 +46,7 @@ describe Tag do
     let!(:tag_selection4) { create :tag_selection, tag: almond, taggable: martini }
     let!(:tag_selection5) { create :tag_selection, tag: protein, taggable: manhattan }
     it 'creates child_tags' do
+      binding.pry
       expect(nut.child_tags).to eq([almond])
     end
     it 'has tags' do
@@ -125,6 +126,7 @@ describe Tag do
     describe '#collect_tag_ids' do
       let(:hash) { { ingredient1.id => true, ingredient1_type.id => true, ingredient1_family.id => true } }
       it 'returns collected tag ids' do
+        binding.pry
         expect(subject.filter_tags(recipes)).to eq(hash)
       end
     end

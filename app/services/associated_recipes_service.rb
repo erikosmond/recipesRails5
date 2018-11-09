@@ -23,7 +23,37 @@ module AssociatedRecipesService
       where('tag_types_tags_2.name = ?', 'IngredientFamily')
   end
 
+  def child_recipes_with_detail
+    child_recipes.
+      select(recipes_with_detail_select).
+      left_outer_joins(recipes_with_child_detail_joins).
+      where('tag_types_tags.name = ?', 'IngredientType').
+      where('tag_types_tags_2.name = ?', 'IngredientFamily')
+  end
+
   private
+
+    def recipes_with_child_detail_joins
+      [
+        child_tag_selections: [
+          { tag: [:tag_type, tags: [:tag_type, tags: :tag_type]] },
+          :tag_attributes,
+          :modifications
+        ]
+      ]
+    end
+
+    def recipes_with_parent_detail_joins
+      [
+        recipe: [
+          tag_selections: [
+            { tag: [:tag_type, tags: [:tag_type, tags: :tag_type]] },
+            :tag_attributes,
+            :modifications
+          ]
+        ]
+      ]
+    end
 
     def group_by_recipe_details(recipe_details)
       recipe_details.to_a.group_by do |r|
