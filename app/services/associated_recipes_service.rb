@@ -16,7 +16,7 @@ module AssociatedRecipesService
   end
 
   def recipes_with_detail
-    tag_selections.
+    recipe_tag_selections.
       select(recipes_with_detail_select).
       left_outer_joins(recipes_with_parent_detail_joins).
       where('tag_types_tags.name = ?', 'IngredientType').
@@ -71,20 +71,16 @@ module AssociatedRecipesService
 
     def recipes_with_parent_detail_joins
       [
-        recipe: [
-          tag_selections: [
-            { tag: [:tag_type, tags: [:tag_type, tags: :tag_type]] },
-            :tag_attributes,
-            :modifications
-          ]
-        ]
+        { tag: [:tag_type, tags: [:tag_type, tags: :tag_type]] },
+        :tag_attributes,
+        :modifications
       ]
     end
 
     def recipes_with_detail_select
       recipes_select_recipes +
         recipes_select_tags + [
-          'tag_selections_recipes.id',
+          'tag_selections_recipe_tag_selections.id',
           'tag_types.name AS tag_type',
           'tag_attributes.value',
           'tag_attributes.property',

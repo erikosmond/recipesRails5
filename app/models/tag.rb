@@ -12,14 +12,41 @@ class Tag < ApplicationRecord
 
   has_many :tag_selections,
            dependent: :destroy
-  has_many :child_tags,
-           through: :tag_selections,
-           source: :taggable,
-           source_type: 'Tag'
   has_many :recipes,
            through: :tag_selections,
            source: :taggable,
            source_type: 'Recipe'
+  has_many :recipe_tag_selections,
+           through: :recipes,
+           source: :tag_selections
+  has_many :child_tags,
+           through: :tag_selections,
+           source: :taggable,
+           source_type: 'Tag'
+  has_many :child_tag_selections,
+           through: :child_tags,
+           source: :tag_selections
+  has_many :child_recipes,
+           through: :child_tag_selections,
+           source: :taggable,
+           source_type: 'Recipe'
+  has_many :child_recipe_tag_selections,
+           through: :child_recipes,
+           source: :tag_selections
+  has_many :grandchild_tags,
+           through: :child_tag_selections,
+           source: :taggable,
+           source_type: 'Tag'
+  has_many :grandchild_tag_selections,
+           through: :grandchild_tags,
+           source: :tag_selections
+  has_many :grandchild_recipes,
+           through: :grandchild_tag_selections,
+           source: :taggable,
+           source_type: 'Recipe'
+  has_many :grandchild_recipe_tag_selections,
+           through: :grandchild_recipes,
+           source: :tag_selections
 
   # Tags that are assigned to this tag, like Ingredient Type
   has_many :taggings,
