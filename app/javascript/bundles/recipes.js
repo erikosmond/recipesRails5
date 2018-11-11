@@ -37,6 +37,7 @@ export default function recipesReducer(state = initialState, action = {}) {
         selectedRecipes: action.payload.recipes.recipes,
         selectedTag: action.payload.recipes.tag,
         recipesLoaded: true,
+        noRecipes: false,
       }
     case NO_RECIPES_FOUND:
       return {

@@ -42,14 +42,15 @@ module Api
       end
 
       def with_detail(tag)
-        case tag.tag_type.name
-        when 'Ingredient'
-          tag.recipes_with_detail.to_a
-        when 'IngredientType'
-          tag.child_recipes_with_detail.to_a
-        when 'IngredientFamily'
-          tag.child_child_recipes_with_detail.to_a
-        end
+        recipes =
+          case tag.tag_type.name
+          when 'IngredientType'
+            tag.child_recipes_with_detail.to_a
+          when 'IngredientFamily'
+            tag.grandchild_recipes_with_detail.to_a +
+            tag.child_recipes_with_detail.to_a
+          end || []
+        recipes + tag.recipes_with_detail.to_a
       end
 
       def all_recipe_json

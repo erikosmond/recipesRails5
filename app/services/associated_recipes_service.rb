@@ -16,26 +16,30 @@ module AssociatedRecipesService
   end
 
   def recipes_with_detail
-    recipe_tag_selections.
-      select(recipes_with_detail_select).
-      left_outer_joins(recipes_with_parent_detail_joins).
-      where('tag_types_tags.name = ?', 'IngredientType').
-      where('tag_types_tags_2.name = ?', 'IngredientFamily')
+    detail_sql(recipe_tag_selections, :recipes_with_parent_detail_joins)
   end
 
   def child_recipes_with_detail
-    child_recipes.
-      select(recipes_with_detail_select).
-      left_outer_joins(recipes_with_child_detail_joins).
-      where('tag_types_tags.name = ?', 'IngredientType').
-      where('tag_types_tags_2.name = ?', 'IngredientFamily')
+    detail_sql(child_recipe_tag_selections, :recipes_with_child_detail_joins)
+  end
+
+  def grandchild_recipes_with_detail
+    detail_sql(grandchild_recipe_tag_selections)
   end
 
   private
 
+    def detail_sql(selected_tags, joins)
+      selected_tags.
+        select(recipes_with_detail_select).
+        left_outer_joins(send(joins)).
+        where('tag_types_tags.name = ?', 'IngredientType').
+        where('tag_types_tags_2.name = ?', 'IngredientFamily')
+    end
+
     def recipes_with_child_detail_joins
       [
-        child_tag_selections: [
+        child_recipe_tag_selections: [
           { tag: [:tag_type, tags: [:tag_type, tags: :tag_type]] },
           :tag_attributes,
           :modifications
