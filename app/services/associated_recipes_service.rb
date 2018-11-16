@@ -15,34 +15,40 @@ module AssociatedRecipesService
     end
   end
 
+  def recipe_detail_level
+    recipes =
+      case tag_type.name
+      when 'IngredientType'
+        child_recipes_with_detail.to_a
+      when 'IngredientFamily'
+        grandchild_recipes_with_detail.to_a +
+        child_recipes_with_detail.to_a
+      end || []
+    recipes + recipes_with_detail.to_a
+  end
+
   def recipes_with_detail
-    detail_sql(recipe_tag_selections)
+    detail_sql(recipe_tag_selections, 'tag_selections_recipe_tag_selections')
   end
 
   def child_recipes_with_detail
-    detail_sql(child_recipe_tag_selections)
+    table_alias = 'child_tag_selections_child_recipe_tag_selections'
+    detail_sql(child_recipe_tag_selections, table_alias)
   end
 
   def grandchild_recipes_with_detail
-    detail_sql(grandchild_recipe_tag_selections)
+    table_alias = 'grandchild_tag_selections_grandchild_recipe_tag_selections'
+    detail_sql(grandchild_recipe_tag_selections, table_alias)
   end
 
   private
 
-    def detail_sql(selected_tags)
+    def detail_sql(selected_tags, tag_selection_table_name)
       selected_tags.
-        select(recipes_with_detail_select).
+        select(recipes_with_detail_select(tag_selection_table_name)).
         left_outer_joins(recipes_with_parent_detail_joins).
         where('tag_types_tags.name = ?', 'IngredientType').
         where('tag_types_tags_2.name = ?', 'IngredientFamily')
-    end
-
-    def recipes_with_child_detail_joins
-      [
-        { tag: [:tag_type, tags: [:tag_type, tags: :tag_type]] },
-        :tag_attributes,
-        :modifications
-      ]
     end
 
     def recipes_with_parent_detail_joins
@@ -97,10 +103,10 @@ module AssociatedRecipesService
       end
     end
 
-    def recipes_with_detail_select
+    def recipes_with_detail_select(tag_selection_table_name)
       recipes_select_recipes +
         recipes_select_tags + [
-          'tag_selections_recipe_tag_selections.id',
+          "#{tag_selection_table_name}.id",
           'tag_types.name AS tag_type',
           'tag_attributes.value',
           'tag_attributes.property',

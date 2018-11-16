@@ -37,6 +37,7 @@ class Tag < ApplicationRecord
   has_many :grandchild_tags,
            through: :child_tag_selections,
            source: :taggable,
+           class_name: 'GrandchildTag',
            source_type: 'Tag'
   has_many :grandchild_tag_selections,
            through: :grandchild_tags,

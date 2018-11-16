@@ -33,7 +33,7 @@ module Api
       end
 
       def tagged_recipes(tag)
-        recipes = with_detail(tag)
+        recipes = tag.recipe_detail_level
         {
           tag: tag,
           recipes: tag.recipes_with_grouped_detail(recipes),
@@ -41,23 +41,9 @@ module Api
         }
       end
 
-      def with_detail(tag)
-        recipes =
-          case tag.tag_type.name
-          when 'IngredientType'
-            tag.child_recipes_with_detail.to_a
-          when 'IngredientFamily'
-            tag.grandchild_recipes_with_detail.to_a +
-            tag.child_recipes_with_detail.to_a
-          end || []
-        recipes + tag.recipes_with_detail.to_a
-      end
-
       def all_recipe_json
         recipe_json = Recipe.all.sort_by(&:name).as_json(only: %i[id name])
-        recipe_json.each_with_object([]) do |recipe, recipes|
-          recipes << { 'Label' => recipe['name'], 'Value' => recipe['id'] }
-        end
+        recipe_json.map { |r| { 'Label' => r['name'], 'Value' => r['id'] } }
       end
   end
 end
