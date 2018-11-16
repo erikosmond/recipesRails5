@@ -26,6 +26,19 @@ class TagSelection < ApplicationRecord
              foreign_type: 'taggable_type',
              class_name: 'Recipe'
 
+  # has_many :child_recipe_tags,
+  #         through: :child_recipe_tag_selections,
+  #         source: :tag
+  belongs_to :child_tag,
+             foreign_key: 'tag_id',
+             class_name: 'ChildTag' #,
+             # optional: true,
+
+  has_many :child_recipe_tags,
+           through: :recipe # ,
+
+  # belongs_to :recipe_tag_selection,
+  #            through: recipe
 
   validates :tag_id, presence: true
   validates :taggable_type, presence: true
@@ -34,5 +47,4 @@ class TagSelection < ApplicationRecord
   validates_uniqueness_of :tag_id, scope: %i[taggable_id taggable_type]
 
   accepts_nested_attributes_for :tag_attributes
-
 end

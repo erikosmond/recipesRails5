@@ -46,6 +46,7 @@ describe Tag do
     let!(:tag_selection4) { create :tag_selection, tag: almond, taggable: martini }
     let!(:tag_selection5) { create :tag_selection, tag: protein, taggable: manhattan }
     it 'creates child_tags' do
+      binding.pry
       expect(nut.child_tags).to eq([almond])
     end
     it 'has tags' do
@@ -66,6 +67,7 @@ describe Tag do
       expect(protein.grandchild_recipes).to eq([martini])
     end
     it 'assigns tags to ingredient family' do
+      binding.pry
       expect(protein.child_tags).to eq([nut])
       expect(protein.grandchild_tags).to eq([almond])
     end

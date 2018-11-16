@@ -16,11 +16,11 @@ module AssociatedRecipesService
   end
 
   def recipes_with_detail
-    detail_sql(recipe_tag_selections, :recipes_with_parent_detail_joins)
+    detail_sql(recipe_tag_selections)
   end
 
   def child_recipes_with_detail
-    detail_sql(child_recipe_tag_selections, :recipes_with_child_detail_joins)
+    detail_sql(child_recipe_tag_selections)
   end
 
   def grandchild_recipes_with_detail
@@ -29,33 +29,27 @@ module AssociatedRecipesService
 
   private
 
-    def detail_sql(selected_tags, joins)
+    def detail_sql(selected_tags)
       selected_tags.
         select(recipes_with_detail_select).
-        left_outer_joins(send(joins)).
+        left_outer_joins(recipes_with_parent_detail_joins).
         where('tag_types_tags.name = ?', 'IngredientType').
         where('tag_types_tags_2.name = ?', 'IngredientFamily')
     end
 
     def recipes_with_child_detail_joins
       [
-        child_recipe_tag_selections: [
-          { tag: [:tag_type, tags: [:tag_type, tags: :tag_type]] },
-          :tag_attributes,
-          :modifications
-        ]
+        { tag: [:tag_type, tags: [:tag_type, tags: :tag_type]] },
+        :tag_attributes,
+        :modifications
       ]
     end
 
     def recipes_with_parent_detail_joins
       [
-        recipe: [
-          tag_selections: [
-            { tag: [:tag_type, tags: [:tag_type, tags: :tag_type]] },
-            :tag_attributes,
-            :modifications
-          ]
-        ]
+        { tag: [:tag_type, tags: [:tag_type, tags: :tag_type]] },
+        :tag_attributes,
+        :modifications
       ]
     end
 
@@ -101,14 +95,6 @@ module AssociatedRecipesService
       recipes.each_with_object([]) do |(k, v), new_recipes|
         new_recipes << k.merge(v)
       end
-    end
-
-    def recipes_with_parent_detail_joins
-      [
-        { tag: [:tag_type, tags: [:tag_type, tags: :tag_type]] },
-        :tag_attributes,
-        :modifications
-      ]
     end
 
     def recipes_with_detail_select

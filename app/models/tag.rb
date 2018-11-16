@@ -22,6 +22,7 @@ class Tag < ApplicationRecord
   has_many :child_tags,
            through: :tag_selections,
            source: :taggable,
+           class_name: 'ChildTag',
            source_type: 'Tag'
   has_many :child_tag_selections,
            through: :child_tags,
