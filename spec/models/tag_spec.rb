@@ -75,7 +75,22 @@ describe Tag do
       expect(protein.grandchild_tags.first.class.name).to eq('GrandchildTag')
       expect(protein.grandchild_recipes_with_detail.to_a.size).to eq(1)
       expect(protein.grandchild_recipes_with_detail.first['recipe_id']).to eq(martini.id)
+    end
+    it 'assigns child recipe to family' do
       expect(protein.child_recipes_with_detail.to_a.size).to eq(1)
+      expect(protein.child_recipes_with_detail.first['recipe_id']).to eq(vesper.id)
+    end
+    it 'assigns own recipe to family' do
+      expect(protein.recipes_with_detail.to_a.size).to eq(1)
+      expect(protein.recipes_with_detail.first['recipe_id']).to eq(manhattan.id)
+    end
+    it 'assigns child recipe to type' do
+      expect(nut.child_recipes_with_detail.to_a.size).to eq(1)
+      expect(nut.child_recipes_with_detail.first['recipe_id']).to eq(martini.id)
+    end
+    it 'assigns own recipe to type' do
+      expect(nut.recipes_with_detail.to_a.size).to eq(1)
+      expect(nut.recipes_with_detail.first['recipe_id']).to eq(vesper.id)
     end
   end
 
@@ -130,16 +145,24 @@ describe Tag do
     let!(:recipes) { subject.recipes_with_detail }
 
     describe '#collect_tag_ids' do
-      let(:hash) { { ingredient1.id => true, ingredient1_type.id => true, ingredient1_family.id => true } }
+      let(:hash) do
+        {
+          subject.id => true,
+          ingredient1.id => true,
+          ingredient1_type.id => true,
+          ingredient1_family.id => true,
+          ingredient2.id => true
+        }
+      end
       it 'returns collected tag ids' do
         expect(subject.filter_tags(recipes)).to eq(hash)
       end
     end
 
     describe '#recipes_with_grouped_detail' do
-      let!(:recipe_result2) { subject.recipes_with_grouped_detail(recipes).first }
+      let!(:recipe_result2) { subject.recipes_with_grouped_detail(recipes).second }
       it 'returns only one valid row' do
-        expect(subject.recipes_with_grouped_detail(recipes).count).to eq(1)
+        expect(subject.recipes_with_grouped_detail(recipes).count).to eq(2)
       end
       it 'returns recipe name' do
         expect(recipe_result2['name']).to eq(recipe2_name)
