@@ -33,18 +33,21 @@ describe Tag do
     let(:type_ingredient) { create :tag_type, name: 'Ingredient' }
     let(:type_ingredient_type) { create :tag_type, name: 'IngredientType' }
     let(:type_ingredient_family) { create :tag_type, name: 'IngredientFamily' }
+    let(:type_ingredient_category) { create :tag_type, name: 'IngredientCategory' }
+    let(:plants) { create(:tag, tag_type: type_ingredient_category, name: 'plants') }
     let(:protein) { create(:tag, tag_type: type_ingredient_family, name: 'Protein') }
     let(:nut) { create(:tag, tag_type: type_ingredient_type, name: 'Nut') }
     let(:almond) { create :tag, tag_type: type_ingredient, name: 'Almond' }
     let!(:tag_selection1) { create :tag_selection, tag: nut, taggable: almond }
     let!(:tag_selection2) { create :tag_selection, tag: protein, taggable: nut }
+    let!(:tag_selection3) { create :tag_selection, tag: plants, taggable: protein }
 
     let(:vesper) { create :recipe, name: 'Vesper' }
     let(:martini) { create :recipe, name: 'Martini' }
     let(:manhattan) { create :recipe, name: 'Manhattan' }
-    let!(:tag_selection3) { create :tag_selection, tag: nut, taggable: vesper }
-    let!(:tag_selection4) { create :tag_selection, tag: almond, taggable: martini }
-    let!(:tag_selection5) { create :tag_selection, tag: protein, taggable: manhattan }
+    let!(:tag_selection4) { create :tag_selection, tag: nut, taggable: vesper }
+    let!(:tag_selection5) { create :tag_selection, tag: almond, taggable: martini }
+    let!(:tag_selection6) { create :tag_selection, tag: protein, taggable: manhattan }
     it 'creates child_tags' do
       expect(nut.child_tags.count).to eq(1)
       expect(nut.child_tags.first.name).to eq('Almond')
@@ -60,7 +63,7 @@ describe Tag do
       expect(almond.recipes).to eq([martini])
     end
     it 'assigns child recipe to ingredient type' do
-      expect(nut.child_tag_selections).to eq([tag_selection4])
+      expect(nut.child_tag_selections).to eq([tag_selection5])
     end
     it 'assigns recipes to ingredient family' do
       expect(protein.recipes).to eq([manhattan])

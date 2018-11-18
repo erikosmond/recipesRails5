@@ -152,13 +152,6 @@ module AssociatedRecipesService
       end
     end
 
-    def ingredient_parent_types
-      [
-        "tag_types_tags.name = 'IngredientType'",
-        "tag_types_tags_2.name = 'IngredientFamily'"
-      ]
-    end
-
     def ingredient_type_parent_types(recipe_level)
       case recipe_level
       when 'self'
@@ -179,16 +172,23 @@ module AssociatedRecipesService
       end
     end
 
+    def ingredient_parent_types
+      [
+        "tag_types_tags.name = 'IngredientType'",
+        "tag_types_tags_2.name = 'IngredientFamily'"
+      ]
+    end
+
     def ingredient_type_parent_type
       [
         "tag_types_tags.name = 'IngredientFamily'",
-        'tag_types_tags_2.name IS NULL'
+        "tag_types_tags_2.name = 'IngredientCategory'"
       ]
     end
 
     def ingredient_family_parent_type
       [
-        'tag_types_tags.name IS NULL',
+        "tag_types_tags.name = 'IngredientCategory'",
         'tag_types_tags_2.name IS NULL'
       ]
     end
