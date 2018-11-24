@@ -1,5 +1,5 @@
 import { put, call } from 'redux-saga/effects'
-import { takeLatest } from 'redux-saga'
+import { takeLatest, takeEvery } from 'redux-saga'
 import { callApi } from 'services/rest'
 
 // Actions
@@ -10,6 +10,7 @@ const LOAD_RECIPE = 'recipes/loadRecipe'
 const LOAD_RECIPE_SUCCESS = 'recipes/loadRecipeSuccess'
 const LOAD_RECIPE_OPTIONS = 'recipes/loadRecipeOptions'
 const LOAD_RECIPE_OPTIONS_SUCCESS = 'recipes/loadRecipeOptionsSuccess'
+const LOAD_CATEGORY_OPTIONS_SUCCESS = 'recipes/loadCategoriesOptionsSuccess'
 const LOAD_INGREDIENT_OPTIONS = 'recipes/loadIngredientOptions'
 const LOAD_INGREDIENT_OPTIONS_SUCCESS = 'recipes/loadIngredientOptionsSuccess'
 const NO_RECIPE_FOUND = 'recipes/noRecipeFound'
@@ -21,6 +22,7 @@ const initialState = {
   recipeOptions: [],
   recipesLoaded: false,
   noRecipes: false,
+  loading: true,
 }
 
 export default function recipesReducer(state = initialState, action = {}) {
@@ -30,6 +32,7 @@ export default function recipesReducer(state = initialState, action = {}) {
         ...state,
         selectedRecipes: [],
         selectedTag: '',
+        loading: true,
       }
     case LOAD_RECIPES_SUCCESS:
       return {
@@ -37,6 +40,7 @@ export default function recipesReducer(state = initialState, action = {}) {
         selectedRecipes: action.payload.recipes.recipes,
         selectedTag: action.payload.recipes.tag,
         recipesLoaded: true,
+        loading: false,
         noRecipes: false,
       }
     case NO_RECIPES_FOUND:
@@ -63,6 +67,11 @@ export default function recipesReducer(state = initialState, action = {}) {
       return {
         ...state,
         ingredientOptions: action.payload.ingredientOptions,
+      }
+    case LOAD_CATEGORY_OPTIONS_SUCCESS:
+      return {
+        ...state,
+        categoryOptions: action.payload.ingredientOptions,
       }
     case NO_RECIPE_FOUND:
       return {
@@ -128,15 +137,27 @@ export function loadRecipeOptionsSuccess({ recipeOptions }) {
   }
 }
 
-export function loadIngredientOptions() {
+export function loadIngredientOptions(payload) {
   return {
     type: LOAD_INGREDIENT_OPTIONS,
+    payload: {
+      ingredientType: payload,
+    },
   }
 }
 
 export function loadIngredientOptionsSuccess({ ingredientOptions }) {
   return {
     type: LOAD_INGREDIENT_OPTIONS_SUCCESS,
+    payload: {
+      ingredientOptions,
+    },
+  }
+}
+
+export function loadCategoryOptionsSuccess({ ingredientOptions }) {
+  return {
+    type: LOAD_CATEGORY_OPTIONS_SUCCESS,
     payload: {
       ingredientOptions,
     },
@@ -179,11 +200,15 @@ export function* loadRecipeOptionsTask() {
   }
 }
 
-export function* loadIngredientOptionsTask() {
-  const url = '/api/tags?type=ingredients'
+export function* loadIngredientOptionsTask({ payload }) {
+  const url = `/api/tags?type=${payload.ingredientType}`
   const result = yield call(callApi, url)
   if (result.success) {
-    yield put(loadIngredientOptionsSuccess({ ingredientOptions: result.data }))
+    if (payload.ingredientType === 'Ingredients') {
+      yield put(loadIngredientOptionsSuccess({ ingredientOptions: result.data }))
+    } else {
+      yield put(loadCategoryOptionsSuccess({ ingredientOptions: result.data }))
+    }
   }
 }
 /* recipes */
@@ -192,5 +217,5 @@ export function* recipesSaga() {
   yield takeLatest(LOAD_RECIPES, loadRecipesTask)
   yield takeLatest(LOAD_RECIPE, loadRecipeTask)
   yield takeLatest(LOAD_RECIPE_OPTIONS, loadRecipeOptionsTask)
-  yield takeLatest(LOAD_INGREDIENT_OPTIONS, loadIngredientOptionsTask)
+  yield takeEvery(LOAD_INGREDIENT_OPTIONS, loadIngredientOptionsTask)
 }

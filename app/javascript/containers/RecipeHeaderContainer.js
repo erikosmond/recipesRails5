@@ -9,6 +9,7 @@ export default withRouter(connect(
   state => ({
     recipeOptions: state.recipesReducer.recipeOptions,
     ingredientOptions: state.recipesReducer.ingredientOptions,
+    categoryOptions: state.recipesReducer.categoryOptions,
   }),
   {
     loadRecipeOptions,

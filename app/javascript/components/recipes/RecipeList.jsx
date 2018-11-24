@@ -8,6 +8,7 @@ class RecipeList extends React.Component {
     loadRecipes: PropTypes.func.isRequired,
     selectedRecipes: PropTypes.arrayOf(PropTypes.shape({})),
     recipesLoaded: PropTypes.bool,
+    loading: PropTypes.bool,
     noRecipes: PropTypes.bool.isRequired,
     startingTagId: PropTypes.string.isRequired,
     selectedTag: PropTypes.shape({}).isRequired,
@@ -23,6 +24,7 @@ class RecipeList extends React.Component {
 
   static defaultProps = {
     recipesLoaded: false,
+    loading: true,
     selectedRecipes: [],
   }
 
@@ -62,9 +64,11 @@ class RecipeList extends React.Component {
       selectedRecipes,
       selectedTag,
       noRecipes,
+      loading,
     } = this.props
-
-    if (this.noRecipes || noRecipes) {
+    if (loading) {
+      return (<div> {'Loading...'} </div>)
+    } else if (this.noRecipes || noRecipes) {
       return (<div> {"We don't have any recipes like that."} </div>)
     } else if (!recipesLoaded) {
       return null

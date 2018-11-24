@@ -15,16 +15,21 @@ module Api
     private
 
       def tags_by_type(tag_type)
-        selected_tags = tag_types(tag_type)
-        tag_types = TagType.where(name: selected_tags)
+        tag_types = tag_types(tag_type)
         tag_json = tag_types.flat_map(&:tags).as_json(only: %i[id name])
         tag_json.map { |r| { 'Label' => r['name'], 'Value' => r['id'] } }
       end
 
       def tag_types(tag_type)
-        {
-          'ingredients' => %w[Ingredient IngredientType IngredientFamily]
-        }[tag_type]
+        ingredients = %w[Ingredient IngredientType IngredientFamily]
+        puts tag_type
+        puts '!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+        puts tag_type.casecmp('ingredients')
+        if tag_type.casecmp('ingredients').zero?
+          TagType.where(name: ingredients)
+        else
+          TagType.where.not(name: ingredients)
+        end
       end
   end
 end
