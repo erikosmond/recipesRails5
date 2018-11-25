@@ -1,5 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import RecipeIngredients from 'components/recipes/RecipeIngredients'
+import RecipeInstructions from 'components/recipes/RecipeInstructions'
+import RecipeDescription from 'components/recipes/RecipeDescription'
 // import Paper from '@material-ui/core/Paper'
 
 class Recipe extends React.Component {
@@ -10,9 +13,6 @@ class Recipe extends React.Component {
       name: PropTypes.string.isRequired,
       ingredients: PropTypes.string.isRequired,
     }),
-    history: PropTypes.shape({
-      pop: PropTypes.func,
-    }).isRequired,
     location: PropTypes.shape().isRequired,
     match: PropTypes.shape({
       params: PropTypes.shape({
@@ -23,11 +23,6 @@ class Recipe extends React.Component {
 
   static defaultProps = {
     recipe: {},
-  }
-
-  constructor(props) {
-    super(props)
-    this.goBack = this.goBack.bind(this)
   }
 
   componentDidMount() {
@@ -45,28 +40,24 @@ class Recipe extends React.Component {
     }
   }
 
-  goBack() {
-    const { history } = this.props
-    history.goBack()
-  }
-
   render() {
     const { recipe, noRecipe } = this.props
-    if (!recipe && !recipe.name) {
+    if (!recipe || !recipe.name) {
       return null
     }
     if (noRecipe) {
       return (
         <div>
-          <button onClick={this.goBack}> Go Back </button>
           <div> {"We don't have a recipe like that"} </div>
         </div>
       )
     }
     return (
       <div>
-        <button onClick={this.goBack}> Go Back </button>
-        {recipe.name}
+        <h2>{recipe.name}</h2>
+        <RecipeIngredients recipe={recipe} />
+        <RecipeInstructions recipe={recipe} />
+        <RecipeDescription recipe={recipe} />
       </div>
     )
   }
