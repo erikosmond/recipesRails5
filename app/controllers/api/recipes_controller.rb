@@ -15,7 +15,9 @@ module Api
     def show
       recipe = Recipe.find_by_id(params.permit(:id)[:id])
       if recipe
-        render json: recipe.as_json(methods: [:ingredients])
+        json_recipe = recipe.as_json
+        json_recipe['ingredients'] = recipe.recipe_detail
+        render json: json_recipe
       else
         render json: {}, status: :not_found
       end

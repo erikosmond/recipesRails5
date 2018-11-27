@@ -28,6 +28,13 @@ module AssociatedRecipesService
     recipes + recipes_with_detail.to_a
   end
 
+  def recipe_detail
+    join_alias = 'tag_selections'
+    tables = %w['Ingredient' 'IngredientType' 'IngredientFamily']
+    tag_types = "tag_types.name IN (#{tables.join(', ')})"
+    detail_sql(tag_selections, join_alias, 'true', tag_types, true)
+  end
+
   def recipes_with_detail
     join_alias = 'tag_selections_recipe_tag_selections'
     parent_type, grandparent_type = parent_type_names_by_type('self')
@@ -48,9 +55,9 @@ module AssociatedRecipesService
 
   private
 
-    def detail_sql(selected_tags, tag_selection_table_name, parent, grandparent)
+    def detail_sql(selected_tags, tag_selection_table_name, parent, grandparent, recipes = false)
       selected_tags.
-        select(recipes_with_detail_select(tag_selection_table_name)).
+        select(recipes_with_detail_select(tag_selection_table_name, recipes)).
         left_outer_joins(recipes_with_parent_detail_joins).
         where(parent).
         where(grandparent)
@@ -108,16 +115,16 @@ module AssociatedRecipesService
       end
     end
 
-    def recipes_with_detail_select(tag_selection_table_name)
-      recipes_select_recipes +
-        recipes_select_tags + [
-          "#{tag_selection_table_name}.id",
-          'tag_types.name AS tag_type',
-          'tag_attributes.value',
-          'tag_attributes.property',
-          'modifications_tag_selections.name AS modification_name',
-          'modifications_tag_selections.id AS modification_id'
-        ]
+    def recipes_with_detail_select(tag_selection_table_name, recipes = false)
+      selects = recipes_select_tags + [
+        "#{tag_selection_table_name}.id",
+        'tag_types.name AS tag_type',
+        'tag_attributes.value',
+        'tag_attributes.property',
+        'modifications_tag_selections.name AS modification_name',
+        'modifications_tag_selections.id AS modification_id'
+      ]
+      recipes ? selects : selects + recipes_select_recipes
     end
 
     def recipes_select_recipes

@@ -8,6 +8,7 @@ const StyledHeader = styled.div`
   position: fixed;
   top: 0px;
   background-color: white;
+  z-index: 1;
 `
 
 const RecipeHeader = (props) => {

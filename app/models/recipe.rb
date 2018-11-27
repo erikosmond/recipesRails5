@@ -1,4 +1,6 @@
 class Recipe < ApplicationRecord
+  include AssociatedRecipesService
+
   has_many :tag_selections,
            -> { where(taggable_type: 'Recipe') },
            as: :taggable,
