@@ -22,9 +22,6 @@ module Api
 
       def tag_types(tag_type)
         ingredients = %w[Ingredient IngredientType IngredientFamily]
-        puts tag_type
-        puts '!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-        puts tag_type.casecmp('ingredients')
         if tag_type.casecmp('ingredients').zero?
           TagType.where(name: ingredients)
         else

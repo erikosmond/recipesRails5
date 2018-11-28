@@ -189,10 +189,10 @@ describe Tag do
         expect(recipe_result2['ingredients'][tag_selection2b.tag_id].property ).to eq(property)
       end
       it 'returns ingredient type' do
-        expect(recipe_result2['ingredients'][tag_selection2b.tag_id].ingredient_type ).to eq(ingredient1_type_name)
+        expect(recipe_result2['ingredients'][tag_selection2b.tag_id].parent_tag ).to eq(ingredient1_type_name)
       end
       it 'returns ingredient family' do
-        expect(recipe_result2['ingredients'][tag_selection2b.tag_id].ingredient_family ).to eq(ingredient1_family_name)
+        expect(recipe_result2['ingredients'][tag_selection2b.tag_id].grandparent_tag ).to eq(ingredient1_family_name)
       end
     end
   end
