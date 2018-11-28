@@ -16,15 +16,18 @@ require('idempotent-babel-polyfill')
 
 const home = document.querySelector('#home')
 
-const myStore = {}
+const myStore = {
+  recipesReducer: {
+    startingTagId: home.dataset.startingTagId,
+  },
+}
 
 const store = configureStore(rootReducer, rootSaga, myStore)
-
 const render = (Component) => {
   ReactDOM.render(
     <AppContainer>
       <Provider store={store}>
-        <Home startingTagId={home.dataset.startingTagId} />
+        <Component />
       </Provider>
     </AppContainer>,
     home,

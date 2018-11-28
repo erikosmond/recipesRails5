@@ -8,22 +8,68 @@ module AssociatedRecipesService
   end
 
   def filter_tags(recipe_details)
-    recipe_details.each_with_object({}) do |r, tags|
+    result = recipe_details.each_with_object({}) do |r, tags|
       tags[r.tag_id] = true
       tags[r.ingredient_type_id] = true
       tags[r.ingredient_family_id] = true
     end
+    result.reject { |k, _v| k.nil? }
+  end
+
+  def recipe_detail_level
+    recipes =
+      case tag_type.name
+      when 'IngredientType'
+        child_recipes_with_detail.to_a
+      when 'IngredientFamily'
+        grandchild_recipes_with_detail.to_a +
+        child_recipes_with_detail.to_a
+      end || []
+    recipes + recipes_with_detail.to_a
+  end
+
+  def recipe_detail
+    join_alias = 'tag_selections'
+    tables = %w['Ingredient' 'IngredientType' 'IngredientFamily']
+    tag_types = "tag_types.name IN (#{tables.join(', ')})"
+    detail_sql(tag_selections, join_alias, 'true', tag_types, true)
   end
 
   def recipes_with_detail
-    tag_selections.
-      select(recipes_with_detail_select).
-      left_outer_joins(recipes_with_parent_detail_joins).
-      where('tag_types_tags.name = ?', 'IngredientType').
-      where('tag_types_tags_2.name = ?', 'IngredientFamily')
+    join_alias = 'tag_selections_recipe_tag_selections'
+    parent_type, grandparent_type = parent_type_names_by_type('self')
+    detail_sql(recipe_tag_selections, join_alias, parent_type, grandparent_type)
+  end
+
+  def child_recipes_with_detail
+    join_alias = 'child_tag_selections_child_recipe_tag_selections'
+    parent_type, grandparent_type = parent_type_names_by_type('child')
+    detail_sql(child_recipe_tag_selections, join_alias, parent_type, grandparent_type)
+  end
+
+  def grandchild_recipes_with_detail
+    join_alias = 'grandchild_tag_selections_grandchild_recipe_tag_selections'
+    parent_type, grandparent_type = parent_type_names_by_type('grandchild')
+    detail_sql(grandchild_recipe_tag_selections, join_alias, parent_type, grandparent_type)
   end
 
   private
+
+    def detail_sql(selected_tags, tag_selection_table_name, parent, grandparent, recipes = false)
+      selected_tags.
+        select(recipes_with_detail_select(tag_selection_table_name, recipes)).
+        left_outer_joins(recipes_with_parent_detail_joins).
+        where(parent).
+        where(grandparent)
+    end
+
+    def recipes_with_parent_detail_joins
+      [
+        { tag: [:tag_type, tags: [:tag_type, tags: :tag_type]] },
+        :tag_attributes,
+        :modifications
+      ]
+    end
 
     def group_by_recipe_details(recipe_details)
       recipe_details.to_a.group_by do |r|
@@ -69,28 +115,16 @@ module AssociatedRecipesService
       end
     end
 
-    def recipes_with_parent_detail_joins
-      [
-        recipe: [
-          tag_selections: [
-            { tag: [:tag_type, tags: [:tag_type, tags: :tag_type]] },
-            :tag_attributes,
-            :modifications
-          ]
-        ]
+    def recipes_with_detail_select(tag_selection_table_name, recipes = false)
+      selects = recipes_select_tags + [
+        "#{tag_selection_table_name}.id",
+        'tag_types.name AS tag_type',
+        'tag_attributes.value',
+        'tag_attributes.property',
+        'modifications_tag_selections.name AS modification_name',
+        'modifications_tag_selections.id AS modification_id'
       ]
-    end
-
-    def recipes_with_detail_select
-      recipes_select_recipes +
-        recipes_select_tags + [
-          'tag_selections_recipes.id',
-          'tag_types.name AS tag_type',
-          'tag_attributes.value',
-          'tag_attributes.property',
-          'modifications_tag_selections.name AS modification_name',
-          'modifications_tag_selections.id AS modification_id'
-        ]
+      recipes ? selects : selects + recipes_select_recipes
     end
 
     def recipes_select_recipes
@@ -111,6 +145,58 @@ module AssociatedRecipesService
         'tags_tags.id AS ingredient_type_id',
         'tags_tags_2.name AS ingredient_family',
         'tags_tags_2.id AS ingredient_family_id'
+      ]
+    end
+
+    def parent_type_names_by_type(recipe_level)
+      case tag_type.name
+      when 'Ingredient'
+        ingredient_parent_types
+      when 'IngredientType'
+        ingredient_type_parent_types(recipe_level)
+      when 'IngredientFamily'
+        ingredient_family_parent_types(recipe_level)
+      end
+    end
+
+    def ingredient_type_parent_types(recipe_level)
+      case recipe_level
+      when 'self'
+        ingredient_type_parent_type
+      when 'child'
+        ingredient_parent_types
+      end
+    end
+
+    def ingredient_family_parent_types(recipe_level)
+      case recipe_level
+      when 'self'
+        ingredient_family_parent_type
+      when 'child'
+        ingredient_type_parent_type
+      when 'grandchild'
+        ingredient_parent_types
+      end
+    end
+
+    def ingredient_parent_types
+      [
+        "tag_types_tags.name = 'IngredientType'",
+        "tag_types_tags_2.name = 'IngredientFamily'"
+      ]
+    end
+
+    def ingredient_type_parent_type
+      [
+        "tag_types_tags.name = 'IngredientFamily'",
+        "tag_types_tags_2.name = 'IngredientCategory'"
+      ]
+    end
+
+    def ingredient_family_parent_type
+      [
+        "tag_types_tags.name = 'IngredientCategory'",
+        'tag_types_tags_2.name IS NULL'
       ]
     end
 end

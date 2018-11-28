@@ -1,42 +1,45 @@
 /* eslint-disable react/jsx-no-bind */
 
 import React from 'react'
-import PropTypes from 'prop-types'
 
 import {
   BrowserRouter as Router,
   Route,
   Switch,
 } from 'react-router-dom'
-import RecipeContainer from 'containers/RecipeContainer'
-import RecipeListContainer from 'containers/RecipeListContainer'
 
-const Home = props => (
+import styled from 'styled-components'
+
+import Recipe from 'containers/RecipeContainer'
+import RecipeList from 'containers/RecipeListContainer'
+import RecipeHeader from 'containers/RecipeHeaderContainer'
+
+const StyledContent = styled.div`
+  margin-top: 70px;
+`
+
+const Home = () => (
   <Router>
-    <Switch>
-      <Route
-        path="/tags/:tagId/recipes"
-        render={routeProps => <RecipeListContainer {...props} {...routeProps} />}
-      />
-      <Route
-        path="/recipes/:recipeId"
-        render={routeProps => <RecipeContainer {...props} {...routeProps} />}
-      />
-      <Route
-        path="/"
-        startingTagId={props.startingTagId}
-        render={routeProps => <RecipeListContainer {...props} {...routeProps} />}
-      />
-    </Switch>
+    <div>
+      <RecipeHeader />
+      <StyledContent>
+        <Switch>
+          <Route
+            path="/tags/:tagId/recipes"
+            component={RecipeList}
+          />
+          <Route
+            path="/recipes/:recipeId"
+            component={Recipe}
+          />
+          <Route
+            path="/"
+            component={RecipeList}
+          />
+        </Switch>
+      </StyledContent>
+    </div>
   </Router>
 )
-
-Home.propTypes = {
-  startingTagId: PropTypes.string,
-}
-
-Home.defaultProps = {
-  startingTagId: undefined,
-}
 
 export default Home

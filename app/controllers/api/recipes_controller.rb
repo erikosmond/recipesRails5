@@ -15,7 +15,9 @@ module Api
     def show
       recipe = Recipe.find_by_id(params.permit(:id)[:id])
       if recipe
-        render json: recipe
+        json_recipe = recipe.as_json
+        json_recipe['ingredients'] = recipe.recipe_detail
+        render json: json_recipe
       else
         render json: {}, status: :not_found
       end
@@ -33,7 +35,7 @@ module Api
       end
 
       def tagged_recipes(tag)
-        recipes = tag.recipes_with_detail.to_a
+        recipes = tag.recipe_detail_level
         {
           tag: tag,
           recipes: tag.recipes_with_grouped_detail(recipes),
@@ -42,7 +44,8 @@ module Api
       end
 
       def all_recipe_json
-        Recipe.all.as_json(only: %i[id name])
+        recipe_json = Recipe.all.sort_by(&:name).as_json(only: %i[id name])
+        recipe_json.map { |r| { 'Label' => r['name'], 'Value' => r['id'] } }
       end
   end
 end

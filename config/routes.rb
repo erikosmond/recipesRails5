@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: :json } do
     resources :recipes, only: %i[show index]
 
-    resources :tags do
+    resources :tags, only: %i[index] do
       resources :recipes, only: %i[index]
     end
   end

@@ -4,15 +4,15 @@ import { withStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
-// import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import CardContent from '@material-ui/core/CardContent'
 import Collapse from '@material-ui/core/Collapse'
-import Typography from '@material-ui/core/Typography'
 import CardActions from '@material-ui/core/CardActions'
 import IconButton from '@material-ui/core/IconButton'
-import IngredientListItem from 'components/recipes/IngredientListItem'
+import RecipeIngredients from 'components/recipes/RecipeIngredients'
+import RecipeInstructions from 'components/recipes/RecipeInstructions'
+import RecipeDescription from 'components/recipes/RecipeDescription'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-
 
 const styles = () => ({
   card: {
@@ -35,9 +35,8 @@ class RecipeListItem extends React.Component {
 
     return (
       <Card className={classes.card}>
-        {/* <Link to={`/recipes/${recipe.id}`}> <h2> {recipe.name} </h2> </Link> */}
         <CardHeader
-          title={<a href={`/recipes/${recipe.id}`}>{recipe.name}</a>}
+          title={<Link to={`/recipes/${recipe.id}`}>{recipe.name}</Link>}
           subheader={ingredientNames.join(', ')}
         />
         <CardActions className={classes.actions} disableActionSpacing>
@@ -54,30 +53,9 @@ class RecipeListItem extends React.Component {
         </CardActions>
         <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
           <CardContent>
-            <Typography paragraph variant="body2">
-              Ingredients:
-            </Typography>
-            <ul>
-              {Object.values(recipe.ingredients).map(ingredient => (
-                <IngredientListItem key={ingredient.id} ingredient={ingredient} />
-              ))}
-            </ul>
-            <Typography paragraph variant="body2">
-              Instructions:
-            </Typography>
-            <Typography paragraph>
-              {recipe.instructions}
-            </Typography>
-            {recipe.description && recipe.description.length > 0 &&
-              <div>
-                <Typography paragraph variant="body2">
-                  Description:
-                </Typography>
-                <Typography paragraph>
-                  {recipe.description}
-                </Typography>
-              </div>
-            }
+            <RecipeIngredients recipe={recipe} />
+            <RecipeInstructions recipe={recipe} />
+            <RecipeDescription recipe={recipe} />
           </CardContent>
         </Collapse>
       </Card>
