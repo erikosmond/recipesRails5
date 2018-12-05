@@ -5,6 +5,8 @@ import { callApi } from 'services/rest'
 // Actions
 const LOAD_RECIPES = 'recipes/loadRecipes'
 const LOAD_RECIPES_SUCCESS = 'recipes/loadRecipesSuccess'
+const LOAD_TAG_INFO = 'recipes/loadTagInfo'
+const LOAD_TAG_INFO_SUCCESS = 'recipes/loadTagInfoSuccess'
 const NO_RECIPES_FOUND = 'recipes/noRecipesFound'
 const LOAD_RECIPE = 'recipes/loadRecipe'
 const LOAD_RECIPE_SUCCESS = 'recipes/loadRecipeSuccess'
@@ -14,6 +16,7 @@ const LOAD_CATEGORY_OPTIONS_SUCCESS = 'recipes/loadCategoriesOptionsSuccess'
 const LOAD_INGREDIENT_OPTIONS = 'recipes/loadIngredientOptions'
 const LOAD_INGREDIENT_OPTIONS_SUCCESS = 'recipes/loadIngredientOptionsSuccess'
 const NO_RECIPE_FOUND = 'recipes/noRecipeFound'
+const NOT_LOADING = 'recipes/notLoading'
 
 // Reducer
 const initialState = {
@@ -31,6 +34,11 @@ export default function recipesReducer(state = initialState, action = {}) {
       return {
         ...state,
         selectedRecipes: [],
+        loading: true,
+      }
+    case LOAD_TAG_INFO:
+      return {
+        ...state,
         selectedTag: '',
         loading: true,
       }
@@ -38,10 +46,15 @@ export default function recipesReducer(state = initialState, action = {}) {
       return {
         ...state,
         selectedRecipes: action.payload.recipes.recipes,
-        selectedTag: action.payload.recipes.tag,
         recipesLoaded: true,
         loading: false,
         noRecipes: false,
+      }
+    case LOAD_TAG_INFO_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        selectedTag: action.payload.tag,
       }
     case NO_RECIPES_FOUND:
       return {
@@ -78,6 +91,11 @@ export default function recipesReducer(state = initialState, action = {}) {
         ...state,
         noRecipe: true,
       }
+    case NOT_LOADING:
+      return {
+        ...state,
+        loading: false,
+      }
     default:
       return state
   }
@@ -91,11 +109,27 @@ export function loadRecipes(tagId) {
   }
 }
 
+export function loadTagInfo(tagId) {
+  return {
+    type: LOAD_TAG_INFO,
+    payload: tagId,
+  }
+}
+
 export function loadRecipesSuccess({ recipes }) {
   return {
     type: LOAD_RECIPES_SUCCESS,
     payload: {
       recipes,
+    },
+  }
+}
+
+export function loadTagInfoSuccess({ tag }) {
+  return {
+    type: LOAD_TAG_INFO_SUCCESS,
+    payload: {
+      tag,
     },
   }
 }
@@ -170,6 +204,12 @@ export function noRecipeFound() {
   }
 }
 
+export function notLoading() {
+  return {
+    type: NOT_LOADING,
+  }
+}
+
 // Saga
 
 export function* loadRecipesTask({ payload }) {
@@ -177,6 +217,16 @@ export function* loadRecipesTask({ payload }) {
   const result = yield call(callApi, url)
   if (result.success) {
     yield put(loadRecipesSuccess({ recipes: result.data }))
+  } else {
+    yield put(noRecipesFound())
+  }
+}
+
+export function* loadTagInfoTask({ payload }) {
+  const url = `/api/tags/${payload}`
+  const result = yield call(callApi, url)
+  if (result.success) {
+    yield put(loadTagInfoSuccess({ tag: result.data }))
   } else {
     yield put(noRecipesFound())
   }
@@ -197,6 +247,8 @@ export function* loadRecipeOptionsTask() {
   const result = yield call(callApi, url)
   if (result.success) {
     yield put(loadRecipeOptionsSuccess({ recipeOptions: result.data }))
+  } else {
+    yield put(notLoading())
   }
 }
 
@@ -209,12 +261,15 @@ export function* loadIngredientOptionsTask({ payload }) {
     } else {
       yield put(loadCategoryOptionsSuccess({ ingredientOptions: result.data }))
     }
+  } else {
+    yield put(notLoading())
   }
 }
 /* recipes */
 
 export function* recipesSaga() {
   yield takeLatest(LOAD_RECIPES, loadRecipesTask)
+  yield takeLatest(LOAD_TAG_INFO, loadTagInfoTask)
   yield takeLatest(LOAD_RECIPE, loadRecipeTask)
   yield takeLatest(LOAD_RECIPE_OPTIONS, loadRecipeOptionsTask)
   yield takeEvery(LOAD_INGREDIENT_OPTIONS, loadIngredientOptionsTask)

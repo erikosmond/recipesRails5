@@ -12,6 +12,15 @@ module Api
       end
     end
 
+    def show
+      tag = Tag.find_by_id(params.permit(:id)[:id])
+      if tag
+        render json: tag.tag_with_heirarchy_grouped
+      else
+        render json: { tag: tag.to_s }, status: :not_found
+      end
+    end
+
     private
 
       def tags_by_type(tag_type)

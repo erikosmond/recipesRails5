@@ -59,7 +59,7 @@ module AssociatedRecipesService
 
     def recipes_with_parent_detail_joins
       [
-        { tag: [:tag_type, tags: [:tag_type, tags: :tag_type]] },
+        { tag: [:tag_type, parent_tags: [:tag_type, parent_tags: :tag_type]] },
         :tag_attributes,
         :modifications
       ]
@@ -133,10 +133,10 @@ module AssociatedRecipesService
         'tags.name AS tag_name',
         'tags.description AS tag_description',
         'tags.id AS tag_id',
-        'tags_tags.name AS parent_tag',
-        'tags_tags.id AS parent_tag_id',
-        'tags_tags_2.name AS grandparent_tag',
-        'tags_tags_2.id AS grandparent_tag_id'
+        'parent_tags_tags.name AS parent_tag',
+        'parent_tags_tags.id AS parent_tag_id',
+        'parent_tags_tags_2.name AS grandparent_tag',
+        'parent_tags_tags_2.id AS grandparent_tag_id'
       ]
     end
 end

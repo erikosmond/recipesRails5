@@ -48,13 +48,48 @@ describe Tag do
     let!(:tag_selection4) { create :tag_selection, tag: nut, taggable: vesper }
     let!(:tag_selection5) { create :tag_selection, tag: almond, taggable: martini }
     let!(:tag_selection6) { create :tag_selection, tag: protein, taggable: manhattan }
+
+    let(:modification_name1) { 'toasted' }
+    let(:modification_name2) { 'crushed' }
+    let(:alteration) { create(:tag_type, name: 'Alteration') }
+    let(:modification1) { create(:tag, tag_type: alteration, name: modification_name1) }
+    let(:modification2) { create(:tag, tag_type: alteration, name: modification_name2) }
+    let!(:tag_selection_mod1) { create(:tag_selection, tag: modification1, taggable: tag_selection1) }
+    let!(:tag_selection_mod2) { create(:tag_selection, tag: modification2, taggable: tag_selection1) }
+
+    let(:expected_heirarchy_result) do
+      {
+        'id' => nut.id,
+        'name' => 'Nut',
+        'description' => nil,
+        'tag_type_id' => nut.tag_type.id,
+        'recipe_id' => nil,
+        'child_tags' => { almond.id => 'Almond' },
+        'grandchild_tags' => {},
+        'parent_tags' => { protein.id => 'Protein' },
+        'grandparent_tags' => { plants.id => 'plants' },
+        'modification_tags' => {
+          modification1.id => 'toasted',
+          modification2.id => 'crushed'
+        }
+      }
+    end
+
     it 'creates child_tags' do
       expect(nut.child_tags.count).to eq(1)
       expect(nut.child_tags.first.name).to eq('Almond')
       expect(nut.child_tags.first.class.name).to eq('ChildTag')
     end
-    it 'has tags' do
-      expect(almond.tags).to eq([nut])
+
+    it 'groups its heirarchy' do
+      expect(nut.tag_with_heirarchy_grouped).to eq expected_heirarchy_result
+    end
+
+    it 'has parent_tags' do
+      expect(almond.parent_tags).to eq([nut])
+    end
+    it 'has grandparent_tags' do
+      expect(almond.grandparent_tags).to eq([protein])
     end
     it 'assigns recipe to ingredient' do
       expect(nut.recipes).to eq([vesper])

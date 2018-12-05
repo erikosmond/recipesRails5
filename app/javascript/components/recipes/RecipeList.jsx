@@ -1,11 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import RecipeListItem from 'components/recipes/RecipeListItem'
+import RelatedTags from 'components/recipes/RelatedTags'
 import Paper from '@material-ui/core/Paper'
 
 class RecipeList extends React.Component {
   static propTypes = {
     loadRecipes: PropTypes.func.isRequired,
+    loadTagInfo: PropTypes.func.isRequired,
     selectedRecipes: PropTypes.arrayOf(PropTypes.shape({})),
     recipesLoaded: PropTypes.bool,
     loading: PropTypes.bool,
@@ -36,14 +38,17 @@ class RecipeList extends React.Component {
   componentDidMount() {
     const {
       loadRecipes,
+      loadTagInfo,
       startingTagId,
       match,
     } = this.props
     const { tagId } = match.params
     if (tagId) {
       loadRecipes(tagId)
+      loadTagInfo(tagId)
     } else if (startingTagId) {
       loadRecipes(startingTagId)
+      loadTagInfo(startingTagId)
     } else {
       this.noRecipes = true
     }
@@ -54,6 +59,7 @@ class RecipeList extends React.Component {
       const { tagId } = nextProps.match.params
       if (tagId) {
         nextProps.loadRecipes(tagId)
+        nextProps.loadTagInfo(tagId)
       }
     }
   }
@@ -82,7 +88,14 @@ class RecipeList extends React.Component {
             <br /><br />
           </div>
         }
-        {`${selectedRecipes.length} recipes`}
+        <div> {`${selectedRecipes.length} recipes`} </div>
+
+        <Paper>
+          <RelatedTags tags={selectedTag.grandparentTags} />
+          <RelatedTags tags={selectedTag.parentTags} />
+          <RelatedTags tags={selectedTag.childTags} />
+          <RelatedTags tags={selectedTag.grandchildTags} />
+        </Paper>
 
         <Paper>
           {selectedRecipes.map(r => (

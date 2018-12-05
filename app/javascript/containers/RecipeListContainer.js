@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom'
 
 import RecipeList from 'components/recipes/RecipeList'
 
-import { loadRecipes } from 'bundles/recipes'
+import { loadRecipes, loadTagInfo } from 'bundles/recipes'
 
 export default withRouter(connect(
   state => ({
@@ -16,5 +16,6 @@ export default withRouter(connect(
   }),
   {
     loadRecipes,
+    loadTagInfo,
   },
 )(RecipeList))

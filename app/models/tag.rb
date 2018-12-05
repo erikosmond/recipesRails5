@@ -2,6 +2,7 @@
 
 class Tag < ApplicationRecord
   include AssociatedRecipesService
+  include AssociatedTagsService
 
   belongs_to :tag_type
   belongs_to :recipe, optional: true, inverse_of: :ingredient
@@ -57,8 +58,14 @@ class Tag < ApplicationRecord
            foreign_type: 'Tag',
            class_name: 'TagSelection',
            dependent: :destroy
-  has_many :tags,
+  has_many :parent_tags,
            through: :taggings,
+           source: 'tag'
+  has_many :parent_taggings,
+           through: :parent_tags,
+           source: :taggings
+  has_many :grandparent_tags,
+           through: :parent_taggings,
            source: 'tag'
 
   has_one :access, as: :accessible
