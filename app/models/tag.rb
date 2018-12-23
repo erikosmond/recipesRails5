@@ -20,6 +20,15 @@ class Tag < ApplicationRecord
   has_many :recipe_tag_selections,
            through: :recipes,
            source: :tag_selections
+  has_many :modified_recipes,
+           through: :tag_selections,
+           source: :modified_recipes
+  has_many :modified_recipe_tag_selections,
+           through: :modified_recipes,
+           source: :tag_selections
+  has_many :modified_tags,
+           through: :tag_selections,
+           source: :modified_tags
   has_many :child_tags,
            through: :tag_selections,
            source: :taggable,

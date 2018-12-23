@@ -95,6 +95,8 @@ class RecipeList extends React.Component {
           <RelatedTags tags={selectedTag.parentTags} />
           <RelatedTags tags={selectedTag.childTags} />
           <RelatedTags tags={selectedTag.grandchildTags} />
+          <RelatedTags tags={selectedTag.modificationTags} />
+          <RelatedTags tags={selectedTag.modifiedTags} />
         </Paper>
 
         <Paper>

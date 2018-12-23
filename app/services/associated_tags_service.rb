@@ -25,25 +25,30 @@ module AssociatedTagsService
   private
 
     def group_tags(tags_json, tags, group)
+      binding.pry
       return unless tags["#{group}_id"] && tags["#{group}_name"]
 
       tags_json["#{group}s"][tags["#{group}_id"]] = tags["#{group}_name"]
     end
 
     def tag_groups
-      %i[
+      groups = %i[
         child_tag
-        grandchild_tag
         parent_tag
         grandparent_tag
         modification_tag
+        modified_tag
       ]
+      groups << :grandchild_tag unless tag_type.name == 'IngredientType'
+      groups
     end
 
     def tag_heirarchy_select
       tag_heirarchy_select_children + tag_heirarchy_select_parents + [
         'modifications_tag_selections.id modification_tag_id',
-        'modifications_tag_selections.name modification_tag_name'
+        'modifications_tag_selections.name modification_tag_name',
+        'modified_tags_tags.id modified_tag_id',
+        'modified_tags_tags.name modified_tag_name'
       ]
     end
 
@@ -67,6 +72,7 @@ module AssociatedTagsService
 
     def tag_heirarchy_join
       [
+        :modified_tags,
         child_tags: :child_tags,
         parent_tags: :parent_tags,
         tag_selections: :modifications

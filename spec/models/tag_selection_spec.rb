@@ -24,6 +24,17 @@ describe TagSelection do
     end
   end
 
+  describe '#modified_tags' do
+    let(:ingredient) { create(:tag, name: 'flour') }
+    let(:recipe) { create(:recipe, name: 'cake') }
+    let(:recipe_ingredient) { create(:tag_selection, tag: ingredient, taggable: recipe) }
+    let(:modification) { create(:tag, name: 'bleached') }
+    let!(:modification_assignment) { create(:tag_selection, tag: modification, taggable: recipe_ingredient) }
+    it 'modified tags' do
+      expect(modification.modified_tags.map(&:name)).to eq([ingredient.name])
+    end
+  end
+
   describe '#access' do
     let!(:access) { create(:access, accessible: subject) }
     it 'can have an access' do

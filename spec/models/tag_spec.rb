@@ -54,8 +54,8 @@ describe Tag do
     let(:alteration) { create(:tag_type, name: 'Alteration') }
     let(:modification1) { create(:tag, tag_type: alteration, name: modification_name1) }
     let(:modification2) { create(:tag, tag_type: alteration, name: modification_name2) }
-    let!(:tag_selection_mod1) { create(:tag_selection, tag: modification1, taggable: tag_selection1) }
-    let!(:tag_selection_mod2) { create(:tag_selection, tag: modification2, taggable: tag_selection1) }
+    let!(:tag_selection_mod1) { create(:tag_selection, tag: modification1, taggable: tag_selection4) }
+    let!(:tag_selection_mod2) { create(:tag_selection, tag: modification2, taggable: tag_selection4) }
 
     let(:expected_heirarchy_result) do
       {
@@ -65,7 +65,6 @@ describe Tag do
         'tag_type_id' => nut.tag_type.id,
         'recipe_id' => nil,
         'child_tags' => { almond.id => 'Almond' },
-        'grandchild_tags' => {},
         'parent_tags' => { protein.id => 'Protein' },
         'grandparent_tags' => { plants.id => 'plants' },
         'modification_tags' => {
@@ -82,6 +81,8 @@ describe Tag do
     end
 
     it 'groups its heirarchy' do
+      binding.pry # test modification_recipes_detail - works in UI - add chamomile infused page should show old overholt and vermouth as related tags
+      # make sure we have chamomile infused as a tag in the recipe list when la dolce vida is loaded
       expect(nut.tag_with_heirarchy_grouped).to eq expected_heirarchy_result
     end
 
