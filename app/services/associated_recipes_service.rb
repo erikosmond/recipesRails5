@@ -95,8 +95,9 @@ module AssociatedRecipesService
           tag_ids[r.tag_id] = true
           tag_ids[r.parent_tag_id] = true
           tag_ids[r.grandparent_tag_id] = true
+          tag_ids[r.modification_id] = true
         end
-        k['tag_ids'] = ids.compact
+        k['tag_ids'] = ids.select { |key, _v| key.present? }
       end
     end
 

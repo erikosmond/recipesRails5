@@ -70,7 +70,8 @@ describe Tag do
         'modification_tags' => {
           modification1.id => 'toasted',
           modification2.id => 'crushed'
-        }
+        },
+        'modified_tags' => {},
       }
     end
 
@@ -81,8 +82,6 @@ describe Tag do
     end
 
     it 'groups its heirarchy' do
-      binding.pry # test modification_recipes_detail - works in UI - add chamomile infused page should show old overholt and vermouth as related tags
-      # make sure we have chamomile infused as a tag in the recipe list when la dolce vida is loaded
       expect(nut.tag_with_heirarchy_grouped).to eq expected_heirarchy_result
     end
 
@@ -116,8 +115,9 @@ describe Tag do
       expect(protein.grandchild_recipes_with_detail.first['recipe_id']).to eq(martini.id)
     end
     it 'assigns child recipe to family' do
-      expect(protein.child_recipes_with_detail.to_a.size).to eq(1)
+      expect(protein.child_recipes_with_detail.to_a.size).to eq(2)
       expect(protein.child_recipes_with_detail.first['recipe_id']).to eq(vesper.id)
+      expect(protein.child_recipes_with_detail.second['recipe_id']).to eq(vesper.id)
     end
     it 'assigns own recipe to family' do
       expect(protein.recipes_with_detail.to_a.size).to eq(1)
@@ -128,8 +128,9 @@ describe Tag do
       expect(nut.child_recipes_with_detail.first['recipe_id']).to eq(martini.id)
     end
     it 'assigns own recipe to type' do
-      expect(nut.recipes_with_detail.to_a.size).to eq(1)
+      expect(nut.recipes_with_detail.to_a.size).to eq(2)
       expect(nut.recipes_with_detail.first['recipe_id']).to eq(vesper.id)
+      expect(nut.recipes_with_detail.second['recipe_id']).to eq(vesper.id)
     end
   end
 

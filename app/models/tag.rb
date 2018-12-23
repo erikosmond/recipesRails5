@@ -27,6 +27,7 @@ class Tag < ApplicationRecord
            through: :modified_recipes,
            source: :tag_selections
   has_many :modified_tags,
+           # -> { where(taggable_type: 'TagSelection') }, # delete?
            through: :tag_selections,
            source: :modified_tags
   has_many :child_tags,
@@ -81,4 +82,6 @@ class Tag < ApplicationRecord
 
   validates :name, presence: true
   validates_uniqueness_of :name, scope: :tag_type
+
+  delegate :name, to: :tag_type, prefix: true
 end

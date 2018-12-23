@@ -25,10 +25,11 @@ describe TagSelection do
   end
 
   describe '#modified_tags' do
+    let(:tag_type) { create(:tag_type, name: 'IngredientModification') }
     let(:ingredient) { create(:tag, name: 'flour') }
     let(:recipe) { create(:recipe, name: 'cake') }
     let(:recipe_ingredient) { create(:tag_selection, tag: ingredient, taggable: recipe) }
-    let(:modification) { create(:tag, name: 'bleached') }
+    let(:modification) { create(:tag, name: 'bleached', tag_type: tag_type) }
     let!(:modification_assignment) { create(:tag_selection, tag: modification, taggable: recipe_ingredient) }
     it 'modified tags' do
       expect(modification.modified_tags.map(&:name)).to eq([ingredient.name])
