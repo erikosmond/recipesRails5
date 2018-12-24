@@ -55,11 +55,6 @@ module AssociatedRecipesService
     detail_sql(modified_recipe_tag_selections, join_alias)
   end
 
-  def modified_tag_detail
-    join_alias = 'tag_selections_modified_tag_tag_selections_2'
-    detail_sql(modified_tag_tag_selections, join_alias)
-  end
-
   private
 
     def detail_sql(selected_tags, tag_selection_table_name, recipes = true)

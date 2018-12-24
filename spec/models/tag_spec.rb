@@ -174,33 +174,72 @@ describe Tag do
     let(:ingredient1_unrelated) { create(:tag, tag_type: tag_type_not_ingredient, name: 'not related') }
     let(:ingredient2) { create(:tag, tag_type: tag_type_ingredient, name: ingredient2_name) }
     let(:modification) { create(:tag, tag_type: alteration, name: modification_name) }
-    let!(:tag_selection1) { create(:tag_selection, tag: subject, taggable: recipe1) }
-    let!(:tag_selection2a) { create(:tag_selection, tag: subject, taggable: recipe2) }
+    let!(:tag_selection1) { create(:tag_selection, tag: tag_subject, taggable: recipe1) }
+    let!(:tag_selection2a) { create(:tag_selection, tag: tag_subject, taggable: recipe2) }
     let!(:tag_selection2b) { create(:tag_selection, tag: ingredient1, taggable: recipe2) }
     let!(:tag_selection2c) { create(:tag_selection, tag: ingredient2, taggable: recipe2) }
     let!(:tag_selection2ba) { create(:tag_selection, tag: ingredient1_type, taggable: ingredient1) }
     let!(:tag_selection2bb) { create(:tag_selection, tag: ingredient1_family, taggable: ingredient1_type) }
     let!(:tag_attribute) { create(:tag_attribute, property: property, value: value, tag_attributable: tag_selection2b) }
     let!(:tag_selection_mod) { create(:tag_selection, tag: modification, taggable: tag_selection2b) }
-    let!(:recipes) { subject.recipes_with_detail }
+    let!(:recipes) { tag_subject.recipes_with_detail }
 
     describe '#collect_tag_ids' do
+      let(:tag_subject) { create(:tag, name: 'Lemon Verbena', tag_type: tag_type_ingredient_type) }
       let(:hash) do
         {
-          subject.id => true,
+          tag_subject.id => true,
           ingredient1.id => true,
           ingredient1_type.id => true,
           ingredient1_family.id => true,
           ingredient2.id => true
         }
       end
-      it 'returns collected tag ids' do
-        expect(subject.filter_tags(recipes)).to eq(hash)
+      let(:detail_ids) do
+        [
+          tag_selection1.id,
+          tag_selection2a.id
+        ]
+      end
+      it 'returns collected tag ids for ingredients' do
+        expect(tag_subject.filter_tags(recipes)).to eq(hash)
+      end
+      it 'returns recipe level detail for ingredients' do
+        expect(tag_subject.recipe_detail_level.map(&:id).uniq).to eq(detail_ids)
+      end
+    end
+
+    describe '#collect_tag_ids' do
+      let(:mod) { create(:tag_type, name: 'IngredientModification') }
+      let(:tag_subject) { create(:tag, name: 'Chamomile', tag_type: mod) }
+      let!(:mod_selection) { create(:tag_selection, tag: tag_subject, taggable: tag_selection1)}
+      let(:filter_hash) do
+        {
+          tag_subject.id => true,
+          ingredient1.id => true,
+          ingredient1_type.id => true,
+          ingredient1_family.id => true,
+          ingredient2.id => true
+        }
+      end
+      let(:detail_ids) do
+        [
+          tag_selection1.id,
+          tag_selection2a.id,
+          mod_selection.id
+        ]
+      end
+      it 'returns collected tag ids for modification' do
+        expect(tag_subject.filter_tags(recipes)).to eq(filter_hash)
+      end
+      it 'returns recipe level detail for modification' do
+        expect(tag_subject.recipe_detail_level.map(&:id).uniq.sort).to eq(detail_ids.sort)
       end
     end
 
     describe '#recipes_with_grouped_detail' do
-      let!(:recipe_result2) { subject.recipes_with_grouped_detail(recipes).second }
+      let(:tag_subject) { create(:tag, name: 'Verbena', tag_type: tag_type_ingredient_type) }
+      let!(:recipe_result2) { tag_subject.recipes_with_grouped_detail(recipes).second }
       it 'returns only one valid row' do
         expect(subject.recipes_with_grouped_detail(recipes).count).to eq(2)
       end
