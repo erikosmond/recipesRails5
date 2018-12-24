@@ -10,7 +10,7 @@ import Collapse from '@material-ui/core/Collapse'
 import CardActions from '@material-ui/core/CardActions'
 import IconButton from '@material-ui/core/IconButton'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import RecipeIngredients from 'components/recipes/RecipeIngredients'
+import RecipeProperties from 'components/recipes/RecipeProperties'
 import RecipeInstructions from 'components/recipes/RecipeInstructions'
 import RecipeDescription from 'components/recipes/RecipeDescription'
 import { allIngredients } from 'services/recipes'
@@ -54,7 +54,7 @@ class RecipeListItem extends React.Component {
         </CardActions>
         <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
           <CardContent>
-            <RecipeIngredients recipe={recipe} />
+            <RecipeProperties title="Ingredients" tags={allIngredients(recipe)} />
             <RecipeInstructions recipe={recipe} />
             <RecipeDescription recipe={recipe} />
           </CardContent>

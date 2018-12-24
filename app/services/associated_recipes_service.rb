@@ -17,13 +17,13 @@ module AssociatedRecipesService
   end
 
   def recipe_detail_level
-    recipes = case tag_type.name
+    recipes = case tag_type_name
               when 'IngredientType'
                 child_recipes_with_detail.to_a
               when 'IngredientFamily'
                 grandchild_recipes_with_detail.to_a +
                 child_recipes_with_detail.to_a
-              else
+              when 'IngredientModification'
                 modification_recipes_detail.to_a
               end || []
     recipes + recipes_with_detail.to_a
@@ -53,6 +53,11 @@ module AssociatedRecipesService
   def modification_recipes_detail
     join_alias = 'tag_selections_modified_recipe_tag_selections_2'
     detail_sql(modified_recipe_tag_selections, join_alias)
+  end
+
+  def modified_tag_detail
+    join_alias = 'tag_selections_modified_tag_tag_selections_2'
+    detail_sql(modified_tag_tag_selections, join_alias)
   end
 
   private

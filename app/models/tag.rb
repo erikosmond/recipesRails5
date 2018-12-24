@@ -24,12 +24,16 @@ class Tag < ApplicationRecord
            through: :tag_selections,
            source: :modified_recipes
   has_many :modified_recipe_tag_selections,
+           -> { where(taggable_type: 'Recipe') },
            through: :modified_recipes,
            source: :tag_selections
   has_many :modified_tags,
-           # -> { where(taggable_type: 'TagSelection') }, # delete?
            through: :tag_selections,
            source: :modified_tags
+  has_many :modified_tag_tag_selections,
+           -> { where(taggable_type: 'TagSelection') },
+           through: :modified_tags,
+           source: :tag_selections
   has_many :child_tags,
            through: :tag_selections,
            source: :taggable,
