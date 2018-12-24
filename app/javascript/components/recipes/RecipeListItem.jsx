@@ -9,10 +9,11 @@ import CardContent from '@material-ui/core/CardContent'
 import Collapse from '@material-ui/core/Collapse'
 import CardActions from '@material-ui/core/CardActions'
 import IconButton from '@material-ui/core/IconButton'
-import RecipeIngredients from 'components/recipes/RecipeIngredients'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import RecipeProperties from 'components/recipes/RecipeProperties'
 import RecipeInstructions from 'components/recipes/RecipeInstructions'
 import RecipeDescription from 'components/recipes/RecipeDescription'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import { allIngredients } from 'services/recipes'
 
 const styles = () => ({
   card: {
@@ -29,7 +30,7 @@ class RecipeListItem extends React.Component {
 
   render() {
     const { recipe, classes } = this.props
-    const ingredientNames = Object.values(recipe.ingredients).map(ingredient => (
+    const ingredientNames = Object.values(allIngredients(recipe)).map(ingredient => (
       ingredient.tagName
     ))
 
@@ -53,7 +54,7 @@ class RecipeListItem extends React.Component {
         </CardActions>
         <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
           <CardContent>
-            <RecipeIngredients recipe={recipe} />
+            <RecipeProperties title="Ingredients" tags={allIngredients(recipe)} />
             <RecipeInstructions recipe={recipe} />
             <RecipeDescription recipe={recipe} />
           </CardContent>

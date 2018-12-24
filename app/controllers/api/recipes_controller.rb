@@ -15,9 +15,8 @@ module Api
     def show
       recipe = Recipe.find_by_id(params.permit(:id)[:id])
       if recipe
-        json_recipe = recipe.as_json
-        json_recipe['ingredients'] = recipe.recipe_detail
-        render json: json_recipe
+        details = recipe.recipes_with_grouped_detail(recipe.recipe_detail)
+        render json: details.first.merge(recipe.as_json)
       else
         render json: {}, status: :not_found
       end

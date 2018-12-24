@@ -48,13 +48,48 @@ describe Tag do
     let!(:tag_selection4) { create :tag_selection, tag: nut, taggable: vesper }
     let!(:tag_selection5) { create :tag_selection, tag: almond, taggable: martini }
     let!(:tag_selection6) { create :tag_selection, tag: protein, taggable: manhattan }
+
+    let(:modification_name1) { 'toasted' }
+    let(:modification_name2) { 'crushed' }
+    let(:alteration) { create(:tag_type, name: 'Alteration') }
+    let(:modification1) { create(:tag, tag_type: alteration, name: modification_name1) }
+    let(:modification2) { create(:tag, tag_type: alteration, name: modification_name2) }
+    let!(:tag_selection_mod1) { create(:tag_selection, tag: modification1, taggable: tag_selection4) }
+    let!(:tag_selection_mod2) { create(:tag_selection, tag: modification2, taggable: tag_selection4) }
+
+    let(:expected_heirarchy_result) do
+      {
+        'id' => nut.id,
+        'name' => 'Nut',
+        'description' => nil,
+        'tag_type_id' => nut.tag_type.id,
+        'recipe_id' => nil,
+        'child_tags' => { almond.id => 'Almond' },
+        'parent_tags' => { protein.id => 'Protein' },
+        'grandparent_tags' => { plants.id => 'plants' },
+        'modification_tags' => {
+          modification1.id => 'toasted',
+          modification2.id => 'crushed'
+        },
+        'modified_tags' => {},
+      }
+    end
+
     it 'creates child_tags' do
       expect(nut.child_tags.count).to eq(1)
       expect(nut.child_tags.first.name).to eq('Almond')
       expect(nut.child_tags.first.class.name).to eq('ChildTag')
     end
-    it 'has tags' do
-      expect(almond.tags).to eq([nut])
+
+    it 'groups its heirarchy' do
+      expect(nut.tag_with_heirarchy_grouped).to eq expected_heirarchy_result
+    end
+
+    it 'has parent_tags' do
+      expect(almond.parent_tags).to eq([nut])
+    end
+    it 'has grandparent_tags' do
+      expect(almond.grandparent_tags).to eq([protein])
     end
     it 'assigns recipe to ingredient' do
       expect(nut.recipes).to eq([vesper])
@@ -80,8 +115,9 @@ describe Tag do
       expect(protein.grandchild_recipes_with_detail.first['recipe_id']).to eq(martini.id)
     end
     it 'assigns child recipe to family' do
-      expect(protein.child_recipes_with_detail.to_a.size).to eq(1)
+      expect(protein.child_recipes_with_detail.to_a.size).to eq(2)
       expect(protein.child_recipes_with_detail.first['recipe_id']).to eq(vesper.id)
+      expect(protein.child_recipes_with_detail.second['recipe_id']).to eq(vesper.id)
     end
     it 'assigns own recipe to family' do
       expect(protein.recipes_with_detail.to_a.size).to eq(1)
@@ -92,8 +128,9 @@ describe Tag do
       expect(nut.child_recipes_with_detail.first['recipe_id']).to eq(martini.id)
     end
     it 'assigns own recipe to type' do
-      expect(nut.recipes_with_detail.to_a.size).to eq(1)
+      expect(nut.recipes_with_detail.to_a.size).to eq(2)
       expect(nut.recipes_with_detail.first['recipe_id']).to eq(vesper.id)
+      expect(nut.recipes_with_detail.second['recipe_id']).to eq(vesper.id)
     end
   end
 
@@ -137,33 +174,72 @@ describe Tag do
     let(:ingredient1_unrelated) { create(:tag, tag_type: tag_type_not_ingredient, name: 'not related') }
     let(:ingredient2) { create(:tag, tag_type: tag_type_ingredient, name: ingredient2_name) }
     let(:modification) { create(:tag, tag_type: alteration, name: modification_name) }
-    let!(:tag_selection1) { create(:tag_selection, tag: subject, taggable: recipe1) }
-    let!(:tag_selection2a) { create(:tag_selection, tag: subject, taggable: recipe2) }
+    let!(:tag_selection1) { create(:tag_selection, tag: tag_subject, taggable: recipe1) }
+    let!(:tag_selection2a) { create(:tag_selection, tag: tag_subject, taggable: recipe2) }
     let!(:tag_selection2b) { create(:tag_selection, tag: ingredient1, taggable: recipe2) }
     let!(:tag_selection2c) { create(:tag_selection, tag: ingredient2, taggable: recipe2) }
     let!(:tag_selection2ba) { create(:tag_selection, tag: ingredient1_type, taggable: ingredient1) }
     let!(:tag_selection2bb) { create(:tag_selection, tag: ingredient1_family, taggable: ingredient1_type) }
     let!(:tag_attribute) { create(:tag_attribute, property: property, value: value, tag_attributable: tag_selection2b) }
     let!(:tag_selection_mod) { create(:tag_selection, tag: modification, taggable: tag_selection2b) }
-    let!(:recipes) { subject.recipes_with_detail }
+    let!(:recipes) { tag_subject.recipes_with_detail }
 
     describe '#collect_tag_ids' do
+      let(:tag_subject) { create(:tag, name: 'Lemon Verbena', tag_type: tag_type_ingredient_type) }
       let(:hash) do
         {
-          subject.id => true,
+          tag_subject.id => true,
           ingredient1.id => true,
           ingredient1_type.id => true,
           ingredient1_family.id => true,
           ingredient2.id => true
         }
       end
-      it 'returns collected tag ids' do
-        expect(subject.filter_tags(recipes)).to eq(hash)
+      let(:detail_ids) do
+        [
+          tag_selection1.id,
+          tag_selection2a.id
+        ]
+      end
+      it 'returns collected tag ids for ingredients' do
+        expect(tag_subject.filter_tags(recipes)).to eq(hash)
+      end
+      it 'returns recipe level detail for ingredients' do
+        expect(tag_subject.recipe_detail_level.map(&:id).uniq).to eq(detail_ids)
+      end
+    end
+
+    describe '#collect_tag_ids' do
+      let(:mod) { create(:tag_type, name: 'IngredientModification') }
+      let(:tag_subject) { create(:tag, name: 'Chamomile', tag_type: mod) }
+      let!(:mod_selection) { create(:tag_selection, tag: tag_subject, taggable: tag_selection1)}
+      let(:filter_hash) do
+        {
+          tag_subject.id => true,
+          ingredient1.id => true,
+          ingredient1_type.id => true,
+          ingredient1_family.id => true,
+          ingredient2.id => true
+        }
+      end
+      let(:detail_ids) do
+        [
+          tag_selection1.id,
+          tag_selection2a.id,
+          mod_selection.id
+        ]
+      end
+      it 'returns collected tag ids for modification' do
+        expect(tag_subject.filter_tags(recipes)).to eq(filter_hash)
+      end
+      it 'returns recipe level detail for modification' do
+        expect(tag_subject.recipe_detail_level.map(&:id).uniq.sort).to eq(detail_ids.sort)
       end
     end
 
     describe '#recipes_with_grouped_detail' do
-      let!(:recipe_result2) { subject.recipes_with_grouped_detail(recipes).second }
+      let(:tag_subject) { create(:tag, name: 'Verbena', tag_type: tag_type_ingredient_type) }
+      let!(:recipe_result2) { tag_subject.recipes_with_grouped_detail(recipes).second }
       it 'returns only one valid row' do
         expect(subject.recipes_with_grouped_detail(recipes).count).to eq(2)
       end
@@ -189,10 +265,10 @@ describe Tag do
         expect(recipe_result2['ingredients'][tag_selection2b.tag_id].property ).to eq(property)
       end
       it 'returns ingredient type' do
-        expect(recipe_result2['ingredients'][tag_selection2b.tag_id].ingredient_type ).to eq(ingredient1_type_name)
+        expect(recipe_result2['ingredients'][tag_selection2b.tag_id].parent_tag ).to eq(ingredient1_type_name)
       end
       it 'returns ingredient family' do
-        expect(recipe_result2['ingredients'][tag_selection2b.tag_id].ingredient_family ).to eq(ingredient1_family_name)
+        expect(recipe_result2['ingredients'][tag_selection2b.tag_id].grandparent_tag ).to eq(ingredient1_family_name)
       end
     end
   end

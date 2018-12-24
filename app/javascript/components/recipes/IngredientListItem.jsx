@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
-// class IngredientListItem extends React.Component {
 const IngredientListItem = ({ ingredient }) => {
   const {
     value,
@@ -10,16 +9,16 @@ const IngredientListItem = ({ ingredient }) => {
     tagName,
     tagId,
   } = ingredient
+  const amount = value || ''
   const presentModificationName = (modificationName === null) ? '' : modificationName
   const ingredientDetails = (modificationName === 'Juice of') ?
-    `${value} ${tagName} Juice` :
-    `${value} ${presentModificationName} ${tagName}`
+    `${amount} ${tagName} Juice` :
+    `${amount} ${presentModificationName} ${tagName}`
   return (
     <li>
       <Link to={`/tags/${tagId}/recipes`}> {ingredientDetails} </Link>
     </li>
   )
-  // }
 }
 
 IngredientListItem.propTypes = {

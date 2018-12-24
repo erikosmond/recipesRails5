@@ -2,6 +2,7 @@
 
 class Tag < ApplicationRecord
   include AssociatedRecipesService
+  include AssociatedTagsService
 
   belongs_to :tag_type
   belongs_to :recipe, optional: true, inverse_of: :ingredient
@@ -18,6 +19,20 @@ class Tag < ApplicationRecord
            source_type: 'Recipe'
   has_many :recipe_tag_selections,
            through: :recipes,
+           source: :tag_selections
+  has_many :modified_recipes,
+           through: :tag_selections,
+           source: :modified_recipes
+  has_many :modified_recipe_tag_selections,
+           -> { where(taggable_type: 'Recipe') },
+           through: :modified_recipes,
+           source: :tag_selections
+  has_many :modified_tags,
+           through: :tag_selections,
+           source: :modified_tags
+  has_many :modified_tag_tag_selections,
+           -> { where(taggable_type: 'TagSelection') },
+           through: :modified_tags,
            source: :tag_selections
   has_many :child_tags,
            through: :tag_selections,
@@ -57,12 +72,20 @@ class Tag < ApplicationRecord
            foreign_type: 'Tag',
            class_name: 'TagSelection',
            dependent: :destroy
-  has_many :tags,
+  has_many :parent_tags,
            through: :taggings,
+           source: 'tag'
+  has_many :parent_taggings,
+           through: :parent_tags,
+           source: :taggings
+  has_many :grandparent_tags,
+           through: :parent_taggings,
            source: 'tag'
 
   has_one :access, as: :accessible
 
   validates :name, presence: true
   validates_uniqueness_of :name, scope: :tag_type
+
+  delegate :name, to: :tag_type, prefix: true
 end
