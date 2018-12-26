@@ -9,11 +9,12 @@ module AssociatedRecipesService
 
   def filter_tags(recipe_details)
     result = recipe_details.each_with_object({}) do |r, tags|
-      tags[r.tag_id] = true
-      tags[r.parent_tag_id] = true
-      tags[r.grandparent_tag_id] = true
+      tags[r.tag_id] = r.tag_name
+      tags[r.parent_tag_id] = r.parent_tag
+      tags[r.grandparent_tag_id] = r.grandparent_tag
+      tags[r.modification_id] = r.modification_name
     end
-    result.reject { |k, _v| k.nil? }
+    result.reject { |k, v| k.blank? || v.blank? }.to_a
   end
 
   def recipe_detail_level

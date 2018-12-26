@@ -1,16 +1,21 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import RecipeFilters from 'components/recipes/RecipeFilters'
 import RecipeListItem from 'components/recipes/RecipeListItem'
 import RelatedTags from 'components/recipes/RelatedTags'
 import Paper from '@material-ui/core/Paper'
+import PaperContent from '../styled/PaperContent'
+
 
 class RecipeList extends React.Component {
   static propTypes = {
     loadRecipes: PropTypes.func.isRequired,
     loadTagInfo: PropTypes.func.isRequired,
+    handleFilter: PropTypes.func.isRequired,
     selectedRecipes: PropTypes.arrayOf(PropTypes.shape({})),
     recipesLoaded: PropTypes.bool,
     loading: PropTypes.bool,
+    filterTags: PropTypes.arrayOf,
     noRecipes: PropTypes.bool.isRequired,
     startingTagId: PropTypes.string.isRequired,
     selectedTag: PropTypes.shape({}).isRequired,
@@ -28,6 +33,7 @@ class RecipeList extends React.Component {
     recipesLoaded: false,
     loading: true,
     selectedRecipes: [],
+    filterTags: [],
   }
 
   constructor(props) {
@@ -71,6 +77,8 @@ class RecipeList extends React.Component {
       selectedTag,
       noRecipes,
       loading,
+      filterTags,
+      handleFilter,
     } = this.props
     if (loading) {
       return (<div> {'Loading...'} </div>)
@@ -99,11 +107,12 @@ class RecipeList extends React.Component {
           <RelatedTags tags={selectedTag.modifiedTags} />
         </Paper>
 
-        <Paper>
+        <RecipeFilters tags={filterTags} handleFilter={handleFilter} />
+        <PaperContent>
           {selectedRecipes.map(r => (
             <RecipeListItem key={r.id} recipe={r} />
           ))}
-        </Paper>
+        </PaperContent>
       </div>
     )
   }

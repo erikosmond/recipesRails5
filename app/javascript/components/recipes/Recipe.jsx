@@ -14,6 +14,7 @@ class Recipe extends React.Component {
       name: PropTypes.string.isRequired,
       ingredients: PropTypes.string.isRequired,
     }),
+    noRecipe: PropTypes.bool.isRequired,
     location: PropTypes.shape().isRequired,
     match: PropTypes.shape({
       params: PropTypes.shape({
@@ -71,12 +72,3 @@ class Recipe extends React.Component {
 }
 
 export default Recipe
-
-Recipe.propTypes = {
-  recipe: PropTypes.shape({
-    id: PropTypes.number,
-    name: PropTypes.string.isRequired,
-    ingredients: PropTypes.string.isRequired,
-  }),
-  noRecipe: PropTypes.bool.isRequired,
-}

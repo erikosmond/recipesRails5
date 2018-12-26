@@ -1,6 +1,7 @@
 import { put, call } from 'redux-saga/effects'
 import { takeLatest, takeEvery } from 'redux-saga'
 import { callApi } from 'services/rest'
+import { selectedFilterService, selectedRecipeService } from 'services/recipeFilters'
 
 // Actions
 const LOAD_RECIPES = 'recipes/loadRecipes'
@@ -17,18 +18,22 @@ const LOAD_INGREDIENT_OPTIONS = 'recipes/loadIngredientOptions'
 const LOAD_INGREDIENT_OPTIONS_SUCCESS = 'recipes/loadIngredientOptionsSuccess'
 const NO_RECIPE_FOUND = 'recipes/noRecipeFound'
 const NOT_LOADING = 'recipes/notLoading'
+const HANDLE_FILTER = 'recipes/handleFilter'
 
 // Reducer
 const initialState = {
   selectedRecipes: [],
+  selectedFilters: [],
   selectedTag: {},
   recipeOptions: [],
+  filterTags: [],
   recipesLoaded: false,
   noRecipes: false,
   loading: true,
 }
 
 export default function recipesReducer(state = initialState, action = {}) {
+  const { id, checked } = action.payload || {}
   switch (action.type) {
     case LOAD_RECIPES:
       return {
@@ -46,6 +51,7 @@ export default function recipesReducer(state = initialState, action = {}) {
       return {
         ...state,
         selectedRecipes: action.payload.recipes.recipes,
+        filterTags: action.payload.recipes.filterTags,
         recipesLoaded: true,
         loading: false,
         noRecipes: false,
@@ -95,6 +101,12 @@ export default function recipesReducer(state = initialState, action = {}) {
       return {
         ...state,
         loading: false,
+      }
+    case HANDLE_FILTER:
+      return {
+        ...state,
+        selectedFilters: selectedFilterService(id, checked, state),
+        selectedRecipes: selectedRecipeService(id, checked, state),
       }
     default:
       return state
@@ -207,6 +219,16 @@ export function noRecipeFound() {
 export function notLoading() {
   return {
     type: NOT_LOADING,
+  }
+}
+
+export function handleFilter(id, checked) {
+  return {
+    type: HANDLE_FILTER,
+    payload: {
+      id,
+      checked,
+    },
   }
 }
 

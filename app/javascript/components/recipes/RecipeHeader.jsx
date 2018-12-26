@@ -57,11 +57,17 @@ export default RecipeHeader
 
 RecipeHeader.propTypes = {
   loadRecipeOptions: PropTypes.func.isRequired,
-  recipeOptions: PropTypes.arrayOf.isRequired,
+  recipeOptions: PropTypes.arrayOf,
   loadIngredientOptions: PropTypes.func.isRequired,
-  ingredientOptions: PropTypes.arrayOf.isRequired,
-  categoryOptions: PropTypes.arrayOf.isRequired,
+  ingredientOptions: PropTypes.arrayOf,
+  categoryOptions: PropTypes.arrayOf,
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
+}
+
+RecipeHeader.defaultProps = {
+  recipeOptions: [],
+  ingredientOptions: [],
+  categoryOptions: [],
 }
