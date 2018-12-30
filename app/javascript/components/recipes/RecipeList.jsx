@@ -11,11 +11,12 @@ class RecipeList extends React.Component {
   static propTypes = {
     loadRecipes: PropTypes.func.isRequired,
     loadTagInfo: PropTypes.func.isRequired,
+    loadAllTags: PropTypes.func.isRequired,
     handleFilter: PropTypes.func.isRequired,
     selectedRecipes: PropTypes.arrayOf(PropTypes.shape({})),
     recipesLoaded: PropTypes.bool,
     loading: PropTypes.bool,
-    filterTags: PropTypes.arrayOf,
+    visibleFilterTags: PropTypes.arrayOf,
     noRecipes: PropTypes.bool.isRequired,
     startingTagId: PropTypes.string.isRequired,
     selectedTag: PropTypes.shape({}).isRequired,
@@ -33,7 +34,7 @@ class RecipeList extends React.Component {
     recipesLoaded: false,
     loading: true,
     selectedRecipes: [],
-    filterTags: [],
+    visibleFilterTags: [],
   }
 
   constructor(props) {
@@ -45,6 +46,7 @@ class RecipeList extends React.Component {
     const {
       loadRecipes,
       loadTagInfo,
+      loadAllTags,
       startingTagId,
       match,
     } = this.props
@@ -52,6 +54,7 @@ class RecipeList extends React.Component {
     if (tagId) {
       loadRecipes(tagId)
       loadTagInfo(tagId)
+      loadAllTags()
     } else if (startingTagId) {
       loadRecipes(startingTagId)
       loadTagInfo(startingTagId)
@@ -77,7 +80,7 @@ class RecipeList extends React.Component {
       selectedTag,
       noRecipes,
       loading,
-      filterTags,
+      visibleFilterTags,
       handleFilter,
     } = this.props
     if (loading) {
@@ -107,7 +110,7 @@ class RecipeList extends React.Component {
           <RelatedTags tags={selectedTag.modifiedTags} />
         </Paper>
 
-        <RecipeFilters tags={filterTags} handleFilter={handleFilter} />
+        <RecipeFilters tags={visibleFilterTags} handleFilter={handleFilter} />
         <PaperContent>
           {selectedRecipes.map(r => (
             <RecipeListItem key={r.id} recipe={r} />

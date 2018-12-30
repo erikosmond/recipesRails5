@@ -186,14 +186,15 @@ describe Tag do
 
     describe '#collect_tag_ids' do
       let(:tag_subject) { create(:tag, name: 'Lemon Verbena', tag_type: tag_type_ingredient_type) }
-      let(:hash) do
-        {
-          tag_subject.id => true,
-          ingredient1.id => true,
-          ingredient1_type.id => true,
-          ingredient1_family.id => true,
-          ingredient2.id => true
-        }
+      let(:array_list) do
+        [
+          [tag_subject.id, 'Lemon Verbena'],
+          [ingredient2.id, 'pepper'],
+          [ingredient1.id, 'salt'],
+          [ingredient1_type.id, 'spices'],
+          [ingredient1_family.id, 'seasoning'],
+          [modification.id, 'chili infused']
+        ]
       end
       let(:detail_ids) do
         [
@@ -202,7 +203,7 @@ describe Tag do
         ]
       end
       it 'returns collected tag ids for ingredients' do
-        expect(tag_subject.filter_tags(recipes)).to eq(hash)
+        expect(tag_subject.filter_tags(recipes) - array_list).to eq([])
       end
       it 'returns recipe level detail for ingredients' do
         expect(tag_subject.recipe_detail_level.map(&:id).uniq).to eq(detail_ids)
@@ -213,14 +214,15 @@ describe Tag do
       let(:mod) { create(:tag_type, name: 'IngredientModification') }
       let(:tag_subject) { create(:tag, name: 'Chamomile', tag_type: mod) }
       let!(:mod_selection) { create(:tag_selection, tag: tag_subject, taggable: tag_selection1)}
-      let(:filter_hash) do
-        {
-          tag_subject.id => true,
-          ingredient1.id => true,
-          ingredient1_type.id => true,
-          ingredient1_family.id => true,
-          ingredient2.id => true
-        }
+      let(:filter_array) do
+        [
+          [tag_subject.id, 'Chamomile'],
+          [ingredient2.id, 'pepper'],
+          [ingredient1.id, 'salt'],
+          [ingredient1_type.id, 'spices'],
+          [ingredient1_family.id, 'seasoning'],
+          [modification.id, 'chili infused']
+        ]
       end
       let(:detail_ids) do
         [
@@ -230,7 +232,7 @@ describe Tag do
         ]
       end
       it 'returns collected tag ids for modification' do
-        expect(tag_subject.filter_tags(recipes)).to eq(filter_hash)
+        expect(tag_subject.filter_tags(recipes) - filter_array).to eq([])
       end
       it 'returns recipe level detail for modification' do
         expect(tag_subject.recipe_detail_level.map(&:id).uniq.sort).to eq(detail_ids.sort)

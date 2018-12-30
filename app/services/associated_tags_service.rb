@@ -19,7 +19,7 @@ module AssociatedTagsService
       tag_heirarchy_select
     ).left_outer_joins(
       tag_heirarchy_join
-    ).where("tags.id = #{id}")
+    ).where(tags: { id: id })
   end
 
   private

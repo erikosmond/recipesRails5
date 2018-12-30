@@ -33,7 +33,9 @@ class RecipeListItem extends React.Component {
     const ingredientNames = Object.values(allIngredients(recipe)).map(ingredient => (
       ingredient.tagName
     ))
-
+    if (recipe.hidden) {
+      return null
+    }
     return (
       <Card className={classes.card}>
         <CardHeader
@@ -66,13 +68,19 @@ class RecipeListItem extends React.Component {
 
 RecipeListItem.propTypes = {
   recipe: PropTypes.shape({
-    id: PropTypes.number,
+    id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     ingredients: PropTypes.string.isRequired,
-  }).isRequired,
+  }),
   classes: PropTypes.shape({
     card: PropTypes.shape({}).isRequired,
   }).isRequired,
+}
+
+RecipeListItem.defaultProps = {
+  recipe: PropTypes.shape({
+    hidden: false,
+  }),
 }
 
 export default withStyles(styles)(RecipeListItem)
