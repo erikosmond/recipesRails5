@@ -35,7 +35,7 @@ const initialState = {
   selectedTag: {},
   recipeOptions: [],
   visibleFilterTags: [],
-  allTags: [],
+  allTags: {},
   recipesLoaded: false,
   noRecipes: false,
   noTags: false,
@@ -292,7 +292,6 @@ export function* handleFilterTask({ payload: { id, checked } }) {
   const selectedFilters = yield call(selectedFilterService, id, checked, recipesState)
   const selectedRecipes = yield call(selectedRecipeService, selectedFilters, recipesState)
   const visibleFilters = yield call(visibleFilterService, selectedRecipes, recipesState.allTags)
-  debugger
   yield put(handleFilterSuccess(selectedRecipes, selectedFilters, visibleFilters))
 }
 
@@ -324,7 +323,11 @@ export function* loadAllTagsTask() {
     const url = '/api/tags'
     const result = yield call(callApi, url)
     if (result.success) {
-      yield put(loadAllTagsSuccess({ tags: result.data }))
+      const tagObj = {}
+      result.data.forEach((t) => {
+        tagObj[t.value] = t.label
+      })
+      yield put(loadAllTagsSuccess({ tags: tagObj }))
     } else {
       yield put(noTagsFound())
     }

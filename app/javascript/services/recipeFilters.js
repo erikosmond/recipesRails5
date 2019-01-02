@@ -1,4 +1,5 @@
-export function selectedFilterService(filterId, checked, state) {
+export function selectedFilterService(fId, checked, state) {
+  const filterId = parseInt(fId, 10)
   if (Array.isArray(state.selectedFilters)) {
     const idIndex = state.selectedFilters.indexOf(filterId)
     if (checked && idIndex === -1) {
@@ -18,18 +19,21 @@ export function selectedFilterService(filterId, checked, state) {
 }
 
 export function visibleFilterService(selectedRecipes = [], allTags = []) {
-  const visibleFilters = []
+  const visibleFilters = {}
+  const filterList = []
   selectedRecipes.forEach((r) => {
     if (!r.hidden) {
       const ids = Object.keys(r.tagIds) || []
       ids.forEach((id) => {
         const i = parseInt(id, 10)
-        visibleFilters.push([i, allTags[i].label])
-        // some of the wrong tags are displayed after this function is run
+        visibleFilters[i] = allTags[i]
       })
     }
   })
-  return visibleFilters
+  Object.keys(visibleFilters).forEach((f) => {
+    filterList.push([f, visibleFilters[f]])
+  })
+  return filterList
 }
 
 export function selectedRecipeService(selectedFilters, state) {
