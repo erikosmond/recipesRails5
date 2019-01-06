@@ -6,6 +6,8 @@ const PaperContent = styled(Paper)`
   min-width: 40%;
   display: inline-grid;
   margin: 10px 3px 10px 3px;
+  height: 700px;
+  overflow: scroll;
 `
 
 export default PaperContent

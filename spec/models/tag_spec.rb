@@ -63,6 +63,7 @@ describe Tag do
         'name' => 'Nut',
         'description' => nil,
         'tag_type_id' => nut.tag_type.id,
+        'tags' => { nut.id => 'Nut' },
         'recipe_id' => nil,
         'child_tags' => { almond.id => 'Almond' },
         'parent_tags' => { protein.id => 'Protein' },

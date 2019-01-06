@@ -3,6 +3,7 @@
 class Tag < ApplicationRecord
   include AssociatedRecipesService
   include AssociatedTagsService
+  extend TagsService
 
   belongs_to :tag_type
   belongs_to :recipe, optional: true, inverse_of: :ingredient

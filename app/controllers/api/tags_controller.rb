@@ -29,9 +29,9 @@ module Api
     private
 
       def tags_by_type(tag_type)
-        tag_types = tag_types(tag_type)
-          tag_json = tag_types.flat_map(&:tags).as_json(only: %i[id name])
-          tag_json.map { |r| { 'Label' => r['name'], 'Value' => r['id'] } }
+        type_ids = tag_types(tag_type).pluck(:id)
+        tag_json = Tag.where(tag_type_id: type_ids).as_json(only: %i[id name])
+        tag_json.map { |r| { 'Label' => r['name'], 'Value' => r['id'] } }
       end
 
       def tag_types(tag_type)
