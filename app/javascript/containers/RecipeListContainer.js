@@ -14,6 +14,8 @@ export default withRouter(connect(
     startingTagId: state.recipesReducer.startingTagId,
     loading: state.recipesReducer.loading,
     visibleFilterTags: state.recipesReducer.visibleFilterTags,
+    allTags: state.recipesReducer.allTags,
+    tagGroups: state.recipesReducer.tagGroups,
   }),
   {
     loadRecipes,

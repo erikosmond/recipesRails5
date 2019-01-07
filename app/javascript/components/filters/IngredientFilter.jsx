@@ -3,8 +3,7 @@ import PropTypes from 'prop-types'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Checkbox from '@material-ui/core/Checkbox'
 
-class RecipeFilterItem extends React.Component {
-  // This whole class and file has been deprecated for IntredientFilter. This should be removed
+class IngredientFilter extends React.Component {
   constructor(props) {
     super(props)
     this.handleChange = this.handleChange.bind(this)
@@ -40,10 +39,14 @@ class RecipeFilterItem extends React.Component {
   }
 }
 
-RecipeFilterItem.propTypes = {
+IngredientFilter.propTypes = {
   id: PropTypes.number.isRequired,
   label: PropTypes.string.isRequired,
   handleFilter: PropTypes.func.isRequired,
+  familyIsVisible: PropTypes.func.isRequired, // can probably remove
+  typeIsVisible: PropTypes.func.isRequired, // can probably remove
+  visibleTags: PropTypes.arrayOf.isRequired,
+  allTags: PropTypes.shape({ id: PropTypes.number.isRequired }).isRequired,
 }
 
-export default RecipeFilterItem
+export default IngredientFilter

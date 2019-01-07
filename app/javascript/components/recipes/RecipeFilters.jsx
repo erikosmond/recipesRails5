@@ -5,6 +5,7 @@ import PaperContent from '../styled/PaperContent'
 import RecipeFilterItem from './RecipeFilterItem'
 
 const RecipeFilters = ({ tags, handleFilter }) => (
+  // This whole class and file has been deprecated for FilterByIngredients. This should be removed
   <PaperContent>
     Filters
     <FormGroup>

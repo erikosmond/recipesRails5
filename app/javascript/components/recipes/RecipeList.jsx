@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+// import FilterByIngredients from 'components/filters/FilterByIngredients'
 import RecipeFilters from 'components/recipes/RecipeFilters'
 import RecipeListItem from 'components/recipes/RecipeListItem'
 import RelatedTags from 'components/recipes/RelatedTags'
@@ -16,6 +17,9 @@ class RecipeList extends React.Component {
     selectedRecipes: PropTypes.arrayOf(PropTypes.shape({})),
     recipesLoaded: PropTypes.bool,
     loading: PropTypes.bool,
+    allTags: PropTypes.shape({
+      id: PropTypes.number.isRequired
+    }),
     visibleFilterTags: PropTypes.arrayOf,
     noRecipes: PropTypes.bool.isRequired,
     startingTagId: PropTypes.string.isRequired,
@@ -35,6 +39,7 @@ class RecipeList extends React.Component {
     loading: true,
     selectedRecipes: [],
     visibleFilterTags: [],
+    allTags: {},
   }
 
   constructor(props) {
@@ -81,6 +86,8 @@ class RecipeList extends React.Component {
       noRecipes,
       loading,
       visibleFilterTags,
+      allTags,
+      tagGroups,
       handleFilter,
     } = this.props
     if (loading) {
@@ -111,6 +118,15 @@ class RecipeList extends React.Component {
         </Paper>
 
         <RecipeFilters tags={visibleFilterTags} handleFilter={handleFilter} />
+
+        {/* <FilterByIngredients
+          visibleTags={visibleFilterTags}
+          allTags={allTags}
+          tagGroups={tagGroups}
+          handleFilter={handleFilter}
+        />
+        */}
+
         <PaperContent>
           {selectedRecipes.map(r => (
             <RecipeListItem key={r.id} recipe={r} />

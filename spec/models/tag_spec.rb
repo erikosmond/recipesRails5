@@ -82,6 +82,11 @@ describe Tag do
       expect(nut.child_tags.first.class.name).to eq('ChildTag')
     end
 
+    it 'returns all ingredient filters' do
+      expected = {protein.id => {nut.id => [almond.id]}}
+      expect(Tag.ingredient_group_heirarchy_filters).to eq(expected)
+    end
+
     it 'groups its heirarchy' do
       expect(nut.tag_with_heirarchy_grouped).to eq expected_heirarchy_result
     end

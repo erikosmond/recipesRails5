@@ -36,6 +36,7 @@ const initialState = {
   recipeOptions: [],
   visibleFilterTags: [],
   allTags: {},
+  tagGroups: {},
   recipesLoaded: false,
   noRecipes: false,
   noTags: false,
@@ -75,6 +76,7 @@ export default function recipesReducer(state = initialState, action = {}) {
       return {
         ...state,
         allTags: action.payload.tags,
+        tagGroups: action.payload.tagGroups,
       }
     case NO_RECIPES_FOUND:
       return {
@@ -172,11 +174,12 @@ export function loadAllTags() {
   }
 }
 
-export function loadAllTagsSuccess({ tags }) {
+export function loadAllTagsSuccess({ tags, tagGroups }) {
   return {
     type: LOAD_ALL_TAGS_SUCCESS,
     payload: {
       tags,
+      tagGroups,
     },
   }
 }
@@ -324,10 +327,11 @@ export function* loadAllTagsTask() {
     const result = yield call(callApi, url)
     if (result.success) {
       const tagObj = {}
-      result.data.forEach((t) => {
+      result.data.tags.forEach((t) => {
         tagObj[t.value] = t.label
       })
-      yield put(loadAllTagsSuccess({ tags: tagObj }))
+      const { tagGroups } = result.data
+      yield put(loadAllTagsSuccess({ tags: tagObj, tagGroups }))
     } else {
       yield put(noTagsFound())
     }
@@ -359,9 +363,9 @@ export function* loadIngredientOptionsTask({ payload }) {
   const result = yield call(callApi, url)
   if (result.success) {
     if (payload.ingredientType === 'Ingredients') {
-      yield put(loadIngredientOptionsSuccess({ ingredientOptions: result.data }))
+      yield put(loadIngredientOptionsSuccess({ ingredientOptions: result.data.tags }))
     } else {
-      yield put(loadCategoryOptionsSuccess({ ingredientOptions: result.data }))
+      yield put(loadCategoryOptionsSuccess({ ingredientOptions: result.data.tags }))
     }
   } else {
     yield put(notLoading())
