@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-// import FilterByIngredients from 'components/filters/FilterByIngredients'
+import FilterByIngredients from 'components/filters/FilterByIngredients'
 import RecipeFilters from 'components/recipes/RecipeFilters'
 import RecipeListItem from 'components/recipes/RecipeListItem'
 import RelatedTags from 'components/recipes/RelatedTags'
@@ -17,8 +17,9 @@ class RecipeList extends React.Component {
     selectedRecipes: PropTypes.arrayOf(PropTypes.shape({})),
     recipesLoaded: PropTypes.bool,
     loading: PropTypes.bool,
+    tagGroups: PropTypes.shape({}).isRequired,
     allTags: PropTypes.shape({
-      id: PropTypes.number.isRequired
+      id: PropTypes.number.isRequired,
     }),
     visibleFilterTags: PropTypes.arrayOf,
     noRecipes: PropTypes.bool.isRequired,
@@ -117,15 +118,15 @@ class RecipeList extends React.Component {
           <RelatedTags tags={selectedTag.modifiedTags} />
         </Paper>
 
-        <RecipeFilters tags={visibleFilterTags} handleFilter={handleFilter} />
+        {/* < RecipeFilters tags={visibleFilterTags} handleFilter={handleFilter} /> */}
 
-        {/* <FilterByIngredients
+        <FilterByIngredients
           visibleTags={visibleFilterTags}
           allTags={allTags}
           tagGroups={tagGroups}
           handleFilter={handleFilter}
         />
-        */}
+
 
         <PaperContent>
           {selectedRecipes.map(r => (

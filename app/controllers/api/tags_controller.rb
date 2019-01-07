@@ -12,9 +12,9 @@ module Api
              end
       if tags
         if tag_type
-          render json: { tags: tags, tag_groups: Tag.ingredient_group_heirarchy_filters }
-        else
           render json: { tags: tags }
+        else
+          render json: { tags: tags, tag_groups: Tag.ingredient_group_heirarchy_filters }
         end
       else
         render json: { tag_type: tag_type.to_s }, status: :not_found

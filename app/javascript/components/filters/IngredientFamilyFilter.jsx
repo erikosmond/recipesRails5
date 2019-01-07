@@ -19,17 +19,19 @@ class IngredientFamilyFilter extends React.Component {
   }
 
   hasVisibleLevel = (childTags, visibleTags) => {
-    let vis = false
-    // update these to for loops, more efficient, won't require vis = vis ||
-    vis = vis || Object.keys(childTags).forEach((ct) => {
-      if (visibleTags.indexOf(ct) > -1) {
-        vis = vis || true
-      } else if (childTags && childTags.length > 0) {
-        vis = vis || this.hasVisibleBottomLevel(childTags[ct], visibleTags)
-      }
+    if (!childTags && childTags.length < 1) {
+      let vis = false
+      // update these to for loops, more efficient, won't require vis = vis ||
+      vis = vis || Object.keys(childTags).forEach((ct) => {
+        if (visibleTags.indexOf(ct) > -1) {
+          vis = vis || true
+        } else if (childTags && childTags.length > 0) {
+          vis = vis || this.hasVisibleBottomLevel(childTags[ct], visibleTags)
+        }
+        return vis
+      })
       return vis
-    })
-    return vis
+    }
   }
 
   familyIsVisible = (bool) => {
@@ -48,11 +50,11 @@ class IngredientFamilyFilter extends React.Component {
       // show id and label
       return (
         <div>
-          {childTags.map(t => (
+          {childTags && Object.keys(childTags).map(t => (
             <RecipeTypeFilter
-              key={t[0]}
-              id={t[0]}
-              label={t[1]}
+              key={t}
+              id={t}
+              label={childTags[t]}
               allTags={allTags}
               visibleTags={visibleTags}
               handleFilter={handleFilter}
@@ -78,3 +80,5 @@ IngredientFamilyFilter.propTypes = {
 IngredientFamilyFilter.defaultProps = {
   childTags: [],
 }
+
+export default IngredientFamilyFilter
