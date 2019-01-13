@@ -9,14 +9,13 @@ const FilterByIngredients = ({
   handleFilter,
   allTags,
   tagGroups,
-}) => {
-  return (
+}) => (
   <PaperContent>
     Filters
     <FormGroup>
       {tagGroups && Object.keys(tagGroups).map(t => (
         <IngredientFamilyFilter
-          key={t}
+          key={t[0]}
           id={t}
           label={allTags[t]}
           handleFilter={handleFilter}
@@ -27,7 +26,7 @@ const FilterByIngredients = ({
       ))}
     </FormGroup>
   </PaperContent>
-)}
+)
 export default FilterByIngredients
 
 FilterByIngredients.propTypes = {

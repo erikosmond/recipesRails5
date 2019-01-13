@@ -4,7 +4,6 @@ import RecipeProperties from 'components/recipes/RecipeProperties'
 import RecipeInstructions from 'components/recipes/RecipeInstructions'
 import RecipeDescription from 'components/recipes/RecipeDescription'
 import { allIngredients } from 'services/recipes'
-// import Paper from '@material-ui/core/Paper'
 
 class Recipe extends React.Component {
   static propTypes = {

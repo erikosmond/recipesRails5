@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import FilterByIngredients from 'components/filters/FilterByIngredients'
-import RecipeFilters from 'components/recipes/RecipeFilters'
 import RecipeListItem from 'components/recipes/RecipeListItem'
 import RelatedTags from 'components/recipes/RelatedTags'
 import Paper from '@material-ui/core/Paper'
@@ -13,6 +12,7 @@ class RecipeList extends React.Component {
     loadRecipes: PropTypes.func.isRequired,
     loadTagInfo: PropTypes.func.isRequired,
     handleFilter: PropTypes.func.isRequired,
+    clearFilters: PropTypes.func.isRequired,
     selectedRecipes: PropTypes.arrayOf(PropTypes.shape({})),
     recipesLoaded: PropTypes.bool,
     loading: PropTypes.bool,
@@ -76,6 +76,10 @@ class RecipeList extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    this.props.clearFilters()
+  }
+
   render() {
     const {
       recipesLoaded,
@@ -114,8 +118,6 @@ class RecipeList extends React.Component {
           <RelatedTags tags={selectedTag.modificationTags} />
           <RelatedTags tags={selectedTag.modifiedTags} />
         </Paper>
-
-        {/* < RecipeFilters tags={visibleFilterTags} handleFilter={handleFilter} /> */}
 
         <FilterByIngredients
           visibleTags={visibleFilterTags}

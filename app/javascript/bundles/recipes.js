@@ -5,7 +5,7 @@ import {
   selectedFilterService,
   selectedRecipeService,
   visibleFilterService,
- } from 'services/recipeFilters'
+} from 'services/recipeFilters'
 
 // Actions
 const LOAD_RECIPES = 'recipes/loadRecipes'
@@ -27,6 +27,7 @@ const NOT_LOADING = 'recipes/notLoading'
 const HANDLE_FILTER = 'recipes/handleFilter'
 const HANDLE_FILTER_SUCCESS = 'recipes/handleFilterSuccess'
 const NO_TAGS = 'recipes/noTags'
+const CLEAR_FILTERS = 'recipes/clearFilters'
 
 // Reducer
 const initialState = {
@@ -61,7 +62,6 @@ export default function recipesReducer(state = initialState, action = {}) {
       return {
         ...state,
         selectedRecipes: action.payload.recipes.recipes,
-        // visibleFilterTags: action.payload.recipes.filterTags,
         recipesLoaded: true,
         loading: false,
         noRecipes: false,
@@ -129,6 +129,11 @@ export default function recipesReducer(state = initialState, action = {}) {
       return {
         ...state,
         noTags: true,
+      }
+    case CLEAR_FILTERS:
+      return {
+        ...state,
+        selectedFilters: [],
       }
     default:
       return state
@@ -266,6 +271,12 @@ export function noTagsFound() {
   }
 }
 
+export function clearFilters() {
+  return {
+    type: CLEAR_FILTERS,
+  }
+}
+
 export function handleFilter(id, checked) {
   return {
     type: HANDLE_FILTER,
@@ -299,7 +310,6 @@ export function* handleFilterTask({ payload: { id, checked } }) {
 }
 
 export function* loadRecipesTask({ payload }) {
-  // yield put(loadAllTags())
   const url = `/api/tags/${payload}/recipes`
   const result = yield call(callApi, url)
   if (result.success) {

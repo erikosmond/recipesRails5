@@ -16,9 +16,9 @@ const styles = () => ({
 })
 
 class IngredientTypeFilter extends React.Component {
-  // state = {
-  //   visible: false, // should be false
-  // };
+  state = {
+    checked: false,
+  }
 
   hasVisibleChildren = () => {
     const { childTags, visibleTags, id } = this.props
@@ -31,10 +31,6 @@ class IngredientTypeFilter extends React.Component {
       }
     }
     return false
-  }
-
-  state = {
-    checked: false,
   }
 
   handleChange = id => (event) => {
@@ -53,9 +49,8 @@ class IngredientTypeFilter extends React.Component {
         id,
         classes,
       } = this.props
-      // show id and label
       return (
-        <ExpansionPanel>
+        <ExpansionPanel expanded={this.state.expansionPanelOpen}>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
             <FormControlLabel
               control={

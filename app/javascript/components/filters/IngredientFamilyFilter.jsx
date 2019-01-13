@@ -16,47 +16,32 @@ const styles = () => ({
 })
 
 class IngredientFamilyFilter extends React.Component {
-  constructor(props) {
-    super(props)
-    this.familyIsVisible = this.familyIsVisible.bind(this)
+  state = {
+    checked: false,
   }
-
-  // state = {
-  //   visible: false,
-  // };
 
   hasVisibleChildren = () => {
     const { childTags, visibleTags } = this.props
-    return this.hasVisibleLevel(childTags, visibleTags)
-  }
-
-  hasVisibleLevel = (childTags, visibleTags) => {
     if (typeof (childTags) === 'object') {
-      const keys = Object.keys(childTags)
-      for (let ct = 0; ct < keys.length; ct += 1) {
-        const key = keys[ct]
-        const values = childTags[key]
-        if (visibleTags[key]) {
-          return true
-        } else if (values && values.length > 0) {
-          for (let ctv = 0; ctv < values.length; ctv += 1) {
-            if (visibleTags[values[ctv]]) {
-              return true
-            }
-          }
-        }
-      }
+      const tagList = Object.keys(childTags)
+      return this.hasVisibleLevel(tagList, visibleTags)
     }
     return false
   }
 
-  familyIsVisible = (bool) => {
-    // probably don't need this
-    this.setState({ visible: bool })
-  }
-
-  state = {
-    checked: false,
+  hasVisibleLevel = (childTags, visibleTags) => {
+    if (childTags.length > 0) {
+      for (let ct = 0; ct < childTags.length; ct += 1) {
+        const key = childTags[ct]
+        const values = childTags[key]
+        if (visibleTags[key]) {
+          return true
+        } else if (values && values.length > 0) {
+          return this.hasVisibleLevel(values, visibleTags)
+        }
+      }
+    }
+    return false
   }
 
   handleChange = id => (event) => {
@@ -99,7 +84,6 @@ class IngredientFamilyFilter extends React.Component {
                 allTags={allTags}
                 visibleTags={visibleTags}
                 handleFilter={handleFilter}
-                familyIsVisible={this.familyIsVisible}
               />
             ))}
           </ExpansionPanelDetails>
