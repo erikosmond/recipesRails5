@@ -19,6 +19,8 @@ const home = document.querySelector('#home')
 const myStore = {
   recipesReducer: {
     startingTagId: home.dataset.startingTagId,
+    allTags: JSON.parse(home.dataset.allTags),
+    tagGroups: JSON.parse(home.dataset.tagGroups),
   },
 }
 

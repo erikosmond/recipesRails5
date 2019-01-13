@@ -61,7 +61,7 @@ export default function recipesReducer(state = initialState, action = {}) {
       return {
         ...state,
         selectedRecipes: action.payload.recipes.recipes,
-        visibleFilterTags: action.payload.recipes.filterTags,
+        // visibleFilterTags: action.payload.recipes.filterTags,
         recipesLoaded: true,
         loading: false,
         noRecipes: false,
@@ -299,10 +299,12 @@ export function* handleFilterTask({ payload: { id, checked } }) {
 }
 
 export function* loadRecipesTask({ payload }) {
+  // yield put(loadAllTags())
   const url = `/api/tags/${payload}/recipes`
   const result = yield call(callApi, url)
   if (result.success) {
     yield put(loadRecipesSuccess({ recipes: result.data }))
+    yield put(handleFilter())
   } else {
     yield put(noRecipesFound())
   }

@@ -16,7 +16,7 @@ const FilterByIngredients = ({
     <FormGroup>
       {tagGroups && Object.keys(tagGroups).map(t => (
         <IngredientFamilyFilter
-          key={t[0]}
+          key={t}
           id={t}
           label={allTags[t]}
           handleFilter={handleFilter}

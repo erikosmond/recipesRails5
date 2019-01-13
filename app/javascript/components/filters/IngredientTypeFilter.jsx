@@ -1,60 +1,53 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import FormGroup from '@material-ui/core/FormGroup'
-import IngredientFilter from 'components/recipes/IngredientFilter'
+import IngredientFilter from 'components/filters/IngredientFilter'
 
 class IngredientTypeFilter extends React.Component {
-  constructor(props) {
-    super(props)
-    this.typeIsVisible = this.typeIsVisible.bind(this)
-  }
-
   state = {
-    visible: false,
+    visible: false, // should be false
   };
 
   hasVisibleChildren = () => {
-    const { childTags, visibleTags } = this.props
-    let vis = false
-    // update these to for loops, more efficient, won't require vis = vis ||
-    vis = vis || Object.keys(childTags).forEach((ct) => {
-      if (visibleTags.indexOf(ct) > -1) {
-        vis = vis || true
+    const { childTags, visibleTags, id } = this.props
+    if (visibleTags[id]) {
+      return true
+    }
+    for (let ct = 0, n = childTags.length; ct < n; ct += 1) {
+      if (visibleTags[childTags[ct]]) {
+        return true
       }
-      return vis
-    })
-    return vis
-  }
-
-  typeIsVisible = (bool) => {
-    // probably don't need this
-    this.setState({ visible: bool })
+    }
+    return false
   }
 
   render() {
-    if (this.state.visible || this.hasVisibleChildren) {
+    if (this.state.visible || this.hasVisibleChildren()) {
       const {
         visibleTags,
         allTags,
         childTags,
         handleFilter,
-        familyIsVisible,
+        id,
       } = this.props
       // show id and label
       return (
         <div>
-          {childTags.map(t => (
-            <IngredientFilter
-              key={t[0]}
-              id={t[0]}
-              label={t[1]}
-              allTags={allTags}
-              visibleTags={visibleTags}
-              handleFilter={handleFilter}
-              familyIsVisible={familyIsVisible}
-              typeIsVisible={this.typeIsVisible}
-            />
-        ))}
+          <div>
+            {`Ingredient Type ${allTags[id]}`}
+          </div>
+          <div>
+            {childTags.map(t => (
+              visibleTags[parseInt(t, 10)] &&
+                <IngredientFilter
+                  key={`${id}--${t}`}
+                  id={t}
+                  label={allTags[parseInt(t, 10)]}
+                  visibleTags={visibleTags}
+                  handleFilter={handleFilter}
+                />
+          ))}
+          </div>
         </div>
       )
     }
@@ -67,7 +60,6 @@ IngredientTypeFilter.propTypes = {
   label: PropTypes.string.isRequired,
   childTags: PropTypes.shape({}),
   handleFilter: PropTypes.func.isRequired,
-  familyIsVisible: PropTypes.func.isRequired,
   visibleTags: PropTypes.arrayOf.isRequired,
   allTags: PropTypes.shape({ id: PropTypes.number.isRequired }).isRequired,
 }
@@ -75,3 +67,5 @@ IngredientTypeFilter.propTypes = {
 IngredientTypeFilter.defaultProps = {
   childTags: [],
 }
+
+export default IngredientTypeFilter

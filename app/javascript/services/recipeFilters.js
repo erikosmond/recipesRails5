@@ -30,10 +30,10 @@ export function visibleFilterService(selectedRecipes = [], allTags = []) {
       })
     }
   })
-  Object.keys(visibleFilters).forEach((f) => {
+  Object.keys(visibleFilters).forEach((f) => { // should probably remove
     filterList.push([f, visibleFilters[f]])
   })
-  return filterList
+  return visibleFilters // filterList is old implementation
 }
 
 export function selectedRecipeService(selectedFilters, state) {

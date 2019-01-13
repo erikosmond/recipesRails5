@@ -35,8 +35,8 @@ module TagsService
 
   def group_grandparent_heirarchy_by_id(model_groups)
     model_groups.each_with_object({}) do |family, family_hash|
-      family_hash[family.id] = family.child_tags.each_with_object({}) do |type, type_hash|
-        type_hash[type.id] = type.child_tags.map(&:id).compact if type&.id
+      family_hash[family.id.to_s] = family.child_tags.each_with_object({}) do |type, type_hash|
+        type_hash[type.id.to_s] = type.child_tags.map(&:id).map(&:to_s).compact if type&.id
       end
     end
   end

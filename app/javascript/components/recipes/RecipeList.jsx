@@ -12,7 +12,6 @@ class RecipeList extends React.Component {
   static propTypes = {
     loadRecipes: PropTypes.func.isRequired,
     loadTagInfo: PropTypes.func.isRequired,
-    loadAllTags: PropTypes.func.isRequired,
     handleFilter: PropTypes.func.isRequired,
     selectedRecipes: PropTypes.arrayOf(PropTypes.shape({})),
     recipesLoaded: PropTypes.bool,
@@ -52,7 +51,6 @@ class RecipeList extends React.Component {
     const {
       loadRecipes,
       loadTagInfo,
-      loadAllTags,
       startingTagId,
       match,
     } = this.props
@@ -60,7 +58,6 @@ class RecipeList extends React.Component {
     if (tagId) {
       loadRecipes(tagId)
       loadTagInfo(tagId)
-      loadAllTags()
     } else if (startingTagId) {
       loadRecipes(startingTagId)
       loadTagInfo(startingTagId)
