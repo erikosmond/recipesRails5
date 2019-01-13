@@ -25,21 +25,16 @@ class IngredientFilter extends React.Component {
       label,
     } = this.props
     return (
-      <div>
-        <div>
-          {`Ingredient ${id}`}
-        </div>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={this.state.checked}
-              onChange={this.handleChange(id)}
-              value={id}
-            />
-          }
-          label={label}
-        />
-      </div>
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={this.state.checked}
+            onChange={this.handleChange(id)}
+            value={id}
+          />
+        }
+        label={label}
+      />
     )
   }
 }
