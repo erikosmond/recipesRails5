@@ -18,7 +18,6 @@ import { allIngredients } from 'services/recipes'
 const styles = () => ({
   card: {
     maxWidth: 400,
-    height: 'auto',
   },
 })
 

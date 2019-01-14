@@ -19,7 +19,11 @@ class RecipeList extends React.Component {
     tagGroups: PropTypes.shape({}).isRequired,
     allTags: PropTypes.shape({
       id: PropTypes.number.isRequired,
-    }),
+    }).isRequired,
+    allTagTypes: PropTypes.shape({
+      id: PropTypes.number.isRequired,
+    }).isRequired,
+    tagsByType: PropTypes.shape({}).isRequired,
     visibleFilterTags: PropTypes.arrayOf,
     noRecipes: PropTypes.bool.isRequired,
     startingTagId: PropTypes.string.isRequired,
@@ -39,7 +43,6 @@ class RecipeList extends React.Component {
     loading: true,
     selectedRecipes: [],
     visibleFilterTags: [],
-    allTags: {},
   }
 
   constructor(props) {
@@ -91,6 +94,8 @@ class RecipeList extends React.Component {
       allTags,
       tagGroups,
       handleFilter,
+      allTagTypes,
+      tagsByType,
     } = this.props
     if (loading) {
       return (<div> {'Loading...'} </div>)
@@ -124,6 +129,8 @@ class RecipeList extends React.Component {
           allTags={allTags}
           tagGroups={tagGroups}
           handleFilter={handleFilter}
+          allTagTypes={allTagTypes}
+          tagsByType={tagsByType}
         />
 
 

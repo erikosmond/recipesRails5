@@ -87,6 +87,11 @@ describe Tag do
       expect(Tag.ingredient_group_heirarchy_filters).to eq(expected)
     end
 
+    it 'returns tags_by_type' do
+      expected = { alteration.id => [modification1.id, modification2.id] }
+      expect(Tag.tags_by_type).to eq(expected)
+    end
+
     it 'groups its heirarchy' do
       expect(nut.tag_with_heirarchy_grouped).to eq expected_heirarchy_result
     end

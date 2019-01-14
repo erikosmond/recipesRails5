@@ -84,6 +84,7 @@ class IngredientFamilyFilter extends React.Component {
                 allTags={allTags}
                 visibleTags={visibleTags}
                 handleFilter={handleFilter}
+                selectable
               />
             ))}
           </ExpansionPanelDetails>

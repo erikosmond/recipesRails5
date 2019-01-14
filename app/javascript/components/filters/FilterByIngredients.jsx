@@ -3,12 +3,15 @@ import PropTypes from 'prop-types'
 import FormGroup from '@material-ui/core/FormGroup'
 import PaperContent from 'components/styled/PaperContent'
 import IngredientFamilyFilter from 'components/filters/IngredientFamilyFilter'
+import IngredientTypeFilter from 'components/filters/IngredientTypeFilter'
 
 const FilterByIngredients = ({
   visibleTags,
   handleFilter,
   allTags,
   tagGroups,
+  tagsByType,
+  allTagTypes,
 }) => (
   <PaperContent>
     Filters
@@ -24,6 +27,17 @@ const FilterByIngredients = ({
           childTags={tagGroups[t]}
         />
       ))}
+      {tagsByType && Object.keys(tagsByType).map(t => (
+        <IngredientTypeFilter
+          key={t[0]}
+          id={t}
+          label={allTagTypes[t]}
+          handleFilter={handleFilter}
+          visibleTags={visibleTags}
+          allTags={allTags}
+          childTags={tagsByType[t]}
+        />
+      ))}
     </FormGroup>
   </PaperContent>
 )
@@ -33,5 +47,7 @@ FilterByIngredients.propTypes = {
   handleFilter: PropTypes.func.isRequired,
   visibleTags: PropTypes.arrayOf.isRequired,
   allTags: PropTypes.shape({ id: PropTypes.number.isRequired }).isRequired,
+  allTagTypes: PropTypes.shape({}).isRequired,
   tagGroups: PropTypes.shape({}).isRequired,
+  tagsByType: PropTypes.shape({}).isRequired,
 }

@@ -48,11 +48,13 @@ class IngredientTypeFilter extends React.Component {
         handleFilter,
         id,
         classes,
+        selectable,
+        label,
       } = this.props
       return (
         <ExpansionPanel expanded={this.state.expansionPanelOpen}>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            <FormControlLabel
+            {selectable && <FormControlLabel
               control={
                 <Checkbox
                   checked={this.state.checked}
@@ -61,7 +63,8 @@ class IngredientTypeFilter extends React.Component {
                 />
               }
               label={allTags[id]}
-            />
+            />}
+            { !selectable && label }
           </ExpansionPanelSummary>
           <ExpansionPanelDetails className={classes.details}>
             {childTags.map(t => (
@@ -89,10 +92,14 @@ IngredientTypeFilter.propTypes = {
   handleFilter: PropTypes.func.isRequired,
   visibleTags: PropTypes.arrayOf.isRequired,
   allTags: PropTypes.shape({ id: PropTypes.number.isRequired }).isRequired,
+  selectable: PropTypes.bool,
+  label: PropTypes.string,
 }
 
 IngredientTypeFilter.defaultProps = {
   childTags: [],
+  selectable: false,
+  label: '',
 }
 
 export default withStyles(styles)(IngredientTypeFilter)

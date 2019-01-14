@@ -39,11 +39,11 @@ module Api
       end
 
       def tag_types(tag_type)
-        ingredients = %w[Ingredient IngredientType IngredientFamily]
+        ingredient_types = TagType::INGREDIENT_TYPES
         if tag_type.to_s.casecmp('ingredients').zero?
-          TagType.where(name: ingredients)
+          TagType.where(name: ingredient_types)
         elsif tag_type
-          TagType.where.not(name: ingredients)
+          TagType.where.not(name: ingredient_types)
         else
           TagType.all
         end

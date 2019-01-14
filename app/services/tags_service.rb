@@ -30,13 +30,24 @@ module TagsService
       current_ingredient = ingredient
     end
     all_families
-    # then also manage the non ingredient types (priority, rating, etc.)
+  end
+
+  def tags_by_type
+    ingredient_types = TagType::INGREDIENT_TYPES + ['IngredientCategory']
+    type_ids = TagType.where.not(name: ingredient_types).pluck(:id)
+    grouped_tags = Tag.select(%i[id tag_type_id]).where(tag_type_id: type_ids).
+                   map(&:as_json).group_by { |t| t['tag_type_id'] }
+    grouped_tags.each_with_object({}) do |(k, v), obj|
+      obj[k] = v.map { |t| t['id'] }
+    end
   end
 
   def group_grandparent_heirarchy_by_id(model_groups)
     model_groups.each_with_object({}) do |family, family_hash|
-      family_hash[family.id.to_s] = family.child_tags.each_with_object({}) do |type, type_hash|
-        type_hash[type.id.to_s] = type.child_tags.map(&:id).map(&:to_s).compact if type&.id
+      family_hash[family.id] = family.child_tags.each_with_object({}) do |type, type_hash|
+        if type&.id
+          type_hash[type.id] = type.child_tags.map(&:id).reject(&:blank?)
+        end
       end
     end
   end

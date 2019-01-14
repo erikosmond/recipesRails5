@@ -1,4 +1,5 @@
 class TagType < ApplicationRecord
+  INGREDIENT_TYPES = %w[Ingredient IngredientType IngredientFamily].freeze
   @mutex = Mutex.new
 
   has_many :tags, dependent: :destroy
