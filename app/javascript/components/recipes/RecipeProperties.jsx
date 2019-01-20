@@ -7,7 +7,7 @@ const RecipeProperties = (props) => {
   const { title, tags } = props
   return (
     <div>
-      {tags.length > 0 &&
+      {tags && tags.length > 0 &&
         <div>
           <Typography paragraph variant="body2">
             {title}

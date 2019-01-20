@@ -53,7 +53,5 @@ class TagSelection < ApplicationRecord
   validates :taggable_type, presence: true
   validates :taggable_id, presence: true
 
-  validates_uniqueness_of :tag_id, scope: %i[taggable_id taggable_type]
-
   accepts_nested_attributes_for :tag_attributes
 end

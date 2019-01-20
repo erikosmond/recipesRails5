@@ -4,7 +4,6 @@ import RecipeProperties from 'components/recipes/RecipeProperties'
 import RecipeInstructions from 'components/recipes/RecipeInstructions'
 import RecipeDescription from 'components/recipes/RecipeDescription'
 import { allIngredients } from 'services/recipes'
-// import Paper from '@material-ui/core/Paper'
 
 class Recipe extends React.Component {
   static propTypes = {
@@ -14,6 +13,7 @@ class Recipe extends React.Component {
       name: PropTypes.string.isRequired,
       ingredients: PropTypes.string.isRequired,
     }),
+    noRecipe: PropTypes.bool.isRequired,
     location: PropTypes.shape().isRequired,
     match: PropTypes.shape({
       params: PropTypes.shape({
@@ -71,12 +71,3 @@ class Recipe extends React.Component {
 }
 
 export default Recipe
-
-Recipe.propTypes = {
-  recipe: PropTypes.shape({
-    id: PropTypes.number,
-    name: PropTypes.string.isRequired,
-    ingredients: PropTypes.string.isRequired,
-  }),
-  noRecipe: PropTypes.bool.isRequired,
-}

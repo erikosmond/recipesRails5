@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module AssociatedTagsService
-  def tag_with_heirarchy_grouped
+  def tag_with_heirarchy_grouped(all_tags = false)
     tag_json = as_json(only: %i[id name description tag_type_id recipe_id])
     tag_groups.each do |tg|
       tag_json["#{tg}s"] = {}
     end
-    tag_with_heirarchy.each do |t|
+    tag_with_heirarchy(all_tags).each do |t|
       tag_groups.each do |g|
         group_tags(tag_json, t, g)
       end
@@ -14,12 +14,15 @@ module AssociatedTagsService
     tag_json
   end
 
-  def tag_with_heirarchy
-    Tag.select(
+  def tag_with_heirarchy(all_tags = false)
+    heirarchy = Tag.select(
       tag_heirarchy_select
     ).left_outer_joins(
       tag_heirarchy_join
-    ).where("tags.id = #{id}")
+    ).order('tags.id, child_tags.id, child_tags_child_tags.id')
+    return heirarchy if all_tags
+
+    heirarchy.where(tags: { id: id })
   end
 
   private
@@ -32,6 +35,7 @@ module AssociatedTagsService
 
     def tag_groups
       groups = %i[
+        tag
         child_tag
         parent_tag
         grandparent_tag
@@ -43,12 +47,14 @@ module AssociatedTagsService
     end
 
     def tag_heirarchy_select
-      selects = tag_heirarchy_select_children + tag_heirarchy_select_parents + [
-        'modifications_tag_selections.id modification_tag_id',
-        'modifications_tag_selections.name modification_tag_name'
-      ]
-      selects << tag_heirarchy_select_modified if modification_tag?
-      selects
+      cols = tag_heirarchy_select_children + tag_heirarchy_select_parents +
+             ['tags.id tag_id', 'tags.name tag_name', 'tag_types.id tag_type_id'] +
+             [
+               'modifications_tag_selections.id modification_tag_id',
+               'modifications_tag_selections.name modification_tag_name'
+             ]
+      cols << tag_heirarchy_select_modified if modification_tag?
+      cols
     end
 
     def tag_heirarchy_select_modified
@@ -78,6 +84,7 @@ module AssociatedTagsService
 
     def tag_heirarchy_join
       join_tables = [
+        :tag_type,
         child_tags: :child_tags,
         parent_tags: :parent_tags,
         tag_selections: :modifications

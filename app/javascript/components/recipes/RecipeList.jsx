@@ -1,16 +1,30 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import FilterByIngredients from 'components/filters/FilterByIngredients'
 import RecipeListItem from 'components/recipes/RecipeListItem'
 import RelatedTags from 'components/recipes/RelatedTags'
 import Paper from '@material-ui/core/Paper'
+import PaperContent from '../styled/PaperContent'
+
 
 class RecipeList extends React.Component {
   static propTypes = {
     loadRecipes: PropTypes.func.isRequired,
     loadTagInfo: PropTypes.func.isRequired,
+    handleFilter: PropTypes.func.isRequired,
+    clearFilters: PropTypes.func.isRequired,
     selectedRecipes: PropTypes.arrayOf(PropTypes.shape({})),
     recipesLoaded: PropTypes.bool,
     loading: PropTypes.bool,
+    tagGroups: PropTypes.shape({}).isRequired,
+    allTags: PropTypes.shape({
+      id: PropTypes.number.isRequired,
+    }).isRequired,
+    allTagTypes: PropTypes.shape({
+      id: PropTypes.number.isRequired,
+    }).isRequired,
+    tagsByType: PropTypes.shape({}).isRequired,
+    visibleFilterTags: PropTypes.arrayOf,
     noRecipes: PropTypes.bool.isRequired,
     startingTagId: PropTypes.string.isRequired,
     selectedTag: PropTypes.shape({}).isRequired,
@@ -28,6 +42,7 @@ class RecipeList extends React.Component {
     recipesLoaded: false,
     loading: true,
     selectedRecipes: [],
+    visibleFilterTags: [],
   }
 
   constructor(props) {
@@ -56,12 +71,17 @@ class RecipeList extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.location !== this.props.location) {
+      nextProps.clearFilters()
       const { tagId } = nextProps.match.params
       if (tagId) {
         nextProps.loadRecipes(tagId)
         nextProps.loadTagInfo(tagId)
       }
     }
+  }
+
+  componentWillUnmount() {
+    this.props.clearFilters()
   }
 
   render() {
@@ -71,6 +91,12 @@ class RecipeList extends React.Component {
       selectedTag,
       noRecipes,
       loading,
+      visibleFilterTags,
+      allTags,
+      tagGroups,
+      handleFilter,
+      allTagTypes,
+      tagsByType,
     } = this.props
     if (loading) {
       return (<div> {'Loading...'} </div>)
@@ -99,11 +125,21 @@ class RecipeList extends React.Component {
           <RelatedTags tags={selectedTag.modifiedTags} />
         </Paper>
 
-        <Paper>
+        <FilterByIngredients
+          visibleTags={visibleFilterTags}
+          allTags={allTags}
+          tagGroups={tagGroups}
+          handleFilter={handleFilter}
+          allTagTypes={allTagTypes}
+          tagsByType={tagsByType}
+        />
+
+
+        <PaperContent>
           {selectedRecipes.map(r => (
             <RecipeListItem key={r.id} recipe={r} />
           ))}
-        </Paper>
+        </PaperContent>
       </div>
     )
   }

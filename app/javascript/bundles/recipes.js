@@ -1,10 +1,18 @@
-import { put, call } from 'redux-saga/effects'
+import { put, call, select } from 'redux-saga/effects'
+import { startSubmit, stopSubmit, getFormValues } from 'redux-form'
 import { takeLatest, takeEvery } from 'redux-saga'
 import { callApi } from 'services/rest'
+import {
+  selectedFilterService,
+  selectedRecipeService,
+  visibleFilterService,
+} from 'services/recipeFilters'
 
 // Actions
 const LOAD_RECIPES = 'recipes/loadRecipes'
 const LOAD_RECIPES_SUCCESS = 'recipes/loadRecipesSuccess'
+const LOAD_ALL_TAGS = 'recipes/loadAllTags'
+const LOAD_ALL_TAGS_SUCCESS = 'recipes/loadAllTagsSuccess'
 const LOAD_TAG_INFO = 'recipes/loadTagInfo'
 const LOAD_TAG_INFO_SUCCESS = 'recipes/loadTagInfoSuccess'
 const NO_RECIPES_FOUND = 'recipes/noRecipesFound'
@@ -17,14 +25,23 @@ const LOAD_INGREDIENT_OPTIONS = 'recipes/loadIngredientOptions'
 const LOAD_INGREDIENT_OPTIONS_SUCCESS = 'recipes/loadIngredientOptionsSuccess'
 const NO_RECIPE_FOUND = 'recipes/noRecipeFound'
 const NOT_LOADING = 'recipes/notLoading'
+const HANDLE_FILTER = 'recipes/handleFilter'
+const HANDLE_FILTER_SUCCESS = 'recipes/handleFilterSuccess'
+const NO_TAGS = 'recipes/noTags'
+const CLEAR_FILTERS = 'recipes/clearFilters'
 
 // Reducer
 const initialState = {
   selectedRecipes: [],
+  selectedFilters: [],
   selectedTag: {},
   recipeOptions: [],
+  visibleFilterTags: [],
+  allTags: {},
+  tagGroups: {},
   recipesLoaded: false,
   noRecipes: false,
+  noTags: false,
   loading: true,
 }
 
@@ -55,6 +72,12 @@ export default function recipesReducer(state = initialState, action = {}) {
         ...state,
         loading: false,
         selectedTag: action.payload.tag,
+      }
+    case LOAD_ALL_TAGS_SUCCESS:
+      return {
+        ...state,
+        allTags: action.payload.tags,
+        tagGroups: action.payload.tagGroups,
       }
     case NO_RECIPES_FOUND:
       return {
@@ -96,6 +119,23 @@ export default function recipesReducer(state = initialState, action = {}) {
         ...state,
         loading: false,
       }
+    case HANDLE_FILTER_SUCCESS:
+      return {
+        ...state,
+        selectedRecipes: action.payload.selectedRecipes,
+        selectedFilters: action.payload.selectedFilters,
+        visibleFilterTags: action.payload.visibleFilters,
+      }
+    case NO_TAGS:
+      return {
+        ...state,
+        noTags: true,
+      }
+    case CLEAR_FILTERS:
+      return {
+        ...state,
+        selectedFilters: [],
+      }
     default:
       return state
   }
@@ -130,6 +170,22 @@ export function loadTagInfoSuccess({ tag }) {
     type: LOAD_TAG_INFO_SUCCESS,
     payload: {
       tag,
+    },
+  }
+}
+
+export function loadAllTags() {
+  return {
+    type: LOAD_ALL_TAGS,
+  }
+}
+
+export function loadAllTagsSuccess({ tags, tagGroups }) {
+  return {
+    type: LOAD_ALL_TAGS_SUCCESS,
+    payload: {
+      tags,
+      tagGroups,
     },
   }
 }
@@ -210,13 +266,56 @@ export function notLoading() {
   }
 }
 
+export function noTagsFound() {
+  return {
+    type: NO_TAGS,
+  }
+}
+
+export function clearFilters() {
+  return {
+    type: CLEAR_FILTERS,
+  }
+}
+
+export function handleFilter(id, checked) {
+  return {
+    type: HANDLE_FILTER,
+    payload: {
+      id,
+      checked,
+    },
+  }
+}
+
+export function handleFilterSuccess(selectedRecipes, selectedFilters, visibleFilters) {
+  return {
+    type: HANDLE_FILTER_SUCCESS,
+    payload: {
+      selectedRecipes,
+      selectedFilters,
+      visibleFilters,
+    },
+  }
+}
+
 // Saga
+
+export function* handleFilterTask({ payload: { id, checked } }) {
+  const selectRecipes = store => store.recipesReducer
+  const recipesState = yield select(selectRecipes)
+  const selectedFilters = yield call(selectedFilterService, id, checked, recipesState)
+  const selectedRecipes = yield call(selectedRecipeService, selectedFilters, recipesState)
+  const visibleFilters = yield call(visibleFilterService, selectedRecipes, recipesState.allTags)
+  yield put(handleFilterSuccess(selectedRecipes, selectedFilters, visibleFilters))
+}
 
 export function* loadRecipesTask({ payload }) {
   const url = `/api/tags/${payload}/recipes`
   const result = yield call(callApi, url)
   if (result.success) {
     yield put(loadRecipesSuccess({ recipes: result.data }))
+    yield put(handleFilter())
   } else {
     yield put(noRecipesFound())
   }
@@ -229,6 +328,26 @@ export function* loadTagInfoTask({ payload }) {
     yield put(loadTagInfoSuccess({ tag: result.data }))
   } else {
     yield put(noRecipesFound())
+  }
+}
+
+export function* loadAllTagsTask() {
+  const selectRecipes = store => store.recipesReducer
+  const recipesState = yield select(selectRecipes)
+  const { allTags } = recipesState
+  if (!allTags || allTags.length === 0) {
+    const url = '/api/tags'
+    const result = yield call(callApi, url)
+    if (result.success) {
+      const tagObj = {}
+      result.data.tags.forEach((t) => {
+        tagObj[t.value] = t.label
+      })
+      const { tagGroups } = result.data
+      yield put(loadAllTagsSuccess({ tags: tagObj, tagGroups }))
+    } else {
+      yield put(noTagsFound())
+    }
   }
 }
 
@@ -257,14 +376,15 @@ export function* loadIngredientOptionsTask({ payload }) {
   const result = yield call(callApi, url)
   if (result.success) {
     if (payload.ingredientType === 'Ingredients') {
-      yield put(loadIngredientOptionsSuccess({ ingredientOptions: result.data }))
+      yield put(loadIngredientOptionsSuccess({ ingredientOptions: result.data.tags }))
     } else {
-      yield put(loadCategoryOptionsSuccess({ ingredientOptions: result.data }))
+      yield put(loadCategoryOptionsSuccess({ ingredientOptions: result.data.tags }))
     }
   } else {
     yield put(notLoading())
   }
 }
+
 /* recipes */
 
 export function* recipesSaga() {
@@ -272,5 +392,7 @@ export function* recipesSaga() {
   yield takeLatest(LOAD_TAG_INFO, loadTagInfoTask)
   yield takeLatest(LOAD_RECIPE, loadRecipeTask)
   yield takeLatest(LOAD_RECIPE_OPTIONS, loadRecipeOptionsTask)
+  yield takeLatest(HANDLE_FILTER, handleFilterTask)
+  yield takeLatest(LOAD_ALL_TAGS, loadAllTagsTask)
   yield takeEvery(LOAD_INGREDIENT_OPTIONS, loadIngredientOptionsTask)
 }

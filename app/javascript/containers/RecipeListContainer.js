@@ -3,7 +3,13 @@ import { withRouter } from 'react-router-dom'
 
 import RecipeList from 'components/recipes/RecipeList'
 
-import { loadRecipes, loadTagInfo } from 'bundles/recipes'
+import {
+  loadRecipes,
+  loadTagInfo,
+  handleFilter,
+  loadAllTags,
+  clearFilters,
+} from 'bundles/recipes'
 
 export default withRouter(connect(
   state => ({
@@ -13,9 +19,17 @@ export default withRouter(connect(
     noRecipes: state.recipesReducer.noRecipes,
     startingTagId: state.recipesReducer.startingTagId,
     loading: state.recipesReducer.loading,
+    visibleFilterTags: state.recipesReducer.visibleFilterTags,
+    allTags: state.recipesReducer.allTags,
+    tagGroups: state.recipesReducer.tagGroups,
+    allTagTypes: state.recipesReducer.allTagTypes,
+    tagsByType: state.recipesReducer.tagsByType,
   }),
   {
     loadRecipes,
+    loadAllTags,
     loadTagInfo,
+    handleFilter,
+    clearFilters,
   },
 )(RecipeList))

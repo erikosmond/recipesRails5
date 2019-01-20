@@ -31,6 +31,7 @@ services:
     environment:
       - DB_PASSWORD="${DB_PASSWORD}"
       - WEBPACK_PORT="${WEBPACK_PORT}"
+      - SIGNUP_CODES=${SIGNUP_CODES}
     volumes:
       - .:/recipes
       - packs:/recipes/public/packs

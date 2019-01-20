@@ -1,2 +1,9 @@
-<div id='home' data-starting-tag-id="<%= @home_tag_id %>"></div>
+<div
+  id='home'
+  data-starting-tag-id="<%= @home_tag_id %>"
+  data-all-tags="<%= @all_tags %>"
+  data-tag-groups="<%= @tag_groups %>"
+  data-tags-by-type="<%= @tags_by_type %>"
+  data-all-tag-types="<%= @all_tag_types %>"
+/>
 <%= javascript_pack_tag 'Home' %>
