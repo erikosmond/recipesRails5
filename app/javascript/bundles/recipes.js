@@ -1,4 +1,5 @@
 import { put, call, select } from 'redux-saga/effects'
+import { startSubmit, stopSubmit, getFormValues } from 'redux-form'
 import { takeLatest, takeEvery } from 'redux-saga'
 import { callApi } from 'services/rest'
 import {
@@ -28,6 +29,7 @@ const HANDLE_FILTER = 'recipes/handleFilter'
 const HANDLE_FILTER_SUCCESS = 'recipes/handleFilterSuccess'
 const NO_TAGS = 'recipes/noTags'
 const CLEAR_FILTERS = 'recipes/clearFilters'
+const USER_SIGNUP = 'users/signup'
 
 // Reducer
 const initialState = {
@@ -277,6 +279,15 @@ export function clearFilters() {
   }
 }
 
+export function handleSignupSubmit(formName) {
+  return {
+    type: USER_SIGNUP,
+    payload: {
+      formName,
+    }
+  }
+}
+
 export function handleFilter(id, checked) {
   return {
     type: HANDLE_FILTER,
@@ -383,6 +394,31 @@ export function* loadIngredientOptionsTask({ payload }) {
     yield put(notLoading())
   }
 }
+
+export function* userSignupTask({ payload: { formName } }) {
+  debugger
+  const form = yield select(getFormValues(formName))
+  yield put(startSubmit(formName))
+
+  const url = '/users'
+  const method = 'POST'
+
+  const result = yield call(callApi, url, { data: form, method })
+
+  if (result.success) {
+    const errors = {}
+    yield put(stopSubmit(formName, errors))
+    debugger
+    // yield put({ type: callback, payload: { result: result.data, formData: form } })
+  } else if (result.data.validationErrors) {
+    // const serverValidationErrors = convertServerValidation(result.data.validationErrors)
+    debugger
+    // yield put(stopSubmit(formName, serverValidationErrors))
+  } else {
+    console.log('failed to save')
+    // yield call(showFlashMessage, 'Failed to save.', 'error')
+  }
+}
 /* recipes */
 
 export function* recipesSaga() {
@@ -393,4 +429,5 @@ export function* recipesSaga() {
   yield takeLatest(HANDLE_FILTER, handleFilterTask)
   yield takeLatest(LOAD_ALL_TAGS, loadAllTagsTask)
   yield takeEvery(LOAD_INGREDIENT_OPTIONS, loadIngredientOptionsTask)
+  yield takeLatest(USER_SIGNUP, userSignupTask)
 }

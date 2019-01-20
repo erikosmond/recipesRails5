@@ -71,6 +71,7 @@ class RecipeList extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.location !== this.props.location) {
+      nextProps.clearFilters()
       const { tagId } = nextProps.match.params
       if (tagId) {
         nextProps.loadRecipes(tagId)

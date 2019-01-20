@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PagesController < ApplicationController
   def home
     starting_tag = Tag.find_by_name('On Deck') || Tag.first

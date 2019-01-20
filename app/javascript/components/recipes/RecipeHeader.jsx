@@ -46,7 +46,7 @@ const RecipeHeader = (props) => {
       <HeaderDropdown
         dropdownOptions={categoryOptions}
         loadOptions={loadIngredientOptions}
-        placeholder="Categories"
+        placeholder="More"
         updateHistory={updateTags}
       />
     </StyledHeader>
