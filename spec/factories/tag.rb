@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :tag do
     tag_type
-    name 'Mint'
+    name { 'Mint' }
   end
 end

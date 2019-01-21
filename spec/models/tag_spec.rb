@@ -56,6 +56,10 @@ describe Tag do
     let(:modification2) { create(:tag, tag_type: alteration, name: modification_name2) }
     let!(:tag_selection_mod1) { create(:tag_selection, tag: modification1, taggable: tag_selection4) }
     let!(:tag_selection_mod2) { create(:tag_selection, tag: modification2, taggable: tag_selection4) }
+    let!(:user) { create(:user) }
+    let!(:access1) { create(:access, user: user, accessible: vesper) }
+    let!(:access2) { create(:access, user: user, accessible: martini) }
+    let!(:access3) { create(:access, user: user, accessible: manhattan) }
 
     let(:expected_heirarchy_result) do
       {
@@ -122,26 +126,26 @@ describe Tag do
       expect(protein.child_tags.first.class.name).to eq('ChildTag')
       expect(protein.grandchild_tags.first.name).to eq('Almond')
       expect(protein.grandchild_tags.first.class.name).to eq('GrandchildTag')
-      expect(protein.grandchild_recipes_with_detail.to_a.size).to eq(1)
-      expect(protein.grandchild_recipes_with_detail.first['recipe_id']).to eq(martini.id)
+      expect(protein.grandchild_recipes_with_detail(user).to_a.size).to eq(1)
+      expect(protein.grandchild_recipes_with_detail(user).first['recipe_id']).to eq(martini.id)
     end
     it 'assigns child recipe to family' do
-      expect(protein.child_recipes_with_detail.to_a.size).to eq(2)
-      expect(protein.child_recipes_with_detail.first['recipe_id']).to eq(vesper.id)
-      expect(protein.child_recipes_with_detail.second['recipe_id']).to eq(vesper.id)
+      expect(protein.child_recipes_with_detail(user).to_a.size).to eq(2)
+      expect(protein.child_recipes_with_detail(user).first['recipe_id']).to eq(vesper.id)
+      expect(protein.child_recipes_with_detail(user).second['recipe_id']).to eq(vesper.id)
     end
     it 'assigns own recipe to family' do
-      expect(protein.recipes_with_detail.to_a.size).to eq(1)
-      expect(protein.recipes_with_detail.first['recipe_id']).to eq(manhattan.id)
+      expect(protein.recipes_with_detail(user).to_a.size).to eq(1)
+      expect(protein.recipes_with_detail(user).first['recipe_id']).to eq(manhattan.id)
     end
     it 'assigns child recipe to type' do
-      expect(nut.child_recipes_with_detail.to_a.size).to eq(1)
-      expect(nut.child_recipes_with_detail.first['recipe_id']).to eq(martini.id)
+      expect(nut.child_recipes_with_detail(user).to_a.size).to eq(1)
+      expect(nut.child_recipes_with_detail(user).first['recipe_id']).to eq(martini.id)
     end
     it 'assigns own recipe to type' do
-      expect(nut.recipes_with_detail.to_a.size).to eq(2)
-      expect(nut.recipes_with_detail.first['recipe_id']).to eq(vesper.id)
-      expect(nut.recipes_with_detail.second['recipe_id']).to eq(vesper.id)
+      expect(nut.recipes_with_detail(user).to_a.size).to eq(2)
+      expect(nut.recipes_with_detail(user).first['recipe_id']).to eq(vesper.id)
+      expect(nut.recipes_with_detail(user).second['recipe_id']).to eq(vesper.id)
     end
   end
 
@@ -193,7 +197,10 @@ describe Tag do
     let!(:tag_selection2bb) { create(:tag_selection, tag: ingredient1_family, taggable: ingredient1_type) }
     let!(:tag_attribute) { create(:tag_attribute, property: property, value: value, tag_attributable: tag_selection2b) }
     let!(:tag_selection_mod) { create(:tag_selection, tag: modification, taggable: tag_selection2b) }
-    let!(:recipes) { tag_subject.recipes_with_detail }
+    let!(:user) { create(:user) }
+    let!(:access1) { create(:access, user: user, accessible: recipe1) }
+    let!(:access2) { create(:access, user: user, accessible: recipe2) }
+    let!(:recipes) { tag_subject.recipes_with_detail(user) }
 
     describe '#collect_tag_ids' do
       let(:tag_subject) { create(:tag, name: 'Lemon Verbena', tag_type: tag_type_ingredient_type) }
@@ -217,7 +224,7 @@ describe Tag do
         expect(tag_subject.filter_tags(recipes) - array_list).to eq([])
       end
       it 'returns recipe level detail for ingredients' do
-        expect(tag_subject.recipe_detail_level.map(&:id).uniq).to eq(detail_ids)
+        expect(tag_subject.recipe_detail_level(user).map(&:id).uniq).to eq(detail_ids)
       end
     end
 
@@ -246,7 +253,7 @@ describe Tag do
         expect(tag_subject.filter_tags(recipes) - filter_array).to eq([])
       end
       it 'returns recipe level detail for modification' do
-        expect(tag_subject.recipe_detail_level.map(&:id).uniq.sort).to eq(detail_ids.sort)
+        expect(tag_subject.recipe_detail_level(user).map(&:id).uniq.sort).to eq(detail_ids.sort)
       end
     end
 
