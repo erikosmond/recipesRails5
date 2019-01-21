@@ -1,15 +1,9 @@
---
--- PostgreSQL database dump
---
-
--- Dumped from database version 10.1
--- Dumped by pg_dump version 10.1
-
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
@@ -28,8 +22,6 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
-SET search_path = public, pg_catalog;
-
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -38,7 +30,7 @@ SET default_with_oids = false;
 -- Name: accesses; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE accesses (
+CREATE TABLE public.accesses (
     id bigint NOT NULL,
     accessible_type character varying NOT NULL,
     accessible_id integer NOT NULL,
@@ -53,7 +45,7 @@ CREATE TABLE accesses (
 -- Name: accesses_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE accesses_id_seq
+CREATE SEQUENCE public.accesses_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -63,15 +55,16 @@ CREATE SEQUENCE accesses_id_seq
 
 --
 -- Name: accesses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
 
-ALTER SEQUENCE accesses_id_seq OWNED BY accesses.id;
+ALTER SEQUENCE public.accesses_id_seq OWNED BY public.accesses.id;
 
 
 --
 -- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE ar_internal_metadata (
+CREATE TABLE public.ar_internal_metadata (
     key character varying NOT NULL,
     value character varying,
     created_at timestamp without time zone NOT NULL,
@@ -83,7 +76,7 @@ CREATE TABLE ar_internal_metadata (
 -- Name: tags; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE tags (
+CREATE TABLE public.tags (
     id bigint NOT NULL,
     name character varying NOT NULL,
     description character varying,
@@ -98,7 +91,7 @@ CREATE TABLE tags (
 -- Name: child_tags; Type: VIEW; Schema: public; Owner: -
 --
 
-CREATE VIEW child_tags AS
+CREATE VIEW public.child_tags AS
  SELECT tags.id,
     tags.name,
     tags.description,
@@ -106,14 +99,14 @@ CREATE VIEW child_tags AS
     tags.recipe_id,
     tags.created_at,
     tags.updated_at
-   FROM tags;
+   FROM public.tags;
 
 
 --
 -- Name: grandchild_tags; Type: VIEW; Schema: public; Owner: -
 --
 
-CREATE VIEW grandchild_tags AS
+CREATE VIEW public.grandchild_tags AS
  SELECT tags.id,
     tags.name,
     tags.description,
@@ -121,14 +114,14 @@ CREATE VIEW grandchild_tags AS
     tags.recipe_id,
     tags.created_at,
     tags.updated_at
-   FROM tags;
+   FROM public.tags;
 
 
 --
 -- Name: recipes; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE recipes (
+CREATE TABLE public.recipes (
     id bigint NOT NULL,
     name character varying NOT NULL,
     description text,
@@ -142,7 +135,7 @@ CREATE TABLE recipes (
 -- Name: recipes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE recipes_id_seq
+CREATE SEQUENCE public.recipes_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -154,14 +147,14 @@ CREATE SEQUENCE recipes_id_seq
 -- Name: recipes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE recipes_id_seq OWNED BY recipes.id;
+ALTER SEQUENCE public.recipes_id_seq OWNED BY public.recipes.id;
 
 
 --
 -- Name: roles; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE roles (
+CREATE TABLE public.roles (
     id bigint NOT NULL,
     name character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
@@ -173,7 +166,7 @@ CREATE TABLE roles (
 -- Name: roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE roles_id_seq
+CREATE SEQUENCE public.roles_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -185,22 +178,37 @@ CREATE SEQUENCE roles_id_seq
 -- Name: roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
+ALTER SEQUENCE public.roles_id_seq OWNED BY public.roles.id;
 
 
 --
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
-CREATE TABLE schema_migrations (
+
+CREATE TABLE public.schema_migrations (
     version character varying NOT NULL
 );
+
+
+--
+-- Name: selected_recipes; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.selected_recipes AS
+ SELECT recipes.id,
+    recipes.name,
+    recipes.description,
+    recipes.instructions,
+    recipes.created_at,
+    recipes.updated_at
+   FROM public.recipes;
 
 
 --
 -- Name: tag_attributes; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE tag_attributes (
+CREATE TABLE public.tag_attributes (
     id bigint NOT NULL,
     tag_attributable_id integer NOT NULL,
     tag_attributable_type character varying NOT NULL,
@@ -215,7 +223,7 @@ CREATE TABLE tag_attributes (
 -- Name: tag_attributes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE tag_attributes_id_seq
+CREATE SEQUENCE public.tag_attributes_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -227,14 +235,14 @@ CREATE SEQUENCE tag_attributes_id_seq
 -- Name: tag_attributes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE tag_attributes_id_seq OWNED BY tag_attributes.id;
+ALTER SEQUENCE public.tag_attributes_id_seq OWNED BY public.tag_attributes.id;
 
 
 --
 -- Name: tag_selections; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE tag_selections (
+CREATE TABLE public.tag_selections (
     id bigint NOT NULL,
     tag_id bigint NOT NULL,
     taggable_type character varying NOT NULL,
@@ -248,7 +256,8 @@ CREATE TABLE tag_selections (
 --
 -- Name: tag_selections_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
-CREATE SEQUENCE tag_selections_id_seq
+
+CREATE SEQUENCE public.tag_selections_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -260,14 +269,14 @@ CREATE SEQUENCE tag_selections_id_seq
 -- Name: tag_selections_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE tag_selections_id_seq OWNED BY tag_selections.id;
+ALTER SEQUENCE public.tag_selections_id_seq OWNED BY public.tag_selections.id;
 
 
 --
 -- Name: tag_types; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE tag_types (
+CREATE TABLE public.tag_types (
     id bigint NOT NULL,
     name character varying NOT NULL,
     description character varying,
@@ -280,7 +289,7 @@ CREATE TABLE tag_types (
 -- Name: tag_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE tag_types_id_seq
+CREATE SEQUENCE public.tag_types_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -292,14 +301,14 @@ CREATE SEQUENCE tag_types_id_seq
 -- Name: tag_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE tag_types_id_seq OWNED BY tag_types.id;
+ALTER SEQUENCE public.tag_types_id_seq OWNED BY public.tag_types.id;
 
 
 --
 -- Name: tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE tags_id_seq
+CREATE SEQUENCE public.tags_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -311,14 +320,14 @@ CREATE SEQUENCE tags_id_seq
 -- Name: tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE tags_id_seq OWNED BY tags.id;
+ALTER SEQUENCE public.tags_id_seq OWNED BY public.tags.id;
 
 
 --
 -- Name: user_roles; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE user_roles (
+CREATE TABLE public.user_roles (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
     role_id bigint NOT NULL,
@@ -331,7 +340,7 @@ CREATE TABLE user_roles (
 -- Name: user_roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE user_roles_id_seq
+CREATE SEQUENCE public.user_roles_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -343,14 +352,14 @@ CREATE SEQUENCE user_roles_id_seq
 -- Name: user_roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE user_roles_id_seq OWNED BY user_roles.id;
+ALTER SEQUENCE public.user_roles_id_seq OWNED BY public.user_roles.id;
 
 
 --
 -- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE users (
+CREATE TABLE public.users (
     id bigint NOT NULL,
     email character varying DEFAULT ''::character varying NOT NULL,
     encrypted_password character varying DEFAULT ''::character varying NOT NULL,
@@ -374,7 +383,7 @@ CREATE TABLE users (
 -- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE users_id_seq
+CREATE SEQUENCE public.users_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -386,74 +395,77 @@ CREATE SEQUENCE users_id_seq
 -- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE users_id_seq OWNED BY users.id;
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
 -- Name: accesses id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY accesses ALTER COLUMN id SET DEFAULT nextval('accesses_id_seq'::regclass);
+ALTER TABLE ONLY public.accesses ALTER COLUMN id SET DEFAULT nextval('public.accesses_id_seq'::regclass);
 
 
 --
 -- Name: recipes id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY recipes ALTER COLUMN id SET DEFAULT nextval('recipes_id_seq'::regclass);
+ALTER TABLE ONLY public.recipes ALTER COLUMN id SET DEFAULT nextval('public.recipes_id_seq'::regclass);
 
 
 --
 -- Name: roles id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regclass);
+ALTER TABLE ONLY public.roles ALTER COLUMN id SET DEFAULT nextval('public.roles_id_seq'::regclass);
 
 
 --
 -- Name: tag_attributes id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY tag_attributes ALTER COLUMN id SET DEFAULT nextval('tag_attributes_id_seq'::regclass);
+ALTER TABLE ONLY public.tag_attributes ALTER COLUMN id SET DEFAULT nextval('public.tag_attributes_id_seq'::regclass);
 
 
 --
 -- Name: tag_selections id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY tag_selections ALTER COLUMN id SET DEFAULT nextval('tag_selections_id_seq'::regclass);
+ALTER TABLE ONLY public.tag_selections ALTER COLUMN id SET DEFAULT nextval('public.tag_selections_id_seq'::regclass);
 
 
 --
 -- Name: tag_types id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY tag_types ALTER COLUMN id SET DEFAULT nextval('tag_types_id_seq'::regclass);
+ALTER TABLE ONLY public.tag_types ALTER COLUMN id SET DEFAULT nextval('public.tag_types_id_seq'::regclass);
 
 
 --
 -- Name: tags id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY tags ALTER COLUMN id SET DEFAULT nextval('tags_id_seq'::regclass);
+ALTER TABLE ONLY public.tags ALTER COLUMN id SET DEFAULT nextval('public.tags_id_seq'::regclass);
+
+
+--
 -- Name: user_roles id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY user_roles ALTER COLUMN id SET DEFAULT nextval('user_roles_id_seq'::regclass);
+ALTER TABLE ONLY public.user_roles ALTER COLUMN id SET DEFAULT nextval('public.user_roles_id_seq'::regclass);
 
 
 --
 -- Name: users id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
 
 
 --
 -- Name: accesses accesses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY accesses
+ALTER TABLE ONLY public.accesses
     ADD CONSTRAINT accesses_pkey PRIMARY KEY (id);
 
 
@@ -461,7 +473,7 @@ ALTER TABLE ONLY accesses
 -- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY ar_internal_metadata
+ALTER TABLE ONLY public.ar_internal_metadata
     ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
 
 
@@ -469,7 +481,7 @@ ALTER TABLE ONLY ar_internal_metadata
 -- Name: recipes recipes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY recipes
+ALTER TABLE ONLY public.recipes
     ADD CONSTRAINT recipes_pkey PRIMARY KEY (id);
 
 
@@ -477,7 +489,7 @@ ALTER TABLE ONLY recipes
 -- Name: roles roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY roles
+ALTER TABLE ONLY public.roles
     ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
 
 
@@ -485,7 +497,7 @@ ALTER TABLE ONLY roles
 -- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY schema_migrations
+ALTER TABLE ONLY public.schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
 
 
@@ -493,14 +505,15 @@ ALTER TABLE ONLY schema_migrations
 -- Name: tag_attributes tag_attributes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY tag_attributes
+ALTER TABLE ONLY public.tag_attributes
     ADD CONSTRAINT tag_attributes_pkey PRIMARY KEY (id);
 
 
 --
 -- Name: tag_selections tag_selections_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
-ALTER TABLE ONLY tag_selections
+
+ALTER TABLE ONLY public.tag_selections
     ADD CONSTRAINT tag_selections_pkey PRIMARY KEY (id);
 
 
@@ -508,7 +521,7 @@ ALTER TABLE ONLY tag_selections
 -- Name: tag_types tag_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY tag_types
+ALTER TABLE ONLY public.tag_types
     ADD CONSTRAINT tag_types_pkey PRIMARY KEY (id);
 
 
@@ -516,7 +529,7 @@ ALTER TABLE ONLY tag_types
 -- Name: tags tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY tags
+ALTER TABLE ONLY public.tags
     ADD CONSTRAINT tags_pkey PRIMARY KEY (id);
 
 
@@ -524,7 +537,7 @@ ALTER TABLE ONLY tags
 -- Name: user_roles user_roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY user_roles
+ALTER TABLE ONLY public.user_roles
     ADD CONSTRAINT user_roles_pkey PRIMARY KEY (id);
 
 
@@ -532,7 +545,7 @@ ALTER TABLE ONLY user_roles
 -- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY users
+ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
 
@@ -540,116 +553,117 @@ ALTER TABLE ONLY users
 -- Name: index_accesses_on_accessible_id_and_accessible_type; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_accesses_on_accessible_id_and_accessible_type ON accesses USING btree (accessible_id, accessible_type);
+CREATE UNIQUE INDEX index_accesses_on_accessible_id_and_accessible_type ON public.accesses USING btree (accessible_id, accessible_type);
 
 
 --
 -- Name: index_accesses_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_accesses_on_user_id ON accesses USING btree (user_id);
+CREATE INDEX index_accesses_on_user_id ON public.accesses USING btree (user_id);
 
 
 --
 -- Name: index_recipes_on_name; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_recipes_on_name ON recipes USING btree (name);
+CREATE INDEX index_recipes_on_name ON public.recipes USING btree (name);
 
 
 --
 -- Name: index_tag_attributes_on_attributable; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_tag_attributes_on_attributable ON tag_attributes USING btree (tag_attributable_id, tag_attributable_type);
+CREATE INDEX index_tag_attributes_on_attributable ON public.tag_attributes USING btree (tag_attributable_id, tag_attributable_type);
+
+
 --
 -- Name: index_tag_selections_on_tag_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_tag_selections_on_tag_id ON tag_selections USING btree (tag_id);
+CREATE INDEX index_tag_selections_on_tag_id ON public.tag_selections USING btree (tag_id);
 
 
 --
 -- Name: index_tag_selections_on_taggable_id_and_taggable_type; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_tag_selections_on_taggable_id_and_taggable_type ON tag_selections USING btree (taggable_id, taggable_type);
+CREATE INDEX index_tag_selections_on_taggable_id_and_taggable_type ON public.tag_selections USING btree (taggable_id, taggable_type);
 
 
 --
 -- Name: index_tags_on_name; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_tags_on_name ON tags USING btree (name);
+CREATE INDEX index_tags_on_name ON public.tags USING btree (name);
 
 
 --
 -- Name: index_tags_on_recipe_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_tags_on_recipe_id ON tags USING btree (recipe_id);
+CREATE INDEX index_tags_on_recipe_id ON public.tags USING btree (recipe_id);
 
 
 --
 -- Name: index_tags_on_tag_type_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_tags_on_tag_type_id ON tags USING btree (tag_type_id);
+CREATE INDEX index_tags_on_tag_type_id ON public.tags USING btree (tag_type_id);
 
 
 --
 -- Name: index_user_roles_on_role_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_user_roles_on_role_id ON user_roles USING btree (role_id);
+CREATE INDEX index_user_roles_on_role_id ON public.user_roles USING btree (role_id);
 
 
 --
 -- Name: index_user_roles_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_user_roles_on_user_id ON user_roles USING btree (user_id);
+CREATE INDEX index_user_roles_on_user_id ON public.user_roles USING btree (user_id);
 
 
 --
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_users_on_email ON users USING btree (email);
+CREATE UNIQUE INDEX index_users_on_email ON public.users USING btree (email);
 
 
 --
 -- Name: index_users_on_reset_password_token; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_users_on_reset_password_token ON users USING btree (reset_password_token);
+CREATE UNIQUE INDEX index_users_on_reset_password_token ON public.users USING btree (reset_password_token);
+
 
 --
 -- Name: index_users_on_username; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_users_on_username ON users USING btree (username);
+CREATE UNIQUE INDEX index_users_on_username ON public.users USING btree (username);
 
 
 --
 -- PostgreSQL database dump complete
 --
-INSERT INTO schema_migrations (version) VALUES ('20180726230603');
 
-INSERT INTO schema_migrations (version) VALUES ('20180726230727');
+SET search_path TO "$user", public;
 
-INSERT INTO schema_migrations (version) VALUES ('20180726231918');
+INSERT INTO "schema_migrations" (version) VALUES
+('20180726230603'),
+('20180726230727'),
+('20180726231918'),
+('20180726234418'),
+('20180726234813'),
+('20180726234938'),
+('20180726235212'),
+('20180726235520'),
+('20180726235950'),
+('20181112133338'),
+('20190121172412');
 
-INSERT INTO schema_migrations (version) VALUES ('20180726234418');
 
-INSERT INTO schema_migrations (version) VALUES ('20180726234813');
-
-INSERT INTO schema_migrations (version) VALUES ('20180726234938');
-
-INSERT INTO schema_migrations (version) VALUES ('20180726235212');
-
-INSERT INTO schema_migrations (version) VALUES ('20180726235520');
-
-INSERT INTO schema_migrations (version) VALUES ('20180726235950');
-
-INSERT INTO schema_migrations (version) VALUES ('20181112133338');

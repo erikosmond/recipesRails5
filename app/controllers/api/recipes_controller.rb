@@ -15,7 +15,9 @@ module Api
     def show
       recipe = Recipe.find_by_id(params.permit(:id)[:id])
       if recipe
-        details = recipe.recipes_with_grouped_detail(recipe.recipe_detail)
+        details = recipe.recipes_with_grouped_detail(
+          recipe.recipe_detail(current_user)
+        )
         render json: details.first.merge(recipe.as_json)
       else
         render json: {}, status: :not_found
@@ -34,7 +36,7 @@ module Api
       end
 
       def tagged_recipes(tag)
-        recipes = tag.recipe_detail_level
+        recipes = tag.recipe_detail_level(current_user)
         {
           tag: tag,
           recipes: tag.recipes_with_grouped_detail(recipes),

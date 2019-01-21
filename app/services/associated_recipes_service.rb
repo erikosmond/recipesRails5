@@ -17,58 +17,60 @@ module AssociatedRecipesService
     result.reject { |k, v| k.blank? || v.blank? }.to_a
   end
 
-  def recipe_detail_level
+  def recipe_detail_level(current_user)
     recipes = case tag_type_name
               when 'IngredientType'
-                child_recipes_with_detail.to_a
+                child_recipes_with_detail(current_user).to_a
               when 'IngredientFamily'
-                grandchild_recipes_with_detail.to_a +
-                child_recipes_with_detail.to_a
+                grandchild_recipes_with_detail(current_user).to_a +
+                child_recipes_with_detail(current_user).to_a
               when 'IngredientModification'
-                modification_recipes_detail.to_a
+                modification_recipes_detail(current_user).to_a
               end || []
-    recipes + recipes_with_detail.to_a
+    recipes + recipes_with_detail(current_user).to_a
   end
 
-  def recipe_detail
+  def recipe_detail(current_user)
     join_alias = 'tag_selections'
     recipe_selects = false
-    detail_sql(tag_selections, join_alias, recipe_selects)
+    detail_sql(tag_selections, join_alias, current_user, recipe_selects)
   end
 
-  def recipes_with_detail
+  def recipes_with_detail(current_user)
     join_alias = 'tag_selections_recipe_tag_selections'
-    detail_sql(recipe_tag_selections, join_alias)
+    detail_sql(recipe_tag_selections, join_alias, current_user)
   end
 
-  def child_recipes_with_detail
+  def child_recipes_with_detail(current_user)
     join_alias = 'child_tag_selections_child_recipe_tag_selections'
-    detail_sql(child_recipe_tag_selections, join_alias)
+    detail_sql(child_recipe_tag_selections, join_alias, current_user)
   end
 
-  def grandchild_recipes_with_detail
+  def grandchild_recipes_with_detail(current_user)
     join_alias = 'grandchild_tag_selections_grandchild_recipe_tag_selections'
-    detail_sql(grandchild_recipe_tag_selections, join_alias)
+    detail_sql(grandchild_recipe_tag_selections, join_alias, current_user)
   end
 
-  def modification_recipes_detail
+  def modification_recipes_detail(current_user)
     join_alias = 'tag_selections_modified_recipe_tag_selections_2'
-    detail_sql(modified_recipe_tag_selections, join_alias)
+    detail_sql(modified_recipe_tag_selections, join_alias, current_user)
   end
 
   private
 
-    def detail_sql(selected_tags, tag_selection_table_name, recipes = true)
+    def detail_sql(selected_tags, tag_selection_table_name, current_user, recipes = true)
       selected_tags.
         select(recipes_with_detail_select(tag_selection_table_name, recipes)).
-        left_outer_joins(recipes_with_parent_detail_joins)
+        left_outer_joins(recipes_with_parent_detail_joins) #.
+        # where("accesses.user_id = #{current_user&.id} OR accesses.status = 'PUBLIC'")
     end
 
     def recipes_with_parent_detail_joins
       [
         { tag: [:tag_type, parent_tags: [:tag_type, parent_tags: :tag_type]] },
         :tag_attributes,
-        :modifications
+        :modifications,
+        selected_recipe: :access
       ]
     end
 

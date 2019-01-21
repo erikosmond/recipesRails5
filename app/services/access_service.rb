@@ -1,5 +1,5 @@
 class AccessService
-  def self.create_access!(user_id, subject, status = :private)
+  def self.create_access!(user_id, subject, status = 'PRIVATE')
     if subject.respond_to?(:access)
       Access.create!(
         user_id: user_id,

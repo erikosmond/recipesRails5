@@ -81,7 +81,8 @@ describe TagSelection do
       expect(tsb).not_to be_valid
     end
     it 'validates unique tags by taggable entity' do
-      expect(ts2).not_to be_valid
+      # for instance when a recipe has a lime wedge and lime juice
+      expect(ts2).to be_valid
     end
   end
 end

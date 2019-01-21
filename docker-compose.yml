@@ -13,12 +13,13 @@ services:
     expose:
       - 9229
   db:
-    image: 'postgres:10.1-alpine'
+    image: 'postgres:9.6-alpine'
     environment:
       - POSTGRES_USER="${DB_USER}"
       - POSTGRES_PASSWORD="${DB_PASSWORD}"
     volumes:
       - 'db:/var/lib/postgresql/data'
+      - '/tmp:/tmp'
     expose:
       - "${DB_PORT}"
     ports:

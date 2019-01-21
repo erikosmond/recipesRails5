@@ -24,6 +24,12 @@ class TagSelection < ApplicationRecord
              foreign_type: 'taggable_type',
              class_name: 'Recipe'
 
+  belongs_to :selected_recipe,
+             optional: true,
+             foreign_key: 'taggable_id',
+             foreign_type: 'taggable_type',
+             class_name: 'SelectedRecipe'
+
   belongs_to :tag_selection,
              optional: true,
              foreign_key: 'taggable_id',
