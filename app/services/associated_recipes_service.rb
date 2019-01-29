@@ -44,8 +44,8 @@ module AssociatedRecipesService
     st = Tag.
       select(recipes_with_detail_select(tag_selection_table_name, recipes)).
       left_outer_joins([tag_selections: [:access, recipe: {tag_selections: recipes_with_parent_detail_joins}]]).
-      where("tags.id = #{id}")
-    binding.pry
+      where("tags_tag_selections.id = #{id}")
+    # binding.pry
     st
   end
 

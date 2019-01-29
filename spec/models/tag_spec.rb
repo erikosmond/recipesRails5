@@ -166,6 +166,7 @@ describe Tag do
       expect(nut.child_recipes_with_detail(user).first['recipe_id']).to eq(martini.id)
     end
     it 'assigns own recipe to type' do
+      binding.pry
       expect(nut.recipes_with_detail(user).to_a.size).to eq(3)
       expect(nut.recipes_with_detail(user).first['recipe_id']).to eq(vesper.id)
       expect(nut.recipes_with_detail(user).second['recipe_id']).to eq(vesper.id)
