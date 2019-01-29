@@ -14,7 +14,7 @@ module Api
         if tag_type
           render json: { tags: tags }
         else
-          render json: { tags: tags, tag_groups: Tag.ingredient_group_heirarchy_filters }
+          render json: { tags: tags, tag_groups: Tag.ingredient_group_heirarchy_filters(current_user) }
         end
       else
         render json: { tag_type: tag_type.to_s }, status: :not_found
@@ -24,7 +24,7 @@ module Api
     def show
       tag = Tag.find_by_id(params.permit(:id)[:id])
       if tag
-        render json: tag.tag_with_heirarchy_grouped
+        render json: tag.tag_with_heirarchy_grouped(current_user)
       else
         render json: { tag: tag.to_s }, status: :not_found
       end

@@ -37,8 +37,16 @@ module AssociatedRecipesService
   end
 
   def recipes_with_detail(current_user)
-    join_alias = 'tag_selections_recipe_tag_selections'
-    detail_sql(recipe_tag_selections, join_alias, current_user)
+    # join_alias = 'tag_selections_recipe_tag_selections'
+    tag_selection_table_name = 'tag_selections_recipes'
+    recipes = true
+    # detail_sql(recipe_tag_selections, join_alias, current_user)
+    st = Tag.
+      select(recipes_with_detail_select(tag_selection_table_name, recipes)).
+      left_outer_joins([tag_selections: [:access, recipe: {tag_selections: recipes_with_parent_detail_joins}]]).
+      where("tags.id = #{id}")
+    binding.pry
+    st
   end
 
   def child_recipes_with_detail(current_user)
@@ -143,6 +151,7 @@ module AssociatedRecipesService
         'tags.name AS tag_name',
         'tags.description AS tag_description',
         'tags.id AS tag_id',
+        'tags.tag_type_id AS tag_type_id',
         'parent_tags_tags.name AS parent_tag',
         'parent_tags_tags.id AS parent_tag_id',
         'parent_tags_tags_2.name AS grandparent_tag',

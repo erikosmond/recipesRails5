@@ -8,7 +8,7 @@ class PagesController < ApplicationController
     @home_tag_id = starting_tag.id
     @all_tags = all_tags.to_json
     @all_tag_types = all_types.to_json
-    @tag_groups = Tag.ingredient_group_heirarchy_filters.to_json
+    @tag_groups = Tag.ingredient_group_heirarchy_filters(current_user).to_json
     @tags_by_type = Tag.tags_by_type.to_json
   end
 end
