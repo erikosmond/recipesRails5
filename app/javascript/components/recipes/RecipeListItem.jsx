@@ -13,6 +13,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import RecipeProperties from 'components/recipes/RecipeProperties'
 import RecipeInstructions from 'components/recipes/RecipeInstructions'
 import RecipeDescription from 'components/recipes/RecipeDescription'
+import RecipeHeaderActions from 'components/recipes/RecipeHeaderActions'
 import { allIngredients } from 'services/recipes'
 
 const styles = () => ({
@@ -41,6 +42,9 @@ class RecipeListItem extends React.Component {
         <CardHeader
           title={<Link to={`/recipes/${recipe.id}`}>{recipe.name}</Link>}
           subheader={ingredientNames.join(', ')}
+          action={
+            <RecipeHeaderActions />
+          }
         />
         <CardActions className={classes.actions} disableActionSpacing>
           <IconButton

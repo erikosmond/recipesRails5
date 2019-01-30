@@ -14,7 +14,6 @@ const FilterByIngredients = ({
   allTagTypes,
 }) => (
   <PaperContent>
-    Filters
     <FormGroup>
       {tagGroups && Object.keys(tagGroups).map(t => (
         <IngredientFamilyFilter
