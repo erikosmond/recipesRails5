@@ -166,7 +166,6 @@ describe Tag do
       expect(nut.child_recipes_with_detail(user).first['recipe_id']).to eq(martini.id)
     end
     it 'assigns own recipe to type' do
-      binding.pry
       expect(nut.recipes_with_detail(user).to_a.size).to eq(3)
       expect(nut.recipes_with_detail(user).first['recipe_id']).to eq(vesper.id)
       expect(nut.recipes_with_detail(user).second['recipe_id']).to eq(vesper.id)
@@ -211,6 +210,7 @@ describe Tag do
     let(:tag_type_not_ingredient) { create(:tag_type, name: 'NotIngredient') }
     let(:alteration) { create(:tag_type, name: 'Alteration') }
     let(:lemon_verbena) { create(:tag, tag_type: tag_type_ingredient, name: ingredient1_verbena) }
+    let(:rating) { create(:tag, tag_type: tag_type_rating, name: 'Rating: 9') }
     let(:ingredient1) { create(:tag, tag_type: tag_type_ingredient, name: ingredient1_name) }
     let(:ingredient1_type) { create(:tag, tag_type: tag_type_ingredient_type, name: ingredient1_type_name) }
     let(:ingredient1_family) { create(:tag, tag_type: tag_type_ingredient_family, name: ingredient1_family_name) }
@@ -250,17 +250,27 @@ describe Tag do
       let(:detail_ids) do
         [
           tag_selection1.id,
-          tag_selection2a.id
+          tag_selection1a.id,
+          tag_selection2a.id,
+          tag_selection2b.id,
+          tag_selection2c.id
+        ]
+      end
+      let(:private_ids) do
+        [
+          tag_selection2a.id,
+          tag_selection2b.id,
+          tag_selection2c.id
         ]
       end
       it 'returns collected tag ids for ingredients' do
         expect(tag_subject.filter_tags(recipes) - array_list).to eq([])
       end
       it 'returns recipe level detail for ingredients' do
-        expect(tag_subject.recipe_detail_level(user).map(&:id).uniq).to eq(detail_ids)
+        expect((tag_subject.recipe_detail_level(user).map(&:id).uniq) - detail_ids).to eq([])
       end
       it 'returns no recipes for ingredients' do
-        expect(tag_subject.recipe_detail_level(non_active_user).map(&:id).uniq).to eq([tag_selection2a.id])
+        expect(tag_subject.recipe_detail_level(non_active_user).map(&:id).uniq - private_ids).to eq([])
       end
     end
 
@@ -276,13 +286,17 @@ describe Tag do
           [ingredient1_type.id, 'spices'],
           [ingredient1_family.id, 'seasoning'],
           [modification.id, 'chili infused'],
-          [rating.id, 'Rating: 9']
+          [rating.id, 'Rating: 9'],
+          [lemon_verbena.id, 'Lemon Verbena']
         ]
       end
       let(:detail_ids) do
         [
           tag_selection1.id,
+          tag_selection1a.id,
           tag_selection2a.id,
+          tag_selection2b.id,
+          tag_selection2c.id,
           mod_selection.id
         ]
       end
