@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module AssociatedTagsService
-  def tag_with_heirarchy_grouped(all_tags = false)
+  def tag_with_heirarchy_grouped(current_user, all_tags = false)
     tag_json = as_json(only: %i[id name description tag_type_id recipe_id])
     tag_groups.each do |tg|
       tag_json["#{tg}s"] = {}
     end
-    tag_with_heirarchy(all_tags).each do |t|
+    tag_with_heirarchy(current_user, all_tags).each do |t|
       tag_groups.each do |g|
         group_tags(tag_json, t, g)
       end
@@ -14,12 +14,14 @@ module AssociatedTagsService
     tag_json
   end
 
-  def tag_with_heirarchy(all_tags = false)
+  def tag_with_heirarchy(current_user, all_tags = false)
     heirarchy = Tag.select(
       tag_heirarchy_select
     ).left_outer_joins(
       tag_heirarchy_join
-    ).order('tags.id, child_tags.id, child_tags_child_tags.id')
+    ).where(
+      "accesses.user_id = #{current_user&.id} OR accesses.status = 'PUBLIC'"
+    ).order('tags.id, child_tags.id, child_tags_tags.id')
     return heirarchy if all_tags
 
     heirarchy.where(tags: { id: id })
@@ -68,8 +70,8 @@ module AssociatedTagsService
       [
         'child_tags.id child_tag_id',
         'child_tags.name child_tag_name',
-        'child_tags_child_tags.id grandchild_tag_id',
-        'child_tags_child_tags.name grandchild_tag_name'
+        'child_tags_tags.id grandchild_tag_id',
+        'child_tags_tags.name grandchild_tag_name'
       ]
     end
 
@@ -85,7 +87,7 @@ module AssociatedTagsService
     def tag_heirarchy_join
       join_tables = [
         :tag_type,
-        child_tags: :child_tags,
+        child_tag_selections: [:access, { tag: :child_tags }],
         parent_tags: :parent_tags,
         tag_selections: :modifications
       ]

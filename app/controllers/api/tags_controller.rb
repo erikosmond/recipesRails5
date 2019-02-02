@@ -14,7 +14,7 @@ module Api
         if tag_type
           render json: { tags: tags }
         else
-          render json: { tags: tags, tag_groups: Tag.ingredient_group_heirarchy_filters }
+          render json: { tags: tags, tag_groups: Tag.ingredient_group_heirarchy_filters(current_user) }
         end
       else
         render json: { tag_type: tag_type.to_s }, status: :not_found
@@ -24,7 +24,7 @@ module Api
     def show
       tag = Tag.find_by_id(params.permit(:id)[:id])
       if tag
-        render json: tag.tag_with_heirarchy_grouped
+        render json: tag.tag_with_heirarchy_grouped(current_user)
       else
         render json: { tag: tag.to_s }, status: :not_found
       end
@@ -34,7 +34,16 @@ module Api
 
       def tags_by_type(tag_type)
         type_ids = tag_types(tag_type).pluck(:id)
-        tag_json = Tag.where(tag_type_id: type_ids).as_json(only: %i[id name])
+        tag_json =
+          if tag_type.to_s.casecmp('ingredients').zero?
+            Tag.where(tag_type_id: type_ids).as_json(only: %i[id name])
+          else
+            Tag.joins(tag_selections: :access).
+              where(tag_type_id: type_ids).
+              where("accesses.status = 'PUBLIC' OR accesses.user_id = #{current_user.id}").
+              each_with_object({}) { |ts, obj| obj[ts.id] = ts.name }.
+              each_with_object([]) { |(k, v), arr| arr << { 'id' => k, 'name' => v } }
+          end
         tag_json.map { |r| { 'Label' => r['name'], 'Value' => r['id'] } }
       end
 

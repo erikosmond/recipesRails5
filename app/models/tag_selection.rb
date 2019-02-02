@@ -58,6 +58,11 @@ class TagSelection < ApplicationRecord
   validates :tag_id, presence: true
   validates :taggable_type, presence: true
   validates :taggable_id, presence: true
+  validate :no_self_assignment
 
   accepts_nested_attributes_for :tag_attributes
+
+  def no_self_assignment
+    errors.add('Does not make sense to assign tag to itself') if taggable == tag
+  end
 end

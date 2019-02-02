@@ -13,6 +13,7 @@ class RecipeList extends React.Component {
     loadTagInfo: PropTypes.func.isRequired,
     handleFilter: PropTypes.func.isRequired,
     clearFilters: PropTypes.func.isRequired,
+    updateRecipeTag: PropTypes.func.isRequired,
     selectedRecipes: PropTypes.arrayOf(PropTypes.shape({})),
     recipesLoaded: PropTypes.bool,
     loading: PropTypes.bool,
@@ -28,6 +29,8 @@ class RecipeList extends React.Component {
     noRecipes: PropTypes.bool.isRequired,
     startingTagId: PropTypes.string.isRequired,
     selectedTag: PropTypes.shape({}).isRequired,
+    priorities: PropTypes.shape({}).isRequired,
+    ratings: PropTypes.shape({}).isRequired,
     location: PropTypes.shape({
       search: PropTypes.func,
     }).isRequired,
@@ -97,6 +100,9 @@ class RecipeList extends React.Component {
       handleFilter,
       allTagTypes,
       tagsByType,
+      ratings,
+      priorities,
+      updateRecipeTag,
     } = this.props
     if (loading) {
       return (<div> {'Loading...'} </div>)
@@ -137,7 +143,13 @@ class RecipeList extends React.Component {
 
         <PaperContent>
           {selectedRecipes.map(r => (
-            <RecipeListItem key={r.id} recipe={r} />
+            <RecipeListItem
+              key={r.id}
+              recipe={r}
+              ratings={ratings}
+              priorities={priorities}
+              updateRecipeTag={updateRecipeTag}
+            />
           ))}
         </PaperContent>
       </div>

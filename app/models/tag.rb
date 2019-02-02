@@ -66,7 +66,7 @@ class Tag < ApplicationRecord
            through: :grandchild_recipes,
            source: :tag_selections
 
-  # Tags that are assigned to this tag, like Ingredient Type
+  # Tags that are assigned to this tag, like Ingredient Type for an Ingredient
   has_many :taggings,
            -> { where(taggable_type: 'Tag') },
            foreign_key: :taggable_id,

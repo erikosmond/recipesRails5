@@ -1,5 +1,5 @@
 import { put, call, select } from 'redux-saga/effects'
-import { startSubmit, stopSubmit, getFormValues } from 'redux-form'
+// import { startSubmit, stopSubmit, getFormValues } from 'redux-form'
 import { takeLatest, takeEvery } from 'redux-saga'
 import { callApi } from 'services/rest'
 import {
@@ -29,6 +29,8 @@ const HANDLE_FILTER = 'recipes/handleFilter'
 const HANDLE_FILTER_SUCCESS = 'recipes/handleFilterSuccess'
 const NO_TAGS = 'recipes/noTags'
 const CLEAR_FILTERS = 'recipes/clearFilters'
+const UPDATE_RECIPE_TAG = 'recipes/updateRecipeTag'
+const UPDATE_RECIPE_TAG_SUCCESS = 'recipes/updateRecipeTagSuccess'
 
 // Reducer
 const initialState = {
@@ -136,12 +138,35 @@ export default function recipesReducer(state = initialState, action = {}) {
         ...state,
         selectedFilters: [],
       }
+    case UPDATE_RECIPE_TAG_SUCCESS:
+      return {
+        ...state,
+        selectedRecipes: state.selectedRecipes.map(r => tagSelectionReducer(r, { ...action })),
+      }
     default:
       return state
   }
 }
 
 // Action Creators
+
+function tagSelectionReducer(recipe, action) {
+  const {
+    payload: {
+      taggableType,
+      taggableId,
+      tagType,
+      tagId,
+    },
+  } = action
+  if (taggableType === 'Recipe') {
+    if (recipe.id === taggableId) {
+      return { ...recipe, [tagType]: { tagId } }
+    }
+  }
+  return recipe
+}
+
 export function loadRecipes(tagId) {
   return {
     type: LOAD_RECIPES,
@@ -299,6 +324,31 @@ export function handleFilterSuccess(selectedRecipes, selectedFilters, visibleFil
   }
 }
 
+export function updateRecipeTag(recipeId, tagId, tagType, tagSelectionId) {
+  return {
+    type: UPDATE_RECIPE_TAG,
+    payload: {
+      tagSelectionId,
+      tagId,
+      tagType,
+      taggableId: recipeId,
+      taggableType: 'Recipe',
+    },
+  }
+}
+
+export function updateTagSelectionSuccess(taggableType, taggableId, tagType, tagId) {
+  return {
+    type: UPDATE_RECIPE_TAG_SUCCESS,
+    payload: {
+      taggableType,
+      taggableId,
+      tagType,
+      tagId,
+    },
+  }
+}
+
 // Saga
 
 export function* handleFilterTask({ payload: { id, checked } }) {
@@ -385,6 +435,40 @@ export function* loadIngredientOptionsTask({ payload }) {
   }
 }
 
+export function* updateTagSelectionTask({
+  payload: {
+    tagId,
+    taggableId,
+    taggableType,
+    tagSelectionId,
+    tagType,
+  },
+}) {
+  const method = tagSelectionId ? 'PUT' : 'POST'
+  const id = tagSelectionId ? `/${tagSelectionId}` : ''
+  const url = `/api/tag_selections${id}`
+  const mapping = {
+    Rating: 'newRating',
+    Priority: 'newPriority',
+  }
+  const params = {
+    method,
+    data: {
+      tagSelection: {
+        tagId,
+        taggableId,
+        taggableType,
+      },
+      id: tagSelectionId,
+    },
+  }
+  const result = yield call(callApi, url, params)
+  if (result.success) {
+    yield put(updateTagSelectionSuccess(taggableType, taggableId, mapping[tagType], tagId))
+  } else {
+    console.log('Unable to update recipe')
+  }
+}
 /* recipes */
 
 export function* recipesSaga() {
@@ -395,4 +479,5 @@ export function* recipesSaga() {
   yield takeLatest(HANDLE_FILTER, handleFilterTask)
   yield takeLatest(LOAD_ALL_TAGS, loadAllTagsTask)
   yield takeEvery(LOAD_INGREDIENT_OPTIONS, loadIngredientOptionsTask)
+  yield takeLatest(UPDATE_RECIPE_TAG, updateTagSelectionTask)
 }

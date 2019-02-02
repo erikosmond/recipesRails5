@@ -13,6 +13,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import RecipeProperties from 'components/recipes/RecipeProperties'
 import RecipeInstructions from 'components/recipes/RecipeInstructions'
 import RecipeDescription from 'components/recipes/RecipeDescription'
+import RecipeHeaderActions from 'components/recipes/RecipeHeaderActions'
 import { allIngredients } from 'services/recipes'
 
 const styles = () => ({
@@ -29,7 +30,13 @@ class RecipeListItem extends React.Component {
   };
 
   render() {
-    const { recipe, classes } = this.props
+    const {
+      recipe,
+      classes,
+      ratings,
+      priorities,
+      updateRecipeTag,
+    } = this.props
     const ingredientNames = Object.values(allIngredients(recipe)).map(ingredient => (
       ingredient.tagName
     ))
@@ -41,6 +48,16 @@ class RecipeListItem extends React.Component {
         <CardHeader
           title={<Link to={`/recipes/${recipe.id}`}>{recipe.name}</Link>}
           subheader={ingredientNames.join(', ')}
+          action={
+            <RecipeHeaderActions
+              ratings={ratings}
+              priorities={priorities}
+              rating={recipe.newRating || (recipe.ratings && recipe.ratings[0])}
+              priority={recipe.newPriority || (recipe.priorities && recipe.priorities[0])}
+              recipeId={recipe.id}
+              updateRecipeTag={updateRecipeTag}
+            />
+          }
         />
         <CardActions className={classes.actions} disableActionSpacing>
           <IconButton
@@ -75,6 +92,9 @@ RecipeListItem.propTypes = {
   classes: PropTypes.shape({
     card: PropTypes.shape({}).isRequired,
   }).isRequired,
+  ratings: PropTypes.shape({}).isRequired,
+  priorities: PropTypes.shape({}).isRequired,
+  updateRecipeTag: PropTypes.func.isRequired,
 }
 
 RecipeListItem.defaultProps = {

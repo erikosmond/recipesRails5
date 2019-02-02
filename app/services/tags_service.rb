@@ -1,12 +1,12 @@
 module TagsService
-  def all_tags_with_heirarchy
+  def all_tags_with_heirarchy(current_user)
     tag = Tag.first
     all_tags = true
-    tag.tag_with_heirarchy(all_tags)
+    tag.tag_with_heirarchy(current_user, all_tags)
   end
 
-  def all_family_tags_with_heirarchy
-    all_tags_with_heirarchy.where(tag_type: TagType.family_id)
+  def all_family_tags_with_heirarchy(current_user)
+    all_tags_with_heirarchy(current_user).where(tag_type: TagType.family_id)
   end
 
   def grandparent_tags_with_grouped_children(heirarchy)
@@ -52,8 +52,8 @@ module TagsService
     end
   end
 
-  def ingredient_group_heirarchy_filters
-    heirarchy = all_family_tags_with_heirarchy
+  def ingredient_group_heirarchy_filters(current_user)
+    heirarchy = all_family_tags_with_heirarchy(current_user)
     groups = grandparent_tags_with_grouped_children(heirarchy)
     group_grandparent_heirarchy_by_id(groups)
   end

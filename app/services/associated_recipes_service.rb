@@ -37,8 +37,13 @@ module AssociatedRecipesService
   end
 
   def recipes_with_detail(current_user)
-    join_alias = 'tag_selections_recipe_tag_selections'
-    detail_sql(recipe_tag_selections, join_alias, current_user)
+    recipes = true
+    ts = TagSelection.
+         select(recipes_with_detail_select('tag_selections_recipes', recipes)).
+         left_outer_joins(
+           [:access, recipe: { tag_selections: recipes_with_parent_detail_joins }]
+         )
+    add_predicates(ts, current_user)
   end
 
   def child_recipes_with_detail(current_user)
@@ -58,11 +63,24 @@ module AssociatedRecipesService
 
   private
 
+    def add_predicates(tag_selections, current_user)
+      tag_selections.
+        where("tag_selections.tag_id = #{id}").
+        where('tag_selections.id IS NOT NULL').
+        where('recipes.id IS NOT NULL').
+        where('tag_selections_recipes.id IS NOT NULL').
+        where('accesses_selected_recipes.id IS NOT NULL').
+        where('accesses.id IS NOT NULL').
+        where("accesses_selected_recipes.user_id = #{current_user&.id} OR
+               accesses_selected_recipes.status = 'PUBLIC'").
+        where("accesses.user_id = #{current_user&.id} OR accesses.status = 'PUBLIC'")
+    end
+
     def detail_sql(selected_tags, tag_selection_table_name, current_user, recipes = true)
       selected_tags.
         select(recipes_with_detail_select(tag_selection_table_name, recipes)).
-        left_outer_joins(recipes_with_parent_detail_joins) #.
-        # where("accesses.user_id = #{current_user&.id} OR accesses.status = 'PUBLIC'")
+        left_outer_joins(recipes_with_parent_detail_joins).
+        where("accesses.user_id = #{current_user&.id} OR accesses.status = 'PUBLIC'")
     end
 
     def recipes_with_parent_detail_joins
@@ -143,6 +161,7 @@ module AssociatedRecipesService
         'tags.name AS tag_name',
         'tags.description AS tag_description',
         'tags.id AS tag_id',
+        'tags.tag_type_id AS tag_type_id',
         'parent_tags_tags.name AS parent_tag',
         'parent_tags_tags.id AS parent_tag_id',
         'parent_tags_tags_2.name AS grandparent_tag',
