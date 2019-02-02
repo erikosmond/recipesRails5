@@ -13,6 +13,8 @@ Rails.application.routes.draw do
       resources :tags, only: %i[index show] do
         resources :recipes, only: %i[index]
       end
+
+      resources :tag_selections, only: %i[create update]
     end
     match '/*page' => 'pages#home', via: :get
   end

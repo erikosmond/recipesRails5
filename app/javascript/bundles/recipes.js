@@ -307,8 +307,9 @@ export function updateRecipeTag(recipeId, tagId, tagType, tagSelectionId) {
     payload: {
       tagSelectionId,
       tagId,
+      tagType,
       taggableId: recipeId,
-      taggableType: tagType,
+      taggableType: 'Recipe',
     },
   }
 }
@@ -413,25 +414,29 @@ export function* updateTagSelectionTask({
     taggableId,
     taggableType,
     tagSelectionId,
+    tagType,
   },
 }) {
   const method = tagSelectionId ? 'PUT' : 'POST'
+  const id = tagSelectionId ? `/${tagSelectionId}` : ''
   const params = {
     method,
     data: {
-      tagId,
-      taggableId,
-      taggableType,
+      tagSelection: {
+        tagId,
+        taggableId,
+        taggableType,
+      },
       id: tagSelectionId,
     },
   }
-
-  const url = '/api/tag_selections'
+  const url = `/api/tag_selections${id}`
   const result = yield call(callApi, url, params)
   if (result.success) {
     console.log(result.data)
   } else {
-    console.log('failed')
+    // use tagType here
+    console.log('Unable to update recipe')
   }
 }
 /* recipes */

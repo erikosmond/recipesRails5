@@ -20,8 +20,8 @@ class RecipeHeaderAction extends React.Component {
     const {
       recipeId,
       updateRecipeTag,
-      label,
       selectedOption,
+      label
     } = this.props
     if (event.currentTarget.value) {
       if (selectedOption && selectedOption.id) {

@@ -52,8 +52,8 @@ class RecipeListItem extends React.Component {
             <RecipeHeaderActions
               ratings={ratings}
               priorities={priorities}
-              rating={recipe.ratings && recipe.ratings[0]}
-              priority={recipe.priorities && recipe.priorities[0]}
+              rating={recipe.newRating || (recipe.ratings && recipe.ratings[0])}
+              priority={recipe.newPriority || (recipe.priorities && recipe.priorities[0])}
               recipeId={recipe.id}
               updateRecipeTag={updateRecipeTag}
             />
