@@ -32,7 +32,7 @@ module Api
 
     private
 
-      def tags_by_type(tag_type, user = current_user)
+      def tags_by_type(tag_type)
         type_ids = tag_types(tag_type).pluck(:id)
         tag_json =
           if tag_type.to_s.casecmp('ingredients').zero?
@@ -40,7 +40,7 @@ module Api
           else
             Tag.joins(tag_selections: :access).
               where(tag_type_id: type_ids).
-              where("accesses.status = 'PUBLIC' OR accesses.user_id = #{user.id}").
+              where("accesses.status = 'PUBLIC' OR accesses.user_id = #{current_user.id}").
               each_with_object({}) { |ts, obj| obj[ts.id] = ts.name }.
               each_with_object([]) { |(k, v), arr| arr << { 'id' => k, 'name' => v } }
           end
