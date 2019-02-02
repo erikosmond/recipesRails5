@@ -23,6 +23,8 @@ const myStore = {
     allTagTypes: JSON.parse(home.dataset.allTagTypes),
     tagGroups: JSON.parse(home.dataset.tagGroups),
     tagsByType: JSON.parse(home.dataset.tagsByType),
+    ratings: JSON.parse(home.dataset.ratings),
+    priorities: JSON.parse(home.dataset.priorities),
   },
 }
 

@@ -9,6 +9,7 @@ import {
   handleFilter,
   loadAllTags,
   clearFilters,
+  updateRecipeTag,
 } from 'bundles/recipes'
 
 export default withRouter(connect(
@@ -24,6 +25,8 @@ export default withRouter(connect(
     tagGroups: state.recipesReducer.tagGroups,
     allTagTypes: state.recipesReducer.allTagTypes,
     tagsByType: state.recipesReducer.tagsByType,
+    priorities: state.recipesReducer.priorities,
+    ratings: state.recipesReducer.ratings,
   }),
   {
     loadRecipes,
@@ -31,5 +34,6 @@ export default withRouter(connect(
     loadTagInfo,
     handleFilter,
     clearFilters,
+    updateRecipeTag,
   },
 )(RecipeList))

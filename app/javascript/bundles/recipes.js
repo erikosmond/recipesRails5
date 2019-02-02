@@ -1,5 +1,5 @@
 import { put, call, select } from 'redux-saga/effects'
-import { startSubmit, stopSubmit, getFormValues } from 'redux-form'
+// import { startSubmit, stopSubmit, getFormValues } from 'redux-form'
 import { takeLatest, takeEvery } from 'redux-saga'
 import { callApi } from 'services/rest'
 import {
@@ -29,6 +29,8 @@ const HANDLE_FILTER = 'recipes/handleFilter'
 const HANDLE_FILTER_SUCCESS = 'recipes/handleFilterSuccess'
 const NO_TAGS = 'recipes/noTags'
 const CLEAR_FILTERS = 'recipes/clearFilters'
+const UPDATE_RECIPE_TAG = 'recipes/updateRecipeTag'
+const UPDATE_RECIPE_TAG_SUCCESS = 'recipes/updateRecipeTagSuccess'
 
 // Reducer
 const initialState = {
@@ -299,6 +301,26 @@ export function handleFilterSuccess(selectedRecipes, selectedFilters, visibleFil
   }
 }
 
+export function updateRecipeTag(recipeId, tagId, tagType, tagSelectionId) {
+  return {
+    type: UPDATE_RECIPE_TAG,
+    payload: {
+      tagSelectionId,
+      tagId,
+      taggableId: recipeId,
+      taggableType: tagType,
+    },
+  }
+}
+
+export function updateRecipeTagSuccess(recipe) {
+  return {
+    type: UPDATE_RECIPE_TAG_SUCCESS,
+    payload: {
+      recipe
+    },
+  }
+}
 // Saga
 
 export function* handleFilterTask({ payload: { id, checked } }) {
@@ -385,6 +407,33 @@ export function* loadIngredientOptionsTask({ payload }) {
   }
 }
 
+export function* updateTagSelectionTask({
+  payload: {
+    tagId,
+    taggableId,
+    taggableType,
+    tagSelectionId,
+  },
+}) {
+  const method = tagSelectionId ? 'PUT' : 'POST'
+  const params = {
+    method,
+    data: {
+      tagId,
+      taggableId,
+      taggableType,
+      id: tagSelectionId,
+    },
+  }
+
+  const url = '/api/tag_selections'
+  const result = yield call(callApi, url, params)
+  if (result.success) {
+    console.log(result.data)
+  } else {
+    console.log('failed')
+  }
+}
 /* recipes */
 
 export function* recipesSaga() {
@@ -395,4 +444,5 @@ export function* recipesSaga() {
   yield takeLatest(HANDLE_FILTER, handleFilterTask)
   yield takeLatest(LOAD_ALL_TAGS, loadAllTagsTask)
   yield takeEvery(LOAD_INGREDIENT_OPTIONS, loadIngredientOptionsTask)
+  yield takeLatest(UPDATE_RECIPE_TAG, updateTagSelectionTask)
 }

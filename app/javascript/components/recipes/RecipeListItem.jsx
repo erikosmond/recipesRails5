@@ -30,7 +30,13 @@ class RecipeListItem extends React.Component {
   };
 
   render() {
-    const { recipe, classes } = this.props
+    const {
+      recipe,
+      classes,
+      ratings,
+      priorities,
+      updateRecipeTag,
+    } = this.props
     const ingredientNames = Object.values(allIngredients(recipe)).map(ingredient => (
       ingredient.tagName
     ))
@@ -43,7 +49,14 @@ class RecipeListItem extends React.Component {
           title={<Link to={`/recipes/${recipe.id}`}>{recipe.name}</Link>}
           subheader={ingredientNames.join(', ')}
           action={
-            <RecipeHeaderActions />
+            <RecipeHeaderActions
+              ratings={ratings}
+              priorities={priorities}
+              rating={recipe.ratings && recipe.ratings[0]}
+              priority={recipe.priorities && recipe.priorities[0]}
+              recipeId={recipe.id}
+              updateRecipeTag={updateRecipeTag}
+            />
           }
         />
         <CardActions className={classes.actions} disableActionSpacing>
@@ -79,6 +92,9 @@ RecipeListItem.propTypes = {
   classes: PropTypes.shape({
     card: PropTypes.shape({}).isRequired,
   }).isRequired,
+  ratings: PropTypes.shape({}).isRequired,
+  priorities: PropTypes.shape({}).isRequired,
+  updateRecipeTag: PropTypes.func.isRequired,
 }
 
 RecipeListItem.defaultProps = {
