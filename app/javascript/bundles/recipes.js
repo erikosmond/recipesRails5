@@ -138,12 +138,35 @@ export default function recipesReducer(state = initialState, action = {}) {
         ...state,
         selectedFilters: [],
       }
+    case UPDATE_RECIPE_TAG_SUCCESS:
+      return {
+        ...state,
+        selectedRecipes: state.selectedRecipes.map(r => tagSelectionReducer(r, { ...action })),
+      }
     default:
       return state
   }
 }
 
 // Action Creators
+
+function tagSelectionReducer(recipe, action) {
+  const {
+    payload: {
+      taggableType,
+      taggableId,
+      tagType,
+      tagId,
+    },
+  } = action
+  if (taggableType === 'Recipe') {
+    if (recipe.id === taggableId) {
+      return { ...recipe, [tagType]: { tagId } }
+    }
+  }
+  return recipe
+}
+
 export function loadRecipes(tagId) {
   return {
     type: LOAD_RECIPES,
@@ -314,14 +337,18 @@ export function updateRecipeTag(recipeId, tagId, tagType, tagSelectionId) {
   }
 }
 
-export function updateRecipeTagSuccess(recipe) {
+export function updateTagSelectionSuccess(taggableType, taggableId, tagType, tagId) {
   return {
     type: UPDATE_RECIPE_TAG_SUCCESS,
     payload: {
-      recipe
+      taggableType,
+      taggableId,
+      tagType,
+      tagId,
     },
   }
 }
+
 // Saga
 
 export function* handleFilterTask({ payload: { id, checked } }) {
@@ -419,6 +446,11 @@ export function* updateTagSelectionTask({
 }) {
   const method = tagSelectionId ? 'PUT' : 'POST'
   const id = tagSelectionId ? `/${tagSelectionId}` : ''
+  const url = `/api/tag_selections${id}`
+  const mapping = {
+    Rating: 'newRating',
+    Priority: 'newPriority',
+  }
   const params = {
     method,
     data: {
@@ -430,12 +462,10 @@ export function* updateTagSelectionTask({
       id: tagSelectionId,
     },
   }
-  const url = `/api/tag_selections${id}`
   const result = yield call(callApi, url, params)
   if (result.success) {
-    console.log(result.data)
+    yield put(updateTagSelectionSuccess(taggableType, taggableId, mapping[tagType], tagId))
   } else {
-    // use tagType here
     console.log('Unable to update recipe')
   }
 }

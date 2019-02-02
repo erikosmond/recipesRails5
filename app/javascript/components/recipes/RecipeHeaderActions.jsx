@@ -41,6 +41,7 @@ const RecipeHeaderActions = (props) => {
         options={priorities}
         selectedOption={priority}
         recipeId={recipeId}
+        updateRecipeTag={updateRecipeTag}
       />
     </div>
   )
