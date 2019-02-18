@@ -33,6 +33,9 @@ services:
       - DB_PASSWORD="${DB_PASSWORD}"
       - WEBPACK_PORT="${WEBPACK_PORT}"
       - SIGNUP_CODES=${SIGNUP_CODES}
+      - RAILS_SERVE_STATIC_FILES=${RAILS_SERVE_STATIC_FILES}
+      - RAILS_ENV=${RAILS_ENV}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
     volumes:
       - .:/recipes
       - packs:/recipes/public/packs
