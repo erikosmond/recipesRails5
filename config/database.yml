@@ -85,4 +85,3 @@ test:
 production:
   <<: *default
   database: recipes
-  password: <%= ENV['RECIPES_DATABASE_PASSWORD'] %>
