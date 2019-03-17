@@ -13,7 +13,13 @@
 # it.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+require File.expand_path('../config/environment', __dir__)
+require 'database_cleaner'
+require 'rspec/rails'
+
 RSpec.configure do |config|
+  config.include Devise::Test::ControllerHelpers, type: :controller
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
@@ -37,6 +43,14 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
 
+  config.before(:each) do |_example|
+    Rails.cache.clear
+    DatabaseCleaner.start
+  end
+
+  config.after(:each) do |_example|
+    DatabaseCleaner.clean
+  end
   # This option will default to `:apply_to_host_groups` in RSpec 4 (and will
   # have no way to turn it off -- the option exists only for backwards
   # compatibility in RSpec 3). It causes shared context metadata to be
@@ -44,8 +58,9 @@ RSpec.configure do |config|
   # triggering implicit auto-inclusion in groups with matching metadata.
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
+  config.order = 'random'
   # to enable siging in a devise user
-  config.extend ControllerMacros, type: :controller
+  # config.extend ControllerMacros, type: :controller
 
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.

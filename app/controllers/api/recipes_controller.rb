@@ -14,11 +14,10 @@ module Api
 
     def show
       recipe = Recipe.find_by_id(params.permit(:id)[:id])
-      if recipe
-        details = recipe.recipes_with_grouped_detail(
-          recipe.recipe_detail(current_user)
-        )
-        render json: details.first.merge(recipe.as_json)
+      if recipe&.tags&.first
+        recipe_details = recipe.recipe_detail(current_user)
+        grouped_detail = recipe.recipes_with_grouped_detail(recipe_details)
+        render json: grouped_detail.first.merge(recipe.as_json)
       else
         render json: {}, status: :not_found
       end

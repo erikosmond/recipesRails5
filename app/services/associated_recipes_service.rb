@@ -31,9 +31,25 @@ module AssociatedRecipesService
   end
 
   def recipe_detail(current_user)
-    join_alias = 'tag_selections'
-    recipe_selects = false
-    detail_sql(tag_selections, join_alias, current_user, recipe_selects)
+    selects = recipes_select_tags + tag_details_select + [
+      "tag_selections.id"
+    ]
+    detail_joins = [
+      { tag: :tag_type },
+      :tag_attributes,
+      :modifications,
+      :access
+    ]
+    tag_selections.
+      select(selects).
+      left_outer_joins(detail_joins).
+      where("accesses.user_id = #{current_user&.id} OR accesses.status = 'PUBLIC'")
+    # all this sql is meant to be called by tags, not recipes
+    # access are being joined to the recipe, not tag selections
+
+    # join_alias = 'tag_selections'
+    # recipe_selects = false
+    # detail_sql(tag_selections, join_alias, current_user, recipe_selects)
   end
 
   def recipes_with_detail(current_user)
@@ -114,9 +130,9 @@ module AssociatedRecipesService
       recipes.each do |k, v|
         ids = v.each_with_object({}) do |r, tag_ids|
           tag_ids[r.tag_id] = true
-          tag_ids[r.parent_tag_id] = true
-          tag_ids[r.grandparent_tag_id] = true
-          tag_ids[r.modification_id] = true
+          tag_ids[r.try(:parent_tag_id)] = true
+          tag_ids[r.try(:grandparent_tag_id)] = true
+          tag_ids[r.try(:modification_id)] = true
         end
         k['tag_ids'] = ids.select { |key, _v| key.present? }
       end
@@ -136,15 +152,22 @@ module AssociatedRecipesService
     end
 
     def recipes_with_detail_select(tag_selection_table_name, recipes = true)
-      selects = recipes_select_tags + [
-        "#{tag_selection_table_name}.id",
+      # TODO: should be able to remove recipes parameter, possibly tag_selection_table name should be in caller, not this method?
+      selects = recipes_select_tags + recipes_select_parent_tags +
+      tag_details_select + [
+        "#{tag_selection_table_name}.id"
+      ]
+      recipes ? selects + recipes_select_recipes : selects
+    end
+
+    def tag_details_select
+      [
         'tag_types.name AS tag_type',
         'tag_attributes.value',
         'tag_attributes.property',
         'modifications_tag_selections.name AS modification_name',
         'modifications_tag_selections.id AS modification_id'
       ]
-      recipes ? selects + recipes_select_recipes : selects
     end
 
     def recipes_select_recipes
@@ -161,7 +184,12 @@ module AssociatedRecipesService
         'tags.name AS tag_name',
         'tags.description AS tag_description',
         'tags.id AS tag_id',
-        'tags.tag_type_id AS tag_type_id',
+        'tags.tag_type_id AS tag_type_id'
+      ]
+    end
+
+    def recipes_select_parent_tags
+      [
         'parent_tags_tags.name AS parent_tag',
         'parent_tags_tags.id AS parent_tag_id',
         'parent_tags_tags_2.name AS grandparent_tag',

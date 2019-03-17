@@ -23,4 +23,12 @@ class TagType < ApplicationRecord
       @ingredient_id ||= TagType.find_by_name('Ingredient').id
     end
   end
+
+  def self.unsync_ids
+    @mutex.synchronize do
+      @ingredient_id = nil
+      @type_id = nil
+      @family_id = nil
+    end
+  end
 end

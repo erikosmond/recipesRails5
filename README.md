@@ -39,3 +39,5 @@ update the pg_hba.conf to allow deploy user access to all databases from all hos
 https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html might need to reboot machine for docker daemon to run
 
 https://docs.docker.com/compose/install/ and click on the Linux tab
+
+The production docker-compose file expects a sister directory to the app directory where the letsencrypt directory will live, housing everything needed to establish SSL connections.

@@ -2,7 +2,7 @@
 
 class PagesController < ApplicationController
   def home
-    starting_tag = Tag.find_by_name('On Deck') || Tag.first
+    starting_tag = Tag.find_by_name('Erik Osmond') || Tag.first
     all_tags = Tag.all.each_with_object({}) { |t, obj| obj[t.id] = t.name }
     all_types = TagType.all.each_with_object({}) { |t, obj| obj[t.id] = t.name }
     rating_tags = TagType.find_by_name('Rating').tags

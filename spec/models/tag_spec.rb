@@ -1,6 +1,12 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 describe Tag do
+  before(:each) do
+    TagType.unsync_ids
+  end
+
   subject { create :tag }
 
   it 'has a valid factory' do
@@ -100,7 +106,7 @@ describe Tag do
     end
 
     it 'returns all ingredient filters' do
-      expected = {protein.id => {nut.id => [almond.id]}}
+      expected = { protein.id => { nut.id => [almond.id] } }
       expect(Tag.ingredient_group_heirarchy_filters(user)).to eq(expected)
     end
 
