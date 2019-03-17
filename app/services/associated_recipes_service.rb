@@ -31,9 +31,6 @@ module AssociatedRecipesService
   end
 
   def recipe_detail(current_user)
-    selects = recipes_select_tags + tag_details_select + [
-      "tag_selections.id"
-    ]
     detail_joins = [
       { tag: :tag_type },
       :tag_attributes,
@@ -41,21 +38,14 @@ module AssociatedRecipesService
       :access
     ]
     tag_selections.
-      select(selects).
+      select(recipes_select_tags + tag_details_select + ['tag_selections.id']).
       left_outer_joins(detail_joins).
       where("accesses.user_id = #{current_user&.id} OR accesses.status = 'PUBLIC'")
-    # all this sql is meant to be called by tags, not recipes
-    # access are being joined to the recipe, not tag selections
-
-    # join_alias = 'tag_selections'
-    # recipe_selects = false
-    # detail_sql(tag_selections, join_alias, current_user, recipe_selects)
   end
 
   def recipes_with_detail(current_user)
-    recipes = true
     ts = TagSelection.
-         select(recipes_with_detail_select('tag_selections_recipes', recipes)).
+         select(recipes_with_detail_select + ['tag_selections_recipes.id']).
          left_outer_joins(
            [:access, recipe: { tag_selections: recipes_with_parent_detail_joins }]
          )
@@ -92,9 +82,9 @@ module AssociatedRecipesService
         where("accesses.user_id = #{current_user&.id} OR accesses.status = 'PUBLIC'")
     end
 
-    def detail_sql(selected_tags, tag_selection_table_name, current_user, recipes = true)
+    def detail_sql(selected_tags, tag_selection_table_name, current_user)
       selected_tags.
-        select(recipes_with_detail_select(tag_selection_table_name, recipes)).
+        select(recipes_with_detail_select + ["#{tag_selection_table_name}.id"]).
         left_outer_joins(recipes_with_parent_detail_joins).
         where("accesses.user_id = #{current_user&.id} OR accesses.status = 'PUBLIC'")
     end
@@ -151,13 +141,11 @@ module AssociatedRecipesService
       recipes.map { |k, v| k.merge(v) }
     end
 
-    def recipes_with_detail_select(tag_selection_table_name, recipes = true)
-      # TODO: should be able to remove recipes parameter, possibly tag_selection_table name should be in caller, not this method?
-      selects = recipes_select_tags + recipes_select_parent_tags +
-      tag_details_select + [
-        "#{tag_selection_table_name}.id"
-      ]
-      recipes ? selects + recipes_select_recipes : selects
+    def recipes_with_detail_select
+      recipes_select_tags +
+        recipes_select_parent_tags +
+        tag_details_select +
+        recipes_select_recipes
     end
 
     def tag_details_select
