@@ -29,4 +29,17 @@ describe Api::RecipesController, type: :controller do
       expect(body['ratings']).to be_nil
     end
   end
+
+  describe 'GET - index' do
+    before do
+      sign_in user
+      get :index,
+          params: { id: recipe.id },
+          format: 'json'
+    end
+    it 'returns a 200' do
+      # TODO: add some real test here
+      expect(response.status).to eq(201)
+    end
+  end
 end

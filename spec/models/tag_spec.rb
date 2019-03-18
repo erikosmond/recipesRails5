@@ -154,28 +154,12 @@ describe Tag do
       expect(protein.child_tags.first.class.name).to eq('ChildTag')
       expect(protein.grandchild_tags.first.name).to eq('Almond')
       expect(protein.grandchild_tags.first.class.name).to eq('GrandchildTag')
-      expect(protein.grandchild_recipes_with_detail(user).to_a.size).to eq(1)
-      expect(protein.grandchild_recipes_with_detail(user).first['recipe_id']).to eq(martini.id)
     end
-    it 'assigns child recipe to family' do
-      expect(protein.child_recipes_with_detail(user).to_a.size).to eq(3)
-      expect(protein.child_recipes_with_detail(user).first['recipe_id']).to eq(vesper.id)
-      expect(protein.child_recipes_with_detail(user).second['recipe_id']).to eq(vesper.id)
-      expect(protein.child_recipes_with_detail(user).third['recipe_id']).to eq(vesper.id)
+    it 'returns recipe level detail for ingredient family' do
+      expect(protein.recipe_detail_level(user).map(&:recipe_id).uniq).to eq([martini.id, vesper.id, manhattan.id])
     end
-    it 'assigns own recipe to family' do
-      expect(protein.recipes_with_detail(user).to_a.size).to eq(1)
-      expect(protein.recipes_with_detail(user).first['recipe_id']).to eq(manhattan.id)
-    end
-    it 'assigns child recipe to type' do
-      expect(nut.child_recipes_with_detail(user).to_a.size).to eq(1)
-      expect(nut.child_recipes_with_detail(user).first['recipe_id']).to eq(martini.id)
-    end
-    it 'assigns own recipe to type' do
-      expect(nut.recipes_with_detail(user).to_a.size).to eq(3)
-      expect(nut.recipes_with_detail(user).first['recipe_id']).to eq(vesper.id)
-      expect(nut.recipes_with_detail(user).second['recipe_id']).to eq(vesper.id)
-      expect(nut.recipes_with_detail(user).third['recipe_id']).to eq(vesper.id)
+    it 'returns recipe level detail for ingredient type' do
+      expect(nut.recipe_detail_level(user).map(&:recipe_id).uniq).to eq([martini.id, vesper.id])
     end
   end
 
@@ -273,7 +257,7 @@ describe Tag do
         expect(tag_subject.filter_tags(recipes) - array_list).to eq([])
       end
       it 'returns recipe level detail for ingredients' do
-        expect((tag_subject.recipe_detail_level(user).map(&:id).uniq) - detail_ids).to eq([])
+        expect(tag_subject.recipe_detail_level(user).map(&:id).uniq - detail_ids).to eq([])
       end
       it 'returns no recipes for ingredients' do
         expect(tag_subject.recipe_detail_level(non_active_user).map(&:id).uniq - private_ids).to eq([])

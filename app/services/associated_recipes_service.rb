@@ -43,6 +43,7 @@ module AssociatedRecipesService
       where("accesses.user_id = #{current_user&.id} OR accesses.status = 'PUBLIC'")
   end
 
+  # should be private method, but is being used explicitly in testing for now
   def recipes_with_detail(current_user)
     ts = TagSelection.
          select(recipes_with_detail_select + ['tag_selections_recipes.id']).
@@ -52,22 +53,22 @@ module AssociatedRecipesService
     add_predicates(ts, current_user)
   end
 
-  def child_recipes_with_detail(current_user)
-    join_alias = 'child_tag_selections_child_recipe_tag_selections'
-    detail_sql(child_recipe_tag_selections, join_alias, current_user)
-  end
-
-  def grandchild_recipes_with_detail(current_user)
-    join_alias = 'grandchild_tag_selections_grandchild_recipe_tag_selections'
-    detail_sql(grandchild_recipe_tag_selections, join_alias, current_user)
-  end
-
-  def modification_recipes_detail(current_user)
-    join_alias = 'tag_selections_modified_recipe_tag_selections_2'
-    detail_sql(modified_recipe_tag_selections, join_alias, current_user)
-  end
-
   private
+
+    def modification_recipes_detail(current_user)
+      join_alias = 'tag_selections_modified_recipe_tag_selections_2'
+      detail_sql(modified_recipe_tag_selections, join_alias, current_user)
+    end
+
+    def child_recipes_with_detail(current_user)
+      join_alias = 'child_tag_selections_child_recipe_tag_selections'
+      detail_sql(child_recipe_tag_selections, join_alias, current_user)
+    end
+
+    def grandchild_recipes_with_detail(current_user)
+      join_alias = 'grandchild_tag_selections_grandchild_recipe_tag_selections'
+      detail_sql(grandchild_recipe_tag_selections, join_alias, current_user)
+    end
 
     def add_predicates(tag_selections, current_user)
       tag_selections.

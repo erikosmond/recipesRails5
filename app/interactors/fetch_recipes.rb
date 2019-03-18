@@ -1,30 +1,28 @@
-# frozen_string_literal: true
+class FetchRecipes
+  include Interactor
 
-module AssociatedTagsService
-  def tag_with_heirarchy_grouped(current_user, all_tags = false)
+  def call
     tag_json = as_json(only: %i[id name description tag_type_id recipe_id])
-    tag_groups.each do |tg|
-      tag_json["#{tg}s"] = {}
-    end
-    tag_with_heirarchy(current_user, all_tags).each do |t|
+    tag_with_heirarchy.each do |t|
       tag_groups.each do |g|
+        tag_json["#{g}s"] = {}
         group_tags(tag_json, t, g)
       end
     end
-    tag_json
+    context.json = tag_json
   end
 
-  def tag_with_heirarchy(current_user, all_tags = false)
+  def tag_with_heirarchy
     heirarchy = Tag.select(
       tag_heirarchy_select
     ).left_outer_joins(
       tag_heirarchy_join
     ).where(
-      "accesses.user_id = #{current_user&.id} OR accesses.status = 'PUBLIC'"
+      "accesses.user_id = #{context.current_user&.id} OR accesses.status = 'PUBLIC'"
     ).order('tags.id, child_tags.id, child_tags_tags.id')
-    return heirarchy if all_tags
+    return heirarchy if context.all_tags
 
-    heirarchy.where(tags: { id: id })
+    heirarchy.where(tags: { id: context.tag.id })
   end
 
   private
@@ -44,7 +42,7 @@ module AssociatedTagsService
         modification_tag
         modified_tag
       ]
-      groups << :grandchild_tag unless tag_type.name == 'IngredientType'
+      groups << :grandchild_tag unless context.tag.tag_type_name == 'IngredientType'
       groups
     end
 
@@ -98,6 +96,6 @@ module AssociatedTagsService
     end
 
     def modification_tag?
-      tag_type_name == 'IngredientModification'
+      context.tag.tag_type_name == 'IngredientModification'
     end
 end

@@ -24,9 +24,14 @@ module Api
     def show
       tag = Tag.find_by_id(params.permit(:id)[:id])
       if tag
-        render json: tag.tag_with_heirarchy_grouped(current_user)
+        result = FetchRecipes.call(tag: tag, current_user: current_user)
+        if result.success?
+          render json: result.json # tag.tag_with_heirarchy_grouped(current_user)
+        else
+          render json: {}, status: :bad_request
+        end
       else
-        render json: { tag: tag.to_s }, status: :not_found
+        render json: {}, status: :not_found
       end
     end
 
