@@ -11,7 +11,7 @@ module Api
         else
           render json: {
             tags: tags,
-            tag_groups: Tag.ingredient_group_heirarchy_filters(current_user)
+            tag_groups: Tag.ingredient_group_hierarchy_filters(current_user)
           }
         end
       else

@@ -10,7 +10,7 @@ class PagesController < ApplicationController
     @home_tag_id = starting_tag.id
     @all_tags = all_tags
     @all_tag_types = all_types
-    @tag_groups = Tag.ingredient_group_heirarchy_filters(current_user)
+    @tag_groups = Tag.ingredient_group_hierarchy_filters(current_user)
     @tags_by_type = Tag.tags_by_type
     @ratings = rating_tags.each_with_object({}) { |t, obj| obj[t.name] = t.id }
     @priorities = priority_tags.each_with_object({}) { |t, obj| obj[t.name] = t.id }

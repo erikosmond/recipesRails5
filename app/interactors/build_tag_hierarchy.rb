@@ -9,8 +9,8 @@ class BuildTagHierarchy
     accesses.user_id = #{context.current_user&.id} OR accesses.status = 'PUBLIC'
     "
     hierarchy = Tag.
-                select(tag_heirarchy_select).
-                left_outer_joins(tag_heirarchy_join).
+                select(tag_hierarchy_select).
+                left_outer_joins(tag_hierarchy_join).
                 where(predicate).
                 order('tags.id, child_tags.id, child_tags_tags.id')
 
@@ -27,8 +27,8 @@ class BuildTagHierarchy
       end
     end
 
-    def tag_heirarchy_select
-      cols = tag_heirarchy_select_children + tag_heirarchy_select_parents +
+    def tag_hierarchy_select
+      cols = tag_hierarchy_select_children + tag_hierarchy_select_parents +
              [
                'tags.id tag_id',
                'tags.name tag_name',
@@ -36,18 +36,18 @@ class BuildTagHierarchy
                'modifications_tag_selections.id modification_tag_id',
                'modifications_tag_selections.name modification_tag_name'
              ]
-      cols << tag_heirarchy_select_modified if modification_tag?
+      cols << tag_hierarchy_select_modified if modification_tag?
       cols
     end
 
-    def tag_heirarchy_select_modified
+    def tag_hierarchy_select_modified
       [
         'modified_tags_tags.id modified_tag_id',
         'modified_tags_tags.name modified_tag_name'
       ]
     end
 
-    def tag_heirarchy_select_children
+    def tag_hierarchy_select_children
       [
         'child_tags.id child_tag_id',
         'child_tags.name child_tag_name',
@@ -56,7 +56,7 @@ class BuildTagHierarchy
       ]
     end
 
-    def tag_heirarchy_select_parents
+    def tag_hierarchy_select_parents
       [
         'parent_tags_tags.id parent_tag_id',
         'parent_tags_tags.name parent_tag_name',
@@ -65,7 +65,7 @@ class BuildTagHierarchy
       ]
     end
 
-    def tag_heirarchy_join
+    def tag_hierarchy_join
       join_tables = [
         :tag_type,
         child_tag_selections: [:access, { tag: :child_tags }],

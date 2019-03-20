@@ -80,7 +80,7 @@ describe Tag do
     let!(:access10) { create(:access, user: user, accessible: tag_selection2, status: 'PRIVATE') }
     let!(:access11) { create(:access, user: user, accessible: tag_selection3, status: 'PRIVATE') }
 
-    let(:expected_heirarchy_result) do
+    let(:expected_hierarchy_result) do
       {
         'id' => nut.id,
         'name' => 'Nut',
@@ -107,12 +107,12 @@ describe Tag do
 
     it 'returns all ingredient filters' do
       expected = { protein.id => { nut.id => [almond.id] } }
-      expect(Tag.ingredient_group_heirarchy_filters(user)).to eq(expected)
+      expect(Tag.ingredient_group_hierarchy_filters(user)).to eq(expected)
     end
 
     it 'returns no ingredient filters' do
       expected = {}
-      expect(Tag.ingredient_group_heirarchy_filters(non_active_user)).to eq(expected)
+      expect(Tag.ingredient_group_hierarchy_filters(non_active_user)).to eq(expected)
     end
 
     it 'returns tags_by_type' do
@@ -120,12 +120,12 @@ describe Tag do
       expect(Tag.tags_by_type).to eq(expected)
     end
 
-    it 'groups its heirarchy' do
-      expect(nut.tag_with_heirarchy_grouped(user)).to eq expected_heirarchy_result
+    it 'groups its hierarchy' do
+      expect(nut.tag_with_hierarchy_grouped(user)).to eq expected_hierarchy_result
     end
 
-    it 'groups no heirarchy' do
-      expect(nut.tag_with_heirarchy_grouped(non_active_user)['tags']).to eq({})
+    it 'groups no hierarchy' do
+      expect(nut.tag_with_hierarchy_grouped(non_active_user)['tags']).to eq({})
     end
 
     it 'has parent_tags' do
