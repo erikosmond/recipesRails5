@@ -1,19 +1,6 @@
-# frozen_string_literal: true
-
+# # frozen_string_literal: true
+#
 module AssociatedTagsService
-  def tag_with_heirarchy_grouped(current_user, all_tags = false)
-    tag_json = as_json(only: %i[id name description tag_type_id recipe_id])
-    tag_groups.each do |tg|
-      tag_json["#{tg}s"] = {}
-    end
-    tag_with_heirarchy(current_user, all_tags).each do |t|
-      tag_groups.each do |g|
-        group_tags(tag_json, t, g)
-      end
-    end
-    tag_json
-  end
-
   def tag_with_heirarchy(current_user, all_tags = false)
     heirarchy = Tag.select(
       tag_heirarchy_select
@@ -33,19 +20,6 @@ module AssociatedTagsService
       return unless tags["#{group}_id"] && tags["#{group}_name"]
 
       tags_json["#{group}s"][tags["#{group}_id"]] = tags["#{group}_name"]
-    end
-
-    def tag_groups
-      groups = %i[
-        tag
-        child_tag
-        parent_tag
-        grandparent_tag
-        modification_tag
-        modified_tag
-      ]
-      groups << :grandchild_tag unless tag_type.name == 'IngredientType'
-      groups
     end
 
     def tag_heirarchy_select

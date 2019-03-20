@@ -1,49 +1,30 @@
-class FetchRecipes
+# frozen_string_literal: true
+
+# For showing child and parent tags
+class BuildTagHierarchy
   include Interactor
 
   def call
-    tag_json = as_json(only: %i[id name description tag_type_id recipe_id])
-    tag_with_heirarchy.each do |t|
-      tag_groups.each do |g|
-        tag_json["#{g}s"] = {}
-        group_tags(tag_json, t, g)
-      end
-    end
-    context.json = tag_json
-  end
+    predicate = "
+    accesses.user_id = #{context.current_user&.id} OR accesses.status = 'PUBLIC'
+    "
+    hierarchy = Tag.
+                select(tag_heirarchy_select).
+                left_outer_joins(tag_heirarchy_join).
+                where(predicate).
+                order('tags.id, child_tags.id, child_tags_tags.id')
 
-  def tag_with_heirarchy
-    heirarchy = Tag.select(
-      tag_heirarchy_select
-    ).left_outer_joins(
-      tag_heirarchy_join
-    ).where(
-      "accesses.user_id = #{context.current_user&.id} OR accesses.status = 'PUBLIC'"
-    ).order('tags.id, child_tags.id, child_tags_tags.id')
-    return heirarchy if context.all_tags
-
-    heirarchy.where(tags: { id: context.tag.id })
+    context.tags_with_hierarchy = filter_tags(hierarchy)
   end
 
   private
 
-    def group_tags(tags_json, tags, group)
-      return unless tags["#{group}_id"] && tags["#{group}_name"]
-
-      tags_json["#{group}s"][tags["#{group}_id"]] = tags["#{group}_name"]
-    end
-
-    def tag_groups
-      groups = %i[
-        tag
-        child_tag
-        parent_tag
-        grandparent_tag
-        modification_tag
-        modified_tag
-      ]
-      groups << :grandchild_tag unless context.tag.tag_type_name == 'IngredientType'
-      groups
+    def filter_tags(hierarchy)
+      if context.all_tags
+        hierarchy
+      else
+        hierarchy.where(tags: { id: context.tag.id })
+      end
     end
 
     def tag_heirarchy_select
