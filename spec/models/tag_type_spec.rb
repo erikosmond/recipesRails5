@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe TagType do
+describe TagType, type: :model do
   subject { create :tag_type }
   let!(:tag_type1) { create(:tag_type, name: 'Same Name')}
   let(:tag_type2) { build(:tag_type, name: 'Same Name')}

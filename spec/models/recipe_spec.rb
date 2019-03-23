@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Recipe do
+describe Recipe, type: :model do
   subject { create :recipe }
 
   describe 'Verify valid records' do

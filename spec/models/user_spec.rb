@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe User do
+describe User, type: :model do
   subject { create :user }
   let!(:access) { create :access, user: subject }
 

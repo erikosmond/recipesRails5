@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe Tag do
+describe Tag, type: :model do
   before(:each) do
     TagType.unsync_ids
   end
