@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require_relative './tag_context.rb'
+require_relative '../contexts/tag_context.rb'
 
 RSpec.describe GroupTags, type: :interactor do
   describe '.call' do
