@@ -18,8 +18,8 @@ RSpec.describe GroupTags, type: :interactor do
         'parent_tags' => { protein.id => 'Protein' },
         'grandparent_tags' => { plants.id => 'plants' },
         'modification_tags' => {
-          modification1.id => 'toasted',
-          modification2.id => 'crushed'
+          toasted.id => 'toasted',
+          crushed.id => 'crushed'
         },
         'modified_tags' => {}
       }

@@ -6,7 +6,7 @@ class GroupTags
     tag_json = context.tag.as_json(only: json_fields)
     context.tags_with_hierarchy.each do |t|
       tag_groups.each do |g|
-        tag_json["#{g}s"] = {}
+        tag_json["#{g}s"] ||= {}
         group_tags(tag_json, t, g)
       end
     end

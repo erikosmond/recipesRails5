@@ -6,31 +6,31 @@ require_relative './tag_context.rb'
 RSpec.describe BuildTagHierarchy, type: :interactor do
   describe '.call' do
     include_context 'tags' # from './tag_context.rb'
-    let(:expected_hierarchy_result) do
-      {
-        'id' => nut.id,
-        'name' => 'Nut',
-        'description' => nil,
-        'tag_type_id' => nut.tag_type.id,
-        'tags' => { nut.id => 'Nut' },
-        'recipe_id' => nil,
-        'child_tags' => { almond.id => 'Almond' },
-        'parent_tags' => { protein.id => 'Protein' },
-        'grandparent_tags' => { plants.id => 'plants' },
-        'modification_tags' => {
-          modification1.id => 'toasted',
-          modification2.id => 'crushed'
-        },
-        'modified_tags' => {}
-      }
-    end
-
-    it "returns a tag's parent and child tags" do
-      result = BuildTagHierarchy.call(
+    let(:result) do
+      BuildTagHierarchy.call(
         tag: nut,
         current_user: user
       )
-      expect(result.tags_with_hierarchy.map(&:to_json)).to eq expected_hierarchy_result
+    end
+    let(:expected_modifications) { [toasted.id, crushed.id, nil] }
+
+    it "returns correct number of tag's parent and child tags" do
+      expect(result.tags_with_hierarchy.size).to eq 3
+    end
+    it 'returns correct grandparent tag' do
+      expect(result.tags_with_hierarchy.map(&:grandparent_tag_id).uniq).to eq [plants.id]
+    end
+    it 'returns correct parent tag' do
+      expect(result.tags_with_hierarchy.map(&:parent_tag_id).uniq).to eq [protein.id]
+    end
+    it 'returns correct tag' do
+      expect(result.tags_with_hierarchy.map(&:tag_id).uniq).to eq [nut.id]
+    end
+    it 'returns correct child tag' do
+      expect(result.tags_with_hierarchy.map(&:child_tag_id).uniq).to eq [almond.id]
+    end
+    it 'returns correct modification tags' do
+      expect(result.tags_with_hierarchy.map(&:modification_tag_id).uniq - expected_modifications).to eq []
     end
   end
 end

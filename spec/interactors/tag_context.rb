@@ -23,10 +23,10 @@ RSpec.shared_context 'tags', shared_context: :metadata do
   let(:modification_name1) { 'toasted' }
   let(:modification_name2) { 'crushed' }
   let(:alteration) { create(:tag_type, name: 'Alteration') }
-  let(:modification1) { create(:tag, tag_type: alteration, name: modification_name1) }
-  let(:modification2) { create(:tag, tag_type: alteration, name: modification_name2) }
-  let!(:tag_selection_mod1) { create(:tag_selection, tag: modification1, taggable: tag_selection4) }
-  let!(:tag_selection_mod2) { create(:tag_selection, tag: modification2, taggable: tag_selection4) }
+  let(:toasted) { create(:tag, tag_type: alteration, name: modification_name1) }
+  let(:crushed) { create(:tag, tag_type: alteration, name: modification_name2) }
+  let!(:tag_selection_mod1) { create(:tag_selection, tag: toasted, taggable: tag_selection4) }
+  let!(:tag_selection_mod2) { create(:tag_selection, tag: crushed, taggable: tag_selection4) }
   let!(:user) { create(:user) }
   let!(:non_active_user) { create(:user) }
   let!(:access1) { create(:access, user: user, accessible: vesper) }
