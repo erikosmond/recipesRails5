@@ -122,12 +122,14 @@ describe Tag, type: :model do
         expect(protein.grandchild_tags.first.class.name).to eq('GrandchildTag')
       end
     end
-    # it 'returns recipe level detail for ingredient family' do
-    #   expect(protein.recipe_detail_level(user).map(&:recipe_id).uniq).to eq([martini.id, vesper.id, manhattan.id])
-    # end
-    # it 'returns recipe level detail for ingredient type' do
-    #   expect(nut.recipe_detail_level(user).map(&:recipe_id).uniq).to eq([martini.id, vesper.id])
-    # end
+    it 'returns recipe level detail for ingredient family' do
+      result = RecipeByTag.call(tag: protein, current_user: user).result
+      expect(GroupRecipeDetail.call(recipe_details: result).result.map { |r| r['id'] } ).to eq([martini.id, vesper.id, manhattan.id])
+    end
+    it 'returns recipe level detail for ingredient type' do
+      result = RecipeByTag.call(tag: nut, current_user: user).result
+      expect(GroupRecipeDetail.call(recipe_details: result).result.map { |r| r['id'] } ).to eq([martini.id, vesper.id])
+    end
   end
 
   describe '#access' do
@@ -148,17 +150,6 @@ describe Tag, type: :model do
     include_context 'recipes'
     describe '#collect_tag_ids' do
       let(:tag_subject) { create(:tag, name: 'Lemon Verbena', tag_type: tag_type_ingredient_type) }
-      let(:array_list) do
-        [
-          [tag_subject.id, 'Lemon Verbena'],
-          [ingredient2.id, 'pepper'],
-          [ingredient1.id, 'salt'],
-          [ingredient1_type.id, 'spices'],
-          [ingredient1_family.id, 'seasoning'],
-          [modification.id, 'chili infused'],
-          [lemon_verbena.id, ingredient1_verbena]
-        ]
-      end
       let(:detail_ids) do
         [
           tag_selection1.id,
@@ -175,14 +166,13 @@ describe Tag, type: :model do
           tag_selection2c.id
         ]
       end
-      it 'returns collected tag ids for ingredients' do
-        expect(tag_subject.filter_tags(recipes) - array_list).to eq([])
-      end
       it 'returns recipe level detail for ingredients' do
-        expect(tag_subject.recipe_detail_level(user).map(&:id).uniq - detail_ids).to eq([])
+        result = RecipeByTag.call(tag: tag_subject, current_user: user).result
+        expect(result.map { |r| r['id'] } - detail_ids).to eq([])
       end
       it 'returns no recipes for ingredients' do
-        expect(tag_subject.recipe_detail_level(non_active_user).map(&:id).uniq - private_ids).to eq([])
+        result = RecipeByTag.call(tag: tag_subject, current_user: non_active_user).result
+        expect(result.map { |r| r['id'] } - private_ids).to eq([])
       end
     end
 
@@ -190,18 +180,6 @@ describe Tag, type: :model do
       let(:mod) { create(:tag_type, name: 'IngredientModification') }
       let(:tag_subject) { create(:tag, name: 'Chamomile', tag_type: mod) }
       let!(:mod_selection) { create(:tag_selection, tag: tag_subject, taggable: tag_selection1)}
-      let(:filter_array) do
-        [
-          [tag_subject.id, 'Chamomile'],
-          [ingredient2.id, 'pepper'],
-          [ingredient1.id, 'salt'],
-          [ingredient1_type.id, 'spices'],
-          [ingredient1_family.id, 'seasoning'],
-          [modification.id, 'chili infused'],
-          [rating.id, 'Rating: 9'],
-          [lemon_verbena.id, 'Lemon Verbena']
-        ]
-      end
       let(:detail_ids) do
         [
           tag_selection1.id,
@@ -212,19 +190,18 @@ describe Tag, type: :model do
           mod_selection.id
         ]
       end
-      it 'returns collected tag ids for modification' do
-        expect(tag_subject.filter_tags(recipes) - filter_array).to eq([])
-      end
       it 'returns recipe level detail for modification' do
-        expect(tag_subject.recipe_detail_level(user).map(&:id).uniq.sort).to eq(detail_ids.sort)
+        expect(RecipeByTag.call(tag: tag_subject, current_user: user).result.map(&:id).uniq.sort).to eq(detail_ids.sort)
       end
     end
 
     describe '#recipes_with_grouped_detail' do
-      let(:tag_subject) { create(:tag, name: 'Verbena', tag_type: tag_type_ingredient_type) }
-      let!(:recipe_result2) { tag_subject.recipes_with_grouped_detail(recipes).second }
+      let!(:tag_subject) { create(:tag, name: 'Verbena', tag_type: tag_type_ingredient_type) }
+      let!(:result) { RecipeByTag.call(tag: tag_subject, current_user: user).result }
+      let(:recipe_result) { GroupRecipeDetail.call(recipe_details: result).result }
+      let(:recipe_result2) { recipe_result.second }
       it 'returns only one valid row' do
-        expect(subject.recipes_with_grouped_detail(recipes).count).to eq(2)
+        expect(recipe_result.size).to eq(2)
       end
       it 'returns recipe name' do
         expect(recipe_result2['name']).to eq(recipe2_name)
