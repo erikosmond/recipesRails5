@@ -16,7 +16,6 @@ RSpec.describe RecipeDetail, type: :interactor do
         current_user: user
       ).result
     end
-    let(:expected_modifications) { [] }
 
     it "returns correct number of recipe's details" do
       expect(result.size).to eq 2

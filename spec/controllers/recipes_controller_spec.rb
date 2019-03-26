@@ -10,7 +10,6 @@ describe Api::RecipesController, type: :controller do
   let!(:different_user) { create(:user) }
   let!(:recipe) { create(:recipe) }
   let!(:rating_type) { create(:tag_type, name: 'Rating') }
-  # let!(:ingredient_type) { create(:tag_type, name: 'Ingredient') }
   let!(:ingredient) { create(:tag, tag_type: tag_type_ingredient) }
   let!(:rating) { create(:tag, name: 'rating', tag_type: rating_type) }
   let!(:tag_selection_ing) { create(:tag_selection, tag: ingredient, taggable: recipe) }
