@@ -10,13 +10,15 @@ describe Api::RecipesController, type: :controller do
   let!(:different_user) { create(:user) }
   let!(:recipe) { create(:recipe) }
   let!(:rating_type) { create(:tag_type, name: 'Rating') }
-  let!(:ingredient_type) { create(:tag_type, name: 'Ingredient') }
-  let!(:ingredient) { create(:tag, tag_type: ingredient_type) }
+  # let!(:ingredient_type) { create(:tag_type, name: 'Ingredient') }
+  let!(:ingredient) { create(:tag, tag_type: tag_type_ingredient) }
   let!(:rating) { create(:tag, name: 'rating', tag_type: rating_type) }
   let!(:tag_selection_ing) { create(:tag_selection, tag: ingredient, taggable: recipe) }
   let!(:tag_selection_rating) { create(:tag_selection, tag: rating, taggable: recipe) }
   let!(:access_ing) { create(:access, accessible: tag_selection_ing, user: user) }
   let!(:access_rating) { create(:access, accessible: tag_selection_rating, user: different_user, status: 'PRIVATE') }
+  let(:tag_subject) { create(:tag, name: 'Lemon Verbena', tag_type: tag_type_ingredient_type) }
+
   describe 'GET - show' do
     before do
       sign_in user

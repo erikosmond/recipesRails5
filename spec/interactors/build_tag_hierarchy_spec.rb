@@ -5,7 +5,7 @@ require_relative '../contexts/tag_context.rb'
 
 RSpec.describe BuildTagHierarchy, type: :interactor do
   describe '.call' do
-    include_context 'tags' # from './tag_context.rb'
+    include_context 'tags'
     let(:result) do
       BuildTagHierarchy.call(
         tag: nut,
