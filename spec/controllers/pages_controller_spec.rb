@@ -77,17 +77,15 @@ describe PagesController, type: :controller do
           format: 'html'
     end
 
-    it { expect(response.status).to eq(200) } # safe
-    it { expect(assigns[:all_tags]).to eq(tags_by_id) } # safe
+    it { expect(response.status).to eq(200) }
+
+    it { expect(assigns[:all_tags]).to eq(tags_by_id) }
     it { expect(assigns[:home_tag_id]).to eq(tag.id) }
     it { expect(assigns[:all_tag_types]).to eq(tag_types_by_id) }
-
     it { expect(assigns[:tag_groups]).to eq(tag_groups) }
-
-    it { expect(assigns[:tags_by_type]).to eq(tags_by_type) } # safe
-    it { expect(assigns[:ratings]).to eq(rating_tag.name => rating_tag.id) } # safe
-
-    it { expect(assigns[:priorities]).to eq(priority_tag.name => priority_tag.id) } # safe?
+    it { expect(assigns[:tags_by_type]).to eq(tags_by_type) }
+    it { expect(assigns[:ratings]).to eq(rating_tag.name => rating_tag.id) }
+    it { expect(assigns[:priorities]).to eq(priority_tag.name => priority_tag.id) }
 
     it { is_expected.to render_template :home }
   end

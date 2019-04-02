@@ -16,7 +16,7 @@ describe Api::RecipesController, type: :controller do
   let!(:tag_selection_rating) { create(:tag_selection, tag: rating, taggable: recipe) }
   let!(:access_ing) { create(:access, accessible: tag_selection_ing, user: user) }
   let!(:access_rating) { create(:access, accessible: tag_selection_rating, user: different_user, status: 'PRIVATE') }
-  let(:tag_subject) { create(:tag, name: 'Lemon Verbena', tag_type: tag_type_ingredient_type) }
+  let(:tag_subject) { create(:tag, name: 'Rice', tag_type: tag_type_ingredient_type) }
 
   describe 'GET - show' do
     before do
@@ -37,53 +37,62 @@ describe Api::RecipesController, type: :controller do
     before do
       sign_in user
       get :index,
-          params: { id: recipe.id },
+          params: { tag_id: tag_subject.id },
           format: 'json'
     end
+
+    let(:filter_array) do
+      [
+        [lemon_verbena.id, 'Lemon Verbena'],
+        [tag_subject.id, 'Rice'],
+        [ingredient2.id, 'pepper'],
+        [ingredient1.id, 'salt'],
+        [ingredient1_type.id, 'spices'],
+        [ingredient1_family.id, 'seasoning'],
+        [modification.id, 'chili infused']]
+    end
+
     it 'returns a 200' do
-      # TODO: add some real test here
-      # make sure to cover filter_tags private method like it was previously in tag_spec.rb
-      # describe '#collect_tag_ids' do
-      #   let(:tag_subject) { create(:tag, name: 'Lemon Verbena', tag_type: tag_type_ingredient_type) }
-      #   let(:array_list) do
-      #     [
-      #       [tag_subject.id, 'Lemon Verbena'],
-      #       [ingredient2.id, 'pepper'],
-      #       [ingredient1.id, 'salt'],
-      #       [ingredient1_type.id, 'spices'],
-      #       [ingredient1_family.id, 'seasoning'],
-      #       [modification.id, 'chili infused'],
-      #       [lemon_verbena.id, ingredient1_verbena]
-      #     ]
-      #   end
-      # end
+      expect(response.status).to eq(200)
+      body = JSON.parse(response.body)
+      expect(body['tag']['id']).to eq(tag_subject.id)
+      expect(body['recipes'].size).to eq(2)
+      expect(body['recipes'].first['name']).to eq('Pizza')
+      expect(body['recipes'].first['ingredients'][lemon_verbena.id.to_s]['tag_type']).to eq 'Ingredient'
+      expect(body['recipes'].first['ingredienttypes'].first['tag_name']).to eq('Rice')
+      expect(body['filter_tags']).to eq(filter_array)
+    end
+  end
 
-      # it 'returns collected tag ids for ingredients' do
-      #   expect(tag_subject.filter_tags(recipes) - array_list).to eq([])
-      # end
+  describe 'GET - index (modification)' do
+    let(:mod) { create(:tag_type, name: 'IngredientModification') }
+    let(:tag_subject) { create(:tag, name: 'Chamomile', tag_type: mod) }
+    let!(:mod_selection) { create(:tag_selection, tag: tag_subject, taggable: tag_selection1)}
 
-      # and cover filter tags on a modification
-      # describe '#collect_tag_ids' do
-      #   let(:mod) { create(:tag_type, name: 'IngredientModification') }
-      #   let(:tag_subject) { create(:tag, name: 'Chamomile', tag_type: mod) }
-      #   let!(:mod_selection) { create(:tag_selection, tag: tag_subject, taggable: tag_selection1)}
-      #   let(:filter_array) do
-      #     [
-      #       [tag_subject.id, 'Chamomile'],
-      #       [ingredient2.id, 'pepper'],
-      #       [ingredient1.id, 'salt'],
-      #       [ingredient1_type.id, 'spices'],
-      #       [ingredient1_family.id, 'seasoning'],
-      #       [modification.id, 'chili infused'],
-      #       [rating.id, 'Rating: 9'],
-      #       [lemon_verbena.id, 'Lemon Verbena']
-      #     ]
-      #   end
-      # end
-      # it 'returns collected tag ids for modification' do
-      #   expect(tag_subject.filter_tags(recipes) - filter_array).to eq([])
-      # end
-      expect(response.status).to eq(201)
+    let(:filter_array) do
+      [
+        [tag_subject.id, 'Chamomile'],
+        [ingredient2.id, 'pepper'],
+        [ingredient1.id, 'salt'],
+        [ingredient1_type.id, 'spices'],
+        [ingredient1_family.id, 'seasoning'],
+        [modification.id, 'chili infused'],
+        [lemon_verbena.id, 'Lemon Verbena']
+      ]
+    end
+
+    before do
+      sign_in user
+      get :index,
+          params: { tag_id: tag_subject.id },
+          format: 'json'
+    end
+
+    it 'returns a 200' do
+      body = JSON.parse(response.body)
+      expect(body['recipes'].size).to eq(2)
+      expect(body['filter_tags'] - filter_array).to eq([])
+      expect(response.status).to eq(200)
     end
   end
 end
