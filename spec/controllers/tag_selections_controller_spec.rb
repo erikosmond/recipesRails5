@@ -22,8 +22,9 @@ describe Api::TagSelectionsController, type: :controller do
           },
           format: 'json'
     end
-    it 'returns a 200' do
+    it 'returns a 200 and creates the record' do
       expect(response.status).to eq(200)
+      expect(TagSelection.where(taggable: recipe, tag: tag).size).to eq 1
     end
   end
 
@@ -35,15 +36,16 @@ describe Api::TagSelectionsController, type: :controller do
           params: {
             id: tag_selection.id,
             tag_selection: {
-              id: tag_selection.id,
+              tag_id: tag.id,
               taggable_type: 'Recipe',
               taggable_id: recipe.id
             }
           },
           format: 'json'
     end
-    it 'returns a 200' do
+    it 'returns a 200 and updates the record' do
       expect(response.status).to eq(200)
+      expect(TagSelection.find(tag_selection.id).tag).to eq tag
     end
   end
 end

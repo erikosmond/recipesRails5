@@ -3,6 +3,7 @@
 require 'spec_helper'
 require 'rails_helper'
 require_relative '../contexts/recipe_context.rb'
+require_relative '../contexts/tag_context.rb'
 
 describe Api::RecipesController, type: :controller do
   include_context 'recipes'
@@ -27,7 +28,6 @@ describe Api::RecipesController, type: :controller do
     end
     it 'returns a 200' do
       body = JSON.parse(response.body)
-      expect(response.status).to eq(200)
       expect(body['ingredients'][ingredient.id.to_s]['id']).to eq(tag_selection_ing.id)
       expect(body['ratings']).to be_nil
     end
@@ -54,12 +54,23 @@ describe Api::RecipesController, type: :controller do
 
     it 'returns a 200' do
       expect(response.status).to eq(200)
+    end
+    it 'returns the tag id' do
       body = JSON.parse(response.body)
       expect(body['tag']['id']).to eq(tag_subject.id)
+    end
+    it 'returns the recipe details' do
+      body = JSON.parse(response.body)
       expect(body['recipes'].size).to eq(2)
       expect(body['recipes'].first['name']).to eq('Pizza')
+    end
+    it 'returns the ingredients' do
+      body = JSON.parse(response.body)
       expect(body['recipes'].first['ingredients'][lemon_verbena.id.to_s]['tag_type']).to eq 'Ingredient'
       expect(body['recipes'].first['ingredienttypes'].first['tag_name']).to eq('Rice')
+    end
+    it 'returns the filter tags' do
+      body = JSON.parse(response.body)
       expect(body['filter_tags']).to eq(filter_array)
     end
   end
@@ -93,6 +104,44 @@ describe Api::RecipesController, type: :controller do
       expect(body['recipes'].size).to eq(2)
       expect(body['filter_tags'] - filter_array).to eq([])
       expect(response.status).to eq(200)
+    end
+  end
+
+  describe 'GET - index (ingredient_type)' do
+    before do
+      sign_in user
+      get :index,
+          params: { tag_id: ingredient1_type.id },
+          format: 'json'
+    end
+
+    it 'returns recipe details' do
+      body = JSON.parse(response.body)
+      expect(body['recipes'].size).to eq(1)
+      expect(body['recipes'].first['ingredients'].keys.size).to eq(2)
+    end
+    it 'returns filter tags' do
+      body = JSON.parse(response.body)
+      expect(body['filter_tags'].size).to eq(6)
+    end
+  end
+
+  describe 'GET - index (ingredient_family)' do
+    before do
+      sign_in user
+      get :index,
+          params: { tag_id: ingredient1_family.id },
+          format: 'json'
+    end
+
+    it 'returns recipe details' do
+      body = JSON.parse(response.body)
+      expect(body['recipes'].size).to eq(1)
+      expect(body['recipes'].first['ingredients'].keys.size).to eq(2)
+    end
+    it 'returns filter tags' do
+      body = JSON.parse(response.body)
+      expect(body['filter_tags'].size).to eq(6)
     end
   end
 end
