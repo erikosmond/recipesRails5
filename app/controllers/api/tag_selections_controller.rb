@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Api
+  # Used to assign tags like rating and priority to a given recipe.
   class TagSelectionsController < ApplicationController
     def create
       render json: TagSelection.create!(

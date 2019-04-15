@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# methods mostly used to build tag heirarchy to populate filtering component.
 module TagsService
   def all_tags_with_hierarchy(current_user)
     tag = Tag.first

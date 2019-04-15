@@ -6,7 +6,7 @@ require_relative '../contexts/recipe_context.rb'
 
 describe Tag, type: :model do
   before(:each) do
-    TagType.unsync_ids
+    TagType.delete_cache
   end
 
   subject { create :tag }

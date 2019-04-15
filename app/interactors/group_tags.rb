@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Group tag's tag heirarchy by type, i.e. grandchild_tag, grandparent_tag, etc.
 class GroupTags
   include Interactor
 

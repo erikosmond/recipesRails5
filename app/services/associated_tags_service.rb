@@ -1,5 +1,6 @@
 # # frozen_string_literal: true
-#
+
+# Helper methods to generate SQL to connect tags to their related tags.
 module AssociatedTagsService
   def tag_with_hierarchy(current_user, all_tags = false)
     hierarchy = Tag.select(

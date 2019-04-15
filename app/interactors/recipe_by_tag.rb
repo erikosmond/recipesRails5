@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Fetch recipes belonging to a tag and that tag's children
 class RecipeByTag
   include AssociatedRecipesService
   include Interactor

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Used to populate the dropdown menus of ingredients at the top of the page
 class TagsByType
   include Interactor
 

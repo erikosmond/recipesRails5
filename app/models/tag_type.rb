@@ -34,7 +34,7 @@ class TagType < ApplicationRecord
     end
   end
 
-  def self.unsync_ids
+  def self.delete_cache
     Rails.cache.delete_matched("#{TAG_TYPES}/*")
   end
 end

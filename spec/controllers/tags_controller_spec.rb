@@ -7,7 +7,7 @@ require_relative '../contexts/tag_context.rb'
 
 describe Api::TagsController, type: :controller do
   before(:each) do
-    TagType.unsync_ids
+    TagType.delete_cache
   end
   include_context 'tags'
   let!(:user) { create(:user) }

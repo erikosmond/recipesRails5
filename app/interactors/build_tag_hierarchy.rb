@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# For showing child and parent tags
+# For showing a tag's given (grand)child_tags and (grand)parent_tags
 class BuildTagHierarchy
   include Interactor
 
@@ -62,12 +62,8 @@ class BuildTagHierarchy
       ]
     end
 
-    def tag_is_ingredient?
-      context.tag.tag_type_id == TagType.ingredient_id
-    end
-
     def predicate
-      if tag_is_ingredient?
+      if ingredient_tag?
         ''
       else
         "accesses.user_id = #{context.current_user&.id} OR accesses.status = 'PUBLIC'"
@@ -75,7 +71,7 @@ class BuildTagHierarchy
     end
 
     def child_tag_joins
-      if tag_is_ingredient?
+      if ingredient_tag?
         { tag: :child_tags }
       else
         [:access, { tag: :child_tags }]
@@ -95,5 +91,9 @@ class BuildTagHierarchy
 
     def modification_tag?
       context.tag.tag_type_id == TagType.modification_id
+    end
+
+    def ingredient_tag?
+      context.tag.tag_type_id == TagType.ingredient_id
     end
 end

@@ -64,7 +64,7 @@ describe PagesController, type: :controller do
 
   describe 'GET - home' do
     before(:each) do
-      TagType.unsync_ids
+      TagType.delete_cache
     end
     before do
       sign_in user

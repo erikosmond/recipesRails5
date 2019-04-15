@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# Group recipe's tags by type, i.e. ingredients, sources, vessels, etc.
+# Also hash all ingredients for filtering.
 class GroupRecipeDetail
   include Interactor
 

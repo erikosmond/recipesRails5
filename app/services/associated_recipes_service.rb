@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Helper methods to define SQL queries used to associate tags to recipes.
 module AssociatedRecipesService
   def recipes_with_parent_detail_joins
     [
