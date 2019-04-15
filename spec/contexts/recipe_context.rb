@@ -19,6 +19,7 @@ RSpec.shared_context 'recipes', shared_context: :metadata do
   let(:tag_type_ingredient_type) { create(:tag_type, name: 'IngredientType') }
   let(:tag_type_ingredient_family) { create(:tag_type, name: 'IngredientFamily') }
   let(:tag_type_not_ingredient) { create(:tag_type, name: 'NotIngredient') }
+  let!(:tag_type_modifiction_type) { create(:tag_type, name: 'IngredientModification') }
   let(:alteration) { create(:tag_type, name: 'Alteration') }
   let(:lemon_verbena) { create(:tag, tag_type: tag_type_ingredient, name: ingredient1_verbena) }
   let(:rating) { create(:tag, tag_type: tag_type_rating, name: 'Rating: 9') }
@@ -28,7 +29,7 @@ RSpec.shared_context 'recipes', shared_context: :metadata do
   let(:ingredient1_unrelated) { create(:tag, tag_type: tag_type_not_ingredient, name: 'not related') }
   let(:ingredient2) { create(:tag, tag_type: tag_type_ingredient, name: ingredient2_name) }
   let(:modification) { create(:tag, tag_type: alteration, name: modification_name) }
-  let!(:tag_selection1) { create(:tag_selection, tag: tag_subject, taggable: pizza) }
+  let(:tag_selection1) { create(:tag_selection, tag: tag_subject, taggable: pizza) }
   let!(:tag_selection1a) { create(:tag_selection, tag: lemon_verbena, taggable: pizza) }
   let!(:tag_selection2a) { create(:tag_selection, tag: tag_subject, taggable: soup) }
   let!(:tag_selection2b) { create(:tag_selection, tag: ingredient1, taggable: soup) }

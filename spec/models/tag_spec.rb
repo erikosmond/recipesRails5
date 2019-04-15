@@ -177,8 +177,7 @@ describe Tag, type: :model do
     end
 
     describe '#collect_tag_ids' do
-      let(:mod) { create(:tag_type, name: 'IngredientModification') }
-      let(:tag_subject) { create(:tag, name: 'Chamomile', tag_type: mod) }
+      let(:tag_subject) { create(:tag, name: 'Chamomile', tag_type: tag_type_modifiction_type) }
       let!(:mod_selection) { create(:tag_selection, tag: tag_subject, taggable: tag_selection1)}
       let(:detail_ids) do
         [

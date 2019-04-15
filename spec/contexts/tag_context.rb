@@ -3,6 +3,7 @@ RSpec.shared_context 'tags', shared_context: :metadata do
   let(:type_ingredient_type) { create :tag_type, name: 'IngredientType' }
   let(:type_ingredient_family) { create :tag_type, name: 'IngredientFamily' }
   let(:type_ingredient_category) { create :tag_type, name: 'IngredientCategory' }
+  let!(:tag_type_modifiction_type) { create(:tag_type, name: 'IngredientModification') }
   let(:plants) { create(:tag, tag_type: type_ingredient_category, name: 'plants') }
   let(:protein) { create(:tag, tag_type: type_ingredient_family, name: 'Protein') }
   let(:nut) { create(:tag, tag_type: type_ingredient_type, name: 'Nut') }

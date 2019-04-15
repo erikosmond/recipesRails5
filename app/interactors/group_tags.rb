@@ -30,7 +30,7 @@ class GroupTags
         modification_tag
         modified_tag
       ]
-      groups << :grandchild_tag if context.tag.tag_type_name != 'IngredientType'
+      groups << :grandchild_tag if context.tag.tag_type_id != TagType.type_id
       groups
     end
 end

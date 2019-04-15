@@ -3,13 +3,13 @@ class RecipeByTag
   include Interactor
 
   def call
-    recipes = case context.tag.tag_type_name
-              when 'IngredientType'
+    recipes = case context.tag.tag_type_id
+              when TagType.type_id
                 child_recipes_with_detail.to_a
-              when 'IngredientFamily'
+              when TagType.family_id
                 grandchild_recipes_with_detail.to_a +
                 child_recipes_with_detail.to_a
-              when 'IngredientModification'
+              when TagType.modification_id
                 modification_recipes_detail.to_a
               end || []
     context.result = recipes + recipes_with_detail.to_a

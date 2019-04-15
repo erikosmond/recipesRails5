@@ -77,6 +77,6 @@ class BuildTagHierarchy
     end
 
     def modification_tag?
-      context.tag.tag_type_name == 'IngredientModification'
+      context.tag.tag_type_id == TagType.modification_id
     end
 end

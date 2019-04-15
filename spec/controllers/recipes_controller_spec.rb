@@ -71,13 +71,12 @@ describe Api::RecipesController, type: :controller do
     end
     it 'returns the filter tags' do
       body = JSON.parse(response.body)
-      expect(body['filter_tags']).to eq(filter_array)
+      expect(body['filter_tags'] - filter_array).to eq([])
     end
   end
 
   describe 'GET - index (modification)' do
-    let(:mod) { create(:tag_type, name: 'IngredientModification') }
-    let(:tag_subject) { create(:tag, name: 'Chamomile', tag_type: mod) }
+    let(:tag_subject) { create(:tag, name: 'Chamomile', tag_type: tag_type_modifiction_type) }
     let!(:mod_selection) { create(:tag_selection, tag: tag_subject, taggable: tag_selection1)}
 
     let(:filter_array) do

@@ -6,3 +6,6 @@ Style/DotPosition:
 
 Layout/IndentationConsistency:
   EnforcedStyle: rails
+
+Metrics/LineLength:
+  Max: 90

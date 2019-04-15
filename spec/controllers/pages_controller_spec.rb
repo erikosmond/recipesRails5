@@ -15,6 +15,7 @@ describe PagesController, type: :controller do
   let!(:priority_tag) { create(:tag, tag_type: priority_type, name: 'a priority') }
   let!(:ing_family_type) { create(:tag_type, name: 'IngredientFamily') }
   let!(:ing_type_type) { create(:tag_type, name: 'IngredientType') }
+  let!(:tag_type_modifiction_type) { create(:tag_type, name: 'IngredientModification') }
   let!(:ing_type) { create(:tag_type, name: 'Ingredient') }
   let!(:family_tag) { create(:tag, tag_type: ing_family_type, name: 'fam tag') }
   let!(:type_tag) { create(:tag, tag_type: ing_type_type, name: 'type tag') }
@@ -36,7 +37,8 @@ describe PagesController, type: :controller do
       all_tag_types[2].id => all_tag_types[2].name,
       all_tag_types[3].id => all_tag_types[3].name,
       all_tag_types[4].id => all_tag_types[4].name,
-      all_tag_types[5].id => all_tag_types[5].name
+      all_tag_types[5].id => all_tag_types[5].name,
+      all_tag_types[6].id => all_tag_types[6].name
     }
   end
   let!(:tags_by_type) do

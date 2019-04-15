@@ -72,6 +72,6 @@ module AssociatedTagsService
     end
 
     def modification_tag?
-      tag_type_name == 'IngredientModification'
+      tag_type_id == TagType.modification_id
     end
 end
