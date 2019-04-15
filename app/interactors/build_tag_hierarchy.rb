@@ -5,9 +5,6 @@ class BuildTagHierarchy
   include Interactor
 
   def call
-    predicate = "
-    accesses.user_id = #{context.current_user&.id} OR accesses.status = 'PUBLIC'
-    "
     hierarchy = Tag.
                 select(tag_hierarchy_select).
                 left_outer_joins(tag_hierarchy_join).
@@ -65,10 +62,30 @@ class BuildTagHierarchy
       ]
     end
 
+    def tag_is_ingredient?
+      context.tag.tag_type_id == TagType.ingredient_id
+    end
+
+    def predicate
+      if tag_is_ingredient?
+        ''
+      else
+        "accesses.user_id = #{context.current_user&.id} OR accesses.status = 'PUBLIC'"
+      end
+    end
+
+    def child_tag_joins
+      if tag_is_ingredient?
+        { tag: :child_tags }
+      else
+        [:access, { tag: :child_tags }]
+      end
+    end
+
     def tag_hierarchy_join
       join_tables = [
         :tag_type,
-        child_tag_selections: [:access, { tag: :child_tags }],
+        child_tag_selections: child_tag_joins,
         parent_tags: :parent_tags,
         tag_selections: :modifications
       ]
