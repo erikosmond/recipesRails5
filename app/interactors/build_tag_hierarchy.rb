@@ -12,9 +12,22 @@ class BuildTagHierarchy
                 order('tags.id, child_tags.id, child_tags_tags.id')
 
     context.tags_with_hierarchy = filter_tags(hierarchy)
+    context.sister_tags = sister_tags
   end
 
   private
+
+    def sister_tags
+      sisters = context.tag.parent_tags.flat_map(&:child_tags)
+      sisters.reject! { |s| s.id == context.tag.id }
+      sisters.presence || friends
+    end
+
+    def friends
+      return [] if context.tag.tag_type_id == TagType.ingredient_id
+
+      context.tag.tag_type.tags.reject { |f| f.id == context.tag.id }
+    end
 
     def filter_tags(hierarchy)
       if context.all_tags

@@ -4,15 +4,21 @@ module Api
   # Used to assign tags like rating and priority to a given recipe.
   class TagSelectionsController < ApplicationController
     def create
-      render json: TagSelection.create!(
-        tag_selection_params
+      result = TagSelectionFactory.call(
+        action: :create,
+        params: tag_selection_params
       )
+      render json: result.tag_selection
     end
 
     def update
       tag_selection = TagSelection.find(params.permit(:id)[:id])
-      tag_selection.update(tag_selection_params)
-      render json: tag_selection
+      result = TagSelectionFactory.call(
+        action: :update,
+        tag_selection: tag_selection,
+        params: tag_selection_params
+      )
+      render json: result.tag_selection
     end
 
     private

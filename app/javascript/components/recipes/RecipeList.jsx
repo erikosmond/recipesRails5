@@ -114,14 +114,13 @@ class RecipeList extends React.Component {
     }
     return (
       <div>
-        <h2>{selectedTag.name}</h2>
+        <h1>{selectedTag.name}</h1>
         {selectedTag.description && selectedTag.description.length > 0 &&
           <div>
             {selectedTag.description}
             <br /><br />
           </div>
         }
-        <div> {`${selectedRecipes.length} recipes`} </div>
 
         <FilterByIngredients
           visibleTags={visibleFilterTags}
@@ -134,7 +133,7 @@ class RecipeList extends React.Component {
 
 
         <PaperContent>
-          <h2> Recipes </h2>
+          <h2> Recipes ({selectedRecipes.length}) </h2>
           {selectedRecipes.map(r => (
             <RecipeListItem
               key={r.id}
@@ -152,6 +151,7 @@ class RecipeList extends React.Component {
           <RelatedTags tags={selectedTag.parentTags} />
           <RelatedTags tags={selectedTag.childTags} />
           <RelatedTags tags={selectedTag.grandchildTags} />
+          <RelatedTags tags={selectedTag.sisterTags} />
           <RelatedTags tags={selectedTag.modificationTags} />
           <RelatedTags tags={selectedTag.modifiedTags} />
         </PaperSidebar>

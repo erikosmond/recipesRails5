@@ -13,10 +13,18 @@ class GroupTags
         group_tags(tag_json, t, g)
       end
     end
+    sister_tags(tag_json)
     context.json = tag_json
   end
 
   private
+
+    def sister_tags(tag_json)
+      tag_json['sister_tags'] = {}
+      context.sister_tags.each do |s|
+        tag_json['sister_tags'][s.id] = s.name
+      end
+    end
 
     def group_tags(tags_json, tags, group)
       return unless tags["#{group}_id"] && tags["#{group}_name"]

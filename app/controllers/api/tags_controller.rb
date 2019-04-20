@@ -44,10 +44,12 @@ module Api
       end
 
       def hierarchy_context_params(hierarchy_result)
+        # This just makes it clearer what is being passed into GroupTags.call
         {
           tag: hierarchy_result.tag,
           current_user: hierarchy_result.current_user,
-          tags_with_hierarchy: hierarchy_result.tags_with_hierarchy
+          tags_with_hierarchy: hierarchy_result.tags_with_hierarchy,
+          sister_tags: hierarchy_result.sister_tags
         }
       end
   end
