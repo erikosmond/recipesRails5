@@ -48,9 +48,7 @@ module TagsService
   def group_grandparent_hierarchy_by_id(model_groups)
     model_groups.each_with_object({}) do |family, family_hash|
       family_hash[family.id] = family.child_tags.each_with_object({}) do |type, type_hash|
-        if type&.id
-          type_hash[type.id] = type.child_tags.map(&:id).reject(&:blank?)
-        end
+        type_hash[type.id] = type.child_tags.map(&:id).reject(&:blank?) if type&.id
       end
     end
   end
@@ -58,6 +56,6 @@ module TagsService
   def ingredient_group_hierarchy_filters(current_user)
     hierarchy = all_family_tags_with_hierarchy(current_user)
     groups = grandparent_tags_with_grouped_children(hierarchy)
-    group_grandparent_hierarchy_by_id(groups)
+    group_grandparent_hierarchy_by_id(groups.sort_by(&:name))
   end
 end

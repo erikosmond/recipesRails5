@@ -14,6 +14,7 @@ RSpec.describe GroupTags, type: :interactor do
         'tag_type_id' => nut.tag_type.id,
         'tags' => { nut.id => 'Nut' },
         'recipe_id' => nil,
+        'sister_tags' => {},
         'child_tags' => { almond.id => 'Almond' },
         'parent_tags' => { protein.id => 'Protein' },
         'grandparent_tags' => { plants.id => 'plants' },
@@ -32,7 +33,8 @@ RSpec.describe GroupTags, type: :interactor do
       result = GroupTags.call(
         tag: nut,
         current_user: user,
-        tags_with_hierarchy: hierarchy_result.tags_with_hierarchy
+        tags_with_hierarchy: hierarchy_result.tags_with_hierarchy,
+        sister_tags: hierarchy_result.sister_tags
       )
       expect(result.json).to eq expected_hierarchy_result
     end

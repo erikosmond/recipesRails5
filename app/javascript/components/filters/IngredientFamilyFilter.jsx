@@ -54,7 +54,7 @@ class IngredientFamilyFilter extends React.Component {
     if (this.state.visible || this.hasVisibleChildren()) {
       const {
         visibleTags,
-        allTags,
+        tagNameById,
         childTags,
         handleFilter,
         id,
@@ -71,7 +71,7 @@ class IngredientFamilyFilter extends React.Component {
                   value={id}
                 />
               }
-              label={allTags[id]}
+              label={tagNameById(id)}
             />
           </ExpansionPanelSummary>
           <ExpansionPanelDetails className={classes.details}>
@@ -79,9 +79,9 @@ class IngredientFamilyFilter extends React.Component {
               <IngredientTypeFilter
                 key={`${id}--${t}`}
                 id={t}
-                label={allTags[parseInt(t, 10)]}
+                label={tagNameById(parseInt(t, 10))}
                 childTags={childTags[parseInt(t, 10)]}
-                allTags={allTags}
+                tagNameById={tagNameById}
                 visibleTags={visibleTags}
                 handleFilter={handleFilter}
                 selectable
@@ -101,7 +101,7 @@ IngredientFamilyFilter.propTypes = {
   childTags: PropTypes.shape({}),
   handleFilter: PropTypes.func.isRequired,
   visibleTags: PropTypes.arrayOf.isRequired,
-  allTags: PropTypes.shape({ id: PropTypes.number.isRequired }).isRequired,
+  tagNameById: PropTypes.func.isRequired,
 }
 
 IngredientFamilyFilter.defaultProps = {

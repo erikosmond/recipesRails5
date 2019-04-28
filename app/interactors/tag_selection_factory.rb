@@ -20,7 +20,7 @@ class TagSelectionFactory
   private
 
     def create(params)
-      TagSelection.create!(params)
+      context.tag_selection = TagSelection.create!(params)
     end
 
     def update(params)

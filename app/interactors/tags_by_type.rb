@@ -13,7 +13,7 @@ class TagsByType
       else
         tags_by_type_ids(type_ids)
       end
-    context.json = tag_json.map do |r|
+    context.json = tag_json.sort_by { |t| t['name'] }.map do |r|
       { 'Label' => r['name'], 'Value' => r['id'] }
     end
   end

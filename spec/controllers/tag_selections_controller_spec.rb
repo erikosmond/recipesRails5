@@ -8,6 +8,7 @@ describe Api::TagSelectionsController, type: :controller do
   let!(:recipe) { create(:recipe) }
   let!(:tag) { create(:tag, name: 'new tag') }
   let!(:old_tag) { create(:tag, name: 'old tag') }
+  let!(:rating_tag_type) { create(:tag_type, name: 'Rating') }
 
   describe 'POST - create' do
     before do

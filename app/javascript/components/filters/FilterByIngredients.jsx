@@ -12,35 +12,40 @@ const FilterByIngredients = ({
   tagGroups,
   tagsByType,
   allTagTypes,
-}) => (
-  <PaperSidebar>
-    <h2> Filters </h2>
-    <FormGroup>
-      {tagGroups && Object.keys(tagGroups).map(t => (
-        <IngredientFamilyFilter
-          key={t}
-          id={t}
-          label={allTags[t]}
-          handleFilter={handleFilter}
-          visibleTags={visibleTags}
-          allTags={allTags}
-          childTags={tagGroups[t]}
-        />
-      ))}
-      {tagsByType && Object.keys(tagsByType).map(t => (
-        <IngredientTypeFilter
-          key={t}
-          id={t}
-          label={allTagTypes[t]}
-          handleFilter={handleFilter}
-          visibleTags={visibleTags}
-          allTags={allTags}
-          childTags={tagsByType[t]}
-        />
-      ))}
-    </FormGroup>
-  </PaperSidebar>
-)
+}) => {
+  function tagNameById(id) {
+    return allTags[id]
+  }
+  return (
+    <PaperSidebar>
+      <h2> Filters </h2>
+      <FormGroup>
+        {tagGroups && Object.keys(tagGroups).map(t => (
+          <IngredientFamilyFilter
+            key={t}
+            id={t}
+            label={allTags[t]}
+            handleFilter={handleFilter}
+            visibleTags={visibleTags}
+            tagNameById={tagNameById}
+            childTags={tagGroups[t]}
+          />
+        ))}
+        {tagsByType && Object.keys(tagsByType).map(t => (
+          <IngredientTypeFilter
+            key={t}
+            id={t}
+            label={allTagTypes[t]}
+            handleFilter={handleFilter}
+            visibleTags={visibleTags}
+            tagNameById={tagNameById}
+            childTags={tagsByType[t]}
+          />
+        ))}
+      </FormGroup>
+    </PaperSidebar>
+  )
+}
 export default FilterByIngredients
 
 FilterByIngredients.propTypes = {

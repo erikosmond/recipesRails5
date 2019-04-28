@@ -33,6 +33,8 @@ const UPDATE_RECIPE_TAG = 'recipes/updateRecipeTag'
 const UPDATE_RECIPE_TAG_SUCCESS = 'recipes/updateRecipeTagSuccess'
 const LOAD_RECIPE_FORM_DATA = 'recipes/loadRecipeFormData'
 const LOAD_RECIPE_FORM_DATA_SUCCESS = 'recipes/loadRecipeFormDataSuccess'
+// const INCREMENT_VISIBLE_RECIPE_COUNT = 'recipes/incrementVisibleRecipeCount'
+const SET_VISIBLE_RECIPE_COUNT = 'recipes/setVisibleRecipeCount'
 
 // Reducer
 const initialState = {
@@ -47,6 +49,7 @@ const initialState = {
   noRecipes: false,
   noTags: false,
   loading: true,
+  visibleRecipeCount: 0,
 }
 
 export default function recipesReducer(state = initialState, action = {}) {
@@ -145,6 +148,18 @@ export default function recipesReducer(state = initialState, action = {}) {
         ...state,
         selectedRecipes: state.selectedRecipes.map(r => tagSelectionReducer(r, { ...action })),
       }
+    case SET_VISIBLE_RECIPE_COUNT:
+      // debugger
+      return {
+        ...state,
+        visibleRecipeCount: action.payload,
+      }
+    // case INCREMENT_VISIBLE_RECIPE_COUNT:
+    //   debugger
+    //   return {
+    //     ...state,
+    //     visibleRecipeCount: state.visibleRecipeCount + 1,
+    //   }
     default:
       return state
   }
@@ -358,13 +373,49 @@ export function loadRecipeFormData() {
   }
 }
 
+// function incrementVisibleRecipeCount(increment) {
+//   debugger
+//   if (increment) {
+//     return {
+//       type: INCREMENT_VISIBLE_RECIPE_COUNT,
+//       payload: {},
+//     }
+//   }
+//   return {}
+// }
+
+function setVisibleRecipeCount(count) {
+  return {
+    type: SET_VISIBLE_RECIPE_COUNT,
+    payload: count,
+  }
+}
+
+function countVisibleRecipes(visibleRecipes) {
+  // use reduce instead of forEach
+  let count = 0
+  visibleRecipes.forEach((r) => {
+    if (!r.hidden) {
+      count += 1
+    }
+  })
+  return count
+}
+
 // Saga
 
 export function* handleFilterTask({ payload: { id, checked } }) {
   const selectRecipes = store => store.recipesReducer
   const recipesState = yield select(selectRecipes)
   const selectedFilters = yield call(selectedFilterService, id, checked, recipesState)
-  const selectedRecipes = yield call(selectedRecipeService, selectedFilters, recipesState)
+  const selectedRecipes = yield call(
+    selectedRecipeService,
+    selectedFilters,
+    recipesState,
+  )
+  const visibleRecipeCount = yield call(countVisibleRecipes, selectedRecipes)
+  yield put(setVisibleRecipeCount(visibleRecipeCount))
+  // take selectedRecipes and count which ones are visible - set that in visibleRecipeCount
   const visibleFilters = yield call(visibleFilterService, selectedRecipes, recipesState.allTags)
   yield put(handleFilterSuccess(selectedRecipes, selectedFilters, visibleFilters))
 }

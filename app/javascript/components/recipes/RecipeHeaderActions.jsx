@@ -15,6 +15,9 @@ const starIcon = `M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2
 const playlistAddIcon = `M14 10H2v2h12v-2zm0-4H2v2h12V6zm4
                          8v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM2 16h8v-2H2v2z`
 
+const commentIcon = `M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9
+                     2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z`
+
 const RecipeHeaderActions = (props) => {
   const {
     classes,

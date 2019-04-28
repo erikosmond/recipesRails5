@@ -1,9 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import FilterByIngredients from 'components/filters/FilterByIngredients'
+import FilterChips from 'components/filters/FilterChips'
 import RecipeListItem from 'components/recipes/RecipeListItem'
 import RelatedTags from 'components/recipes/RelatedTags'
-import Paper from '@material-ui/core/Paper'
+// import Paper from '@material-ui/core/Paper'
 import PaperContent from '../styled/PaperContent'
 import PaperSidebar from '../styled/PaperSidebar'
 
@@ -27,6 +28,8 @@ class RecipeList extends React.Component {
     }).isRequired,
     tagsByType: PropTypes.shape({}).isRequired,
     visibleFilterTags: PropTypes.arrayOf,
+    selectedFilters: PropTypes.arrayOf,
+    visibleRecipeCount: PropTypes.number.isRequired,
     noRecipes: PropTypes.bool.isRequired,
     startingTagId: PropTypes.string.isRequired,
     selectedTag: PropTypes.shape({}).isRequired,
@@ -88,6 +91,15 @@ class RecipeList extends React.Component {
     this.props.clearFilters()
   }
 
+  renderHeaderWithCount() {
+    const { selectedRecipes, visibleRecipeCount } = this.props
+    const selectedRecipeCount = selectedRecipes.length
+    const prefix = selectedRecipeCount === visibleRecipeCount ? '' : `${visibleRecipeCount} of `
+    return (
+      <h2> Recipes ({prefix + selectedRecipeCount}) </h2>
+    )
+  }
+
   render() {
     const {
       recipesLoaded,
@@ -104,6 +116,7 @@ class RecipeList extends React.Component {
       ratings,
       priorities,
       updateRecipeTag,
+      selectedFilters,
     } = this.props
     if (loading) {
       return (<div> {'Loading...'} </div>)
@@ -122,6 +135,12 @@ class RecipeList extends React.Component {
           </div>
         }
 
+        <FilterChips
+          allTags={allTags}
+          selectedFilters={selectedFilters}
+          handleFilter={handleFilter}
+        />
+
         <FilterByIngredients
           visibleTags={visibleFilterTags}
           allTags={allTags}
@@ -133,7 +152,7 @@ class RecipeList extends React.Component {
 
 
         <PaperContent>
-          <h2> Recipes ({selectedRecipes.length}) </h2>
+          {this.renderHeaderWithCount()}
           {selectedRecipes.map(r => (
             <RecipeListItem
               key={r.id}
