@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe TagAttribute do
+describe TagAttribute, type: :model do
   subject { create :tag_attribute }
   let(:tag) { create(:tag) }
   let(:tag_attr) { build(:tag_attribute, tag_attributable: tag, property: nil) }

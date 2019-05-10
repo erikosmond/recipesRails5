@@ -4,17 +4,15 @@ module Api
   class TagsController < ApplicationController
     def index
       tag_type = params.permit(:type)[:type]
-      tags = if tag_type
-               tags_by_type(tag_type)
-             else
-               tag_json = Tag.all.as_json(only: %i[id name])
-               tag_json.map { |r| { 'Label' => r['name'], 'Value' => r['id'] } }
-             end
+      tags = check_type(tag_type)
       if tags
         if tag_type
-          render json: { tags: tags }
+          render json: { tags: tags.json }
         else
-          render json: { tags: tags, tag_groups: Tag.ingredient_group_heirarchy_filters(current_user) }
+          render json: {
+            tags: tags,
+            tag_groups: Tag.ingredient_group_hierarchy_filters(current_user)
+          }
         end
       else
         render json: { tag_type: tag_type.to_s }, status: :not_found
@@ -24,38 +22,35 @@ module Api
     def show
       tag = Tag.find_by_id(params.permit(:id)[:id])
       if tag
-        render json: tag.tag_with_heirarchy_grouped(current_user)
-      else
-        render json: { tag: tag.to_s }, status: :not_found
+        hierarchy_result = BuildTagHierarchy.call(
+          tag: tag,
+          current_user: current_user
+        )
+        result = GroupTags.call(hierarchy_context_params(hierarchy_result))
+        render json: result.json and return if result.success?
       end
+      render json: {}, status: :not_found
     end
 
     private
 
-      def tags_by_type(tag_type)
-        type_ids = tag_types(tag_type).pluck(:id)
-        tag_json =
-          if tag_type.to_s.casecmp('ingredients').zero?
-            Tag.where(tag_type_id: type_ids).as_json(only: %i[id name])
-          else
-            Tag.joins(tag_selections: :access).
-              where(tag_type_id: type_ids).
-              where("accesses.status = 'PUBLIC' OR accesses.user_id = #{current_user.id}").
-              each_with_object({}) { |ts, obj| obj[ts.id] = ts.name }.
-              each_with_object([]) { |(k, v), arr| arr << { 'id' => k, 'name' => v } }
-          end
-        tag_json.map { |r| { 'Label' => r['name'], 'Value' => r['id'] } }
+      def check_type(tag_type)
+        if tag_type
+          TagsByType.call(tag_type: tag_type, current_user: current_user)
+        else
+          tag_json = Tag.all.as_json(only: %i[id name])
+          tag_json.map { |r| { 'Label' => r['name'], 'Value' => r['id'] } }
+        end
       end
 
-      def tag_types(tag_type)
-        ingredient_types = TagType::INGREDIENT_TYPES
-        if tag_type.to_s.casecmp('ingredients').zero?
-          TagType.where(name: ingredient_types)
-        elsif tag_type
-          TagType.where.not(name: ingredient_types)
-        else
-          TagType.all
-        end
+      def hierarchy_context_params(hierarchy_result)
+        # This just makes it clearer what is being passed into GroupTags.call
+        {
+          tag: hierarchy_result.tag,
+          current_user: hierarchy_result.current_user,
+          tags_with_hierarchy: hierarchy_result.tags_with_hierarchy,
+          sister_tags: hierarchy_result.sister_tags
+        }
       end
   end
 end

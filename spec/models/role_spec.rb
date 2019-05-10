@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Role do
+describe Role, type: :model do
   subject { create :role }
 
   it 'has a valid factory' do

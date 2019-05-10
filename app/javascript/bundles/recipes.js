@@ -31,6 +31,8 @@ const NO_TAGS = 'recipes/noTags'
 const CLEAR_FILTERS = 'recipes/clearFilters'
 const UPDATE_RECIPE_TAG = 'recipes/updateRecipeTag'
 const UPDATE_RECIPE_TAG_SUCCESS = 'recipes/updateRecipeTagSuccess'
+const LOAD_RECIPE_FORM_DATA = 'recipes/loadRecipeFormData'
+const LOAD_RECIPE_FORM_DATA_SUCCESS = 'recipes/loadRecipeFormDataSuccess'
 
 // Reducer
 const initialState = {
@@ -346,6 +348,13 @@ export function updateTagSelectionSuccess(taggableType, taggableId, tagType, tag
       tagType,
       tagId,
     },
+  }
+}
+
+export function loadRecipeFormData() {
+  return {
+    type: LOAD_RECIPE_FORM_DATA,
+    payload: {},
   }
 }
 

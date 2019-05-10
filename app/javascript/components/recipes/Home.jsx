@@ -11,6 +11,7 @@ import {
 import styled from 'styled-components'
 
 import Recipe from 'containers/RecipeContainer'
+import RecipeForm from 'containers/RecipeFormContainer'
 import RecipeList from 'containers/RecipeListContainer'
 import RecipeHeader from 'containers/RecipeHeaderContainer'
 
@@ -27,6 +28,14 @@ const Home = () => (
           <Route
             path="/tags/:tagId/recipes"
             component={RecipeList}
+          />
+          <Route
+            path="/recipes/new"
+            component={RecipeForm}
+          />
+          <Route
+            path="/recipes/:recipeId/edit"
+            component={RecipeForm}
           />
           <Route
             path="/recipes/:recipeId"

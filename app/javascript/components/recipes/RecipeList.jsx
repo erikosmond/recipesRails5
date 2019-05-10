@@ -5,6 +5,7 @@ import RecipeListItem from 'components/recipes/RecipeListItem'
 import RelatedTags from 'components/recipes/RelatedTags'
 import Paper from '@material-ui/core/Paper'
 import PaperContent from '../styled/PaperContent'
+import PaperSidebar from '../styled/PaperSidebar'
 
 
 class RecipeList extends React.Component {
@@ -113,23 +114,13 @@ class RecipeList extends React.Component {
     }
     return (
       <div>
-        <h2>{selectedTag.name}</h2>
+        <h1>{selectedTag.name}</h1>
         {selectedTag.description && selectedTag.description.length > 0 &&
           <div>
             {selectedTag.description}
             <br /><br />
           </div>
         }
-        <div> {`${selectedRecipes.length} recipes`} </div>
-
-        <Paper>
-          <RelatedTags tags={selectedTag.grandparentTags} />
-          <RelatedTags tags={selectedTag.parentTags} />
-          <RelatedTags tags={selectedTag.childTags} />
-          <RelatedTags tags={selectedTag.grandchildTags} />
-          <RelatedTags tags={selectedTag.modificationTags} />
-          <RelatedTags tags={selectedTag.modifiedTags} />
-        </Paper>
 
         <FilterByIngredients
           visibleTags={visibleFilterTags}
@@ -142,6 +133,7 @@ class RecipeList extends React.Component {
 
 
         <PaperContent>
+          <h2> Recipes ({selectedRecipes.length}) </h2>
           {selectedRecipes.map(r => (
             <RecipeListItem
               key={r.id}
@@ -152,6 +144,17 @@ class RecipeList extends React.Component {
             />
           ))}
         </PaperContent>
+
+        <PaperSidebar>
+          <h2> Related </h2>
+          <RelatedTags tags={selectedTag.grandparentTags} />
+          <RelatedTags tags={selectedTag.parentTags} />
+          <RelatedTags tags={selectedTag.childTags} />
+          <RelatedTags tags={selectedTag.grandchildTags} />
+          <RelatedTags tags={selectedTag.sisterTags} />
+          <RelatedTags tags={selectedTag.modificationTags} />
+          <RelatedTags tags={selectedTag.modifiedTags} />
+        </PaperSidebar>
       </div>
     )
   }

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe TagSelection do
+describe TagSelection, type: :model do
   subject { create :tag_selection }
 
   it 'has a valid factory' do

@@ -1,18 +1,21 @@
+# frozen_string_literal: true
+
+# methods mostly used to build tag heirarchy to populate filtering component.
 module TagsService
-  def all_tags_with_heirarchy(current_user)
+  def all_tags_with_hierarchy(current_user)
     tag = Tag.first
     all_tags = true
-    tag.tag_with_heirarchy(current_user, all_tags)
+    tag.tag_with_hierarchy(current_user, all_tags)
   end
 
-  def all_family_tags_with_heirarchy(current_user)
-    all_tags_with_heirarchy(current_user).where(tag_type: TagType.family_id)
+  def all_family_tags_with_hierarchy(current_user)
+    all_tags_with_hierarchy(current_user).where(tag_type: TagType.family_id)
   end
 
-  def grandparent_tags_with_grouped_children(heirarchy)
+  def grandparent_tags_with_grouped_children(hierarchy)
     all_families = []
     current_family, current_type, current_ingredient = nil, nil, nil
-    heirarchy.each do |result|
+    hierarchy.each do |result|
       if current_family&.id != result.tag_id
         ing_family = Tag.new(name: result.tag_name, id: result.tag_id, tag_type_id: TagType.family_id)
         current_family = ing_family
@@ -42,7 +45,7 @@ module TagsService
     end
   end
 
-  def group_grandparent_heirarchy_by_id(model_groups)
+  def group_grandparent_hierarchy_by_id(model_groups)
     model_groups.each_with_object({}) do |family, family_hash|
       family_hash[family.id] = family.child_tags.each_with_object({}) do |type, type_hash|
         if type&.id
@@ -52,9 +55,9 @@ module TagsService
     end
   end
 
-  def ingredient_group_heirarchy_filters(current_user)
-    heirarchy = all_family_tags_with_heirarchy(current_user)
-    groups = grandparent_tags_with_grouped_children(heirarchy)
-    group_grandparent_heirarchy_by_id(groups)
+  def ingredient_group_hierarchy_filters(current_user)
+    hierarchy = all_family_tags_with_hierarchy(current_user)
+    groups = grandparent_tags_with_grouped_children(hierarchy)
+    group_grandparent_hierarchy_by_id(groups)
   end
 end

@@ -14,11 +14,10 @@ module Api
 
     def show
       recipe = Recipe.find_by_id(params.permit(:id)[:id])
-      if recipe
-        details = recipe.recipes_with_grouped_detail(
-          recipe.recipe_detail(current_user)
-        )
-        render json: details.first.merge(recipe.as_json)
+      if recipe&.tags&.first
+        detail = RecipeDetail.call(recipe: recipe, current_user: current_user)
+        grouped_detail = GroupRecipeDetail.call(recipe_details: detail.result)
+        render json: grouped_detail.result.first.merge(recipe.as_json)
       else
         render json: {}, status: :not_found
       end
@@ -36,17 +35,27 @@ module Api
       end
 
       def tagged_recipes(tag)
-        recipes = tag.recipe_detail_level(current_user)
+        recipes = RecipeByTag.call(tag: tag, current_user: current_user)
         {
           tag: tag,
-          recipes: tag.recipes_with_grouped_detail(recipes),
-          filter_tags: tag.filter_tags(recipes)
+          recipes: GroupRecipeDetail.call(recipe_details: recipes.result).result,
+          filter_tags: filter_tags(recipes.result)
         }
       end
 
       def all_recipe_json
         recipe_json = Recipe.all.sort_by(&:name).as_json(only: %i[id name])
         recipe_json.map { |r| { 'Label' => r['name'], 'Value' => r['id'] } }
+      end
+
+      def filter_tags(recipes)
+        result = recipes.each_with_object({}) do |r, tags|
+          tags[r.tag_id] = r.tag_name
+          tags[r.parent_tag_id] = r.parent_tag
+          tags[r.grandparent_tag_id] = r.grandparent_tag
+          tags[r.modification_id] = r.modification_name
+        end
+        result.reject { |k, v| k.blank? || v.blank? }.to_a
       end
   end
 end
