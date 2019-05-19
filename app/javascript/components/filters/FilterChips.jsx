@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
 import Chip from '@material-ui/core/Chip'
 import Paper from '@material-ui/core/Paper'
-import TagFacesIcon from '@material-ui/icons/TagFaces'
 
 const styles = theme => ({
   root: {
@@ -48,27 +47,21 @@ class FilterChips extends React.Component {
   }
 
   render() {
-    const { classes } = this.props
-
+    const { classes, selectedTag } = this.props
     return (
       <Paper className={classes.root}>
-        {this.state.chipData.map((data) => {
-          let icon = null
-
-          if (data.label === 'React') {
-            icon = <TagFacesIcon />
-          }
-
-          return (
-            <Chip
-              key={data.key}
-              icon={icon}
-              label={data.label}
-              onDelete={this.handleDelete(data)}
-              className={classes.chip}
-            />
-          )
-        })}
+        <Chip
+          label={selectedTag.name}
+          className={classes.chip}
+        />
+        {this.state.chipData.map(data => (
+          <Chip
+            key={data.key}
+            label={data.label}
+            onDelete={this.handleDelete(data)}
+            className={classes.chip}
+          />
+          ))}
       </Paper>
     )
   }
@@ -79,6 +72,7 @@ FilterChips.propTypes = {
   handleFilter: PropTypes.func.isRequired,
   allTags: PropTypes.shape.isRequired,
   selectedFilters: PropTypes.arrayOf.isRequired,
+  selectedTag: PropTypes.shape().isRequired,
 }
 
 export default withStyles(styles)(FilterChips)

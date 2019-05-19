@@ -16,10 +16,6 @@ const styles = () => ({
 })
 
 class IngredientFamilyFilter extends React.Component {
-  state = {
-    checked: false,
-  }
-
   hasVisibleChildren = () => {
     const { childTags, visibleTags } = this.props
     if (typeof (childTags) === 'object') {
@@ -46,17 +42,22 @@ class IngredientFamilyFilter extends React.Component {
 
   handleChange = id => (event) => {
     const { handleFilter } = this.props
-    this.setState({ checked: event.target.checked })
     handleFilter(id, event.target.checked)
   }
 
+  isVisible = () => {
+    const { id, visibleTags } = this.props
+    return Array.isArray(visibleTags) && visibleTags.indexOf(parseInt(id, 10)) > -1
+  }
+
   render() {
-    if (this.state.visible || this.hasVisibleChildren()) {
+    if (this.isVisible() || this.hasVisibleChildren()) {
       const {
         visibleTags,
         tagNameById,
         childTags,
         handleFilter,
+        selectedFilters,
         id,
         classes,
       } = this.props
@@ -66,7 +67,7 @@ class IngredientFamilyFilter extends React.Component {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={this.state.checked}
+                  checked={selectedFilters.indexOf(parseInt(id, 10)) > -1}
                   onChange={this.handleChange(id)}
                   value={id}
                 />
@@ -84,6 +85,7 @@ class IngredientFamilyFilter extends React.Component {
                 tagNameById={tagNameById}
                 visibleTags={visibleTags}
                 handleFilter={handleFilter}
+                selectedFilters={selectedFilters}
                 selectable
               />
             ))}
@@ -100,12 +102,14 @@ IngredientFamilyFilter.propTypes = {
   classes: PropTypes.shape().isRequired,
   childTags: PropTypes.shape({}),
   handleFilter: PropTypes.func.isRequired,
+  selectedFilters: PropTypes.arrayOf(PropTypes.number),
   visibleTags: PropTypes.arrayOf.isRequired,
   tagNameById: PropTypes.func.isRequired,
 }
 
 IngredientFamilyFilter.defaultProps = {
   childTags: [],
+  selectedFilters: [],
 }
 
 export default withStyles(styles)(IngredientFamilyFilter)

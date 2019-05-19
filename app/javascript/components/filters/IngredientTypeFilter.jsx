@@ -16,9 +16,7 @@ const styles = () => ({
 })
 
 class IngredientTypeFilter extends React.Component {
-  state = {
-    checked: false,
-  }
+  state = {}
 
   hasVisibleChildren = () => {
     const { childTags, visibleTags, id } = this.props
@@ -35,17 +33,22 @@ class IngredientTypeFilter extends React.Component {
 
   handleChange = id => (event) => {
     const { handleFilter } = this.props
-    this.setState({ checked: event.target.checked })
     handleFilter(id, event.target.checked)
   }
 
+  isVisible = () => {
+    const { id, visibleTags } = this.props
+    return Array.isArray(visibleTags) && visibleTags.indexOf(parseInt(id, 10)) > -1
+  }
+
   render() {
-    if (this.state.visible || this.hasVisibleChildren()) {
+    if (this.isVisible() || this.hasVisibleChildren()) {
       const {
         visibleTags,
         tagNameById,
         childTags,
         handleFilter,
+        selectedFilters,
         id,
         classes,
         selectable,
@@ -57,7 +60,7 @@ class IngredientTypeFilter extends React.Component {
             {selectable && <FormControlLabel
               control={
                 <Checkbox
-                  checked={this.state.checked}
+                  checked={selectedFilters.indexOf(parseInt(id, 10)) > -1}
                   onChange={this.handleChange(id)}
                   value={id}
                 />
@@ -75,6 +78,7 @@ class IngredientTypeFilter extends React.Component {
                   label={tagNameById(parseInt(t, 10))}
                   visibleTags={visibleTags}
                   handleFilter={handleFilter}
+                  selectedFilters={selectedFilters}
                 />
               ))}
           </ExpansionPanelDetails>
@@ -90,6 +94,7 @@ IngredientTypeFilter.propTypes = {
   classes: PropTypes.shape().isRequired,
   childTags: PropTypes.shape({}),
   handleFilter: PropTypes.func.isRequired,
+  selectedFilters: PropTypes.arrayOf(PropTypes.number),
   visibleTags: PropTypes.arrayOf.isRequired,
   tagNameById: PropTypes.func.isRequired,
   selectable: PropTypes.bool,
@@ -98,6 +103,7 @@ IngredientTypeFilter.propTypes = {
 
 IngredientTypeFilter.defaultProps = {
   childTags: [],
+  selectedFilters: [],
   selectable: false,
   label: '',
 }

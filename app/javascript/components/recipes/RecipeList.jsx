@@ -4,7 +4,6 @@ import FilterByIngredients from 'components/filters/FilterByIngredients'
 import FilterChips from 'components/filters/FilterChips'
 import RecipeListItem from 'components/recipes/RecipeListItem'
 import RelatedTags from 'components/recipes/RelatedTags'
-// import Paper from '@material-ui/core/Paper'
 import PaperContent from '../styled/PaperContent'
 import PaperSidebar from '../styled/PaperSidebar'
 
@@ -28,7 +27,7 @@ class RecipeList extends React.Component {
     }).isRequired,
     tagsByType: PropTypes.shape({}).isRequired,
     visibleFilterTags: PropTypes.arrayOf,
-    selectedFilters: PropTypes.arrayOf,
+    selectedFilters: PropTypes.arrayOf(PropTypes.number),
     visibleRecipeCount: PropTypes.number.isRequired,
     noRecipes: PropTypes.bool.isRequired,
     startingTagId: PropTypes.string.isRequired,
@@ -50,6 +49,7 @@ class RecipeList extends React.Component {
     loading: true,
     selectedRecipes: [],
     visibleFilterTags: [],
+    selectedFilters: [],
   }
 
   constructor(props) {
@@ -139,12 +139,14 @@ class RecipeList extends React.Component {
           allTags={allTags}
           selectedFilters={selectedFilters}
           handleFilter={handleFilter}
+          selectedTag={selectedTag}
         />
 
         <FilterByIngredients
           visibleTags={visibleFilterTags}
           allTags={allTags}
           tagGroups={tagGroups}
+          selectedFilters={selectedFilters}
           handleFilter={handleFilter}
           allTagTypes={allTagTypes}
           tagsByType={tagsByType}

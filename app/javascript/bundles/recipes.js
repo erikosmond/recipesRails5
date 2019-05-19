@@ -149,7 +149,6 @@ export default function recipesReducer(state = initialState, action = {}) {
         selectedRecipes: state.selectedRecipes.map(r => tagSelectionReducer(r, { ...action })),
       }
     case SET_VISIBLE_RECIPE_COUNT:
-      // debugger
       return {
         ...state,
         visibleRecipeCount: action.payload,

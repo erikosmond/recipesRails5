@@ -8,6 +8,7 @@ import IngredientTypeFilter from 'components/filters/IngredientTypeFilter'
 const FilterByIngredients = ({
   visibleTags,
   handleFilter,
+  selectedFilters,
   allTags,
   tagGroups,
   tagsByType,
@@ -26,6 +27,7 @@ const FilterByIngredients = ({
             id={t}
             label={allTags[t]}
             handleFilter={handleFilter}
+            selectedFilters={selectedFilters}
             visibleTags={visibleTags}
             tagNameById={tagNameById}
             childTags={tagGroups[t]}
@@ -37,6 +39,7 @@ const FilterByIngredients = ({
             id={t}
             label={allTagTypes[t]}
             handleFilter={handleFilter}
+            selectedFilters={selectedFilters}
             visibleTags={visibleTags}
             tagNameById={tagNameById}
             childTags={tagsByType[t]}
@@ -50,9 +53,14 @@ export default FilterByIngredients
 
 FilterByIngredients.propTypes = {
   handleFilter: PropTypes.func.isRequired,
-  visibleTags: PropTypes.arrayOf.isRequired,
+  selectedFilters: PropTypes.arrayOf(PropTypes.number),
+  visibleTags: PropTypes.arrayOf(PropTypes.number).isRequired,
   allTags: PropTypes.shape({ id: PropTypes.number.isRequired }).isRequired,
   allTagTypes: PropTypes.shape({}).isRequired,
   tagGroups: PropTypes.shape({}).isRequired,
   tagsByType: PropTypes.shape({}).isRequired,
+}
+
+FilterByIngredients.defaultProps = {
+  selectedFilters: [],
 }
