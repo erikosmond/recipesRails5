@@ -41,3 +41,5 @@ https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html m
 https://docs.docker.com/compose/install/ and click on the Linux tab
 
 The production docker-compose file expects a sister directory to the app directory where the letsencrypt directory will live, housing everything needed to establish SSL connections.
+
+In production, the Rails app, nginx, and database run in separate containers on the same machine. This is simply to save money. If the app were ever to generate revenue, I'd utilize RDS to host the database. I'd also move the app to ECS to allow for easy scaling if the site ever started getting more traffic.

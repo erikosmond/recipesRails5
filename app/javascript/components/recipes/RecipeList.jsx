@@ -7,7 +7,6 @@ import RelatedTags from 'components/recipes/RelatedTags'
 import PaperContent from '../styled/PaperContent'
 import PaperSidebar from '../styled/PaperSidebar'
 
-
 class RecipeList extends React.Component {
   static propTypes = {
     loadRecipes: PropTypes.func.isRequired,
@@ -20,16 +19,16 @@ class RecipeList extends React.Component {
     loading: PropTypes.bool,
     tagGroups: PropTypes.shape({}).isRequired,
     allTags: PropTypes.shape({
-      id: PropTypes.number.isRequired,
+      id: PropTypes.number,
     }).isRequired,
     allTagTypes: PropTypes.shape({
-      id: PropTypes.number.isRequired,
+      id: PropTypes.number,
     }).isRequired,
     tagsByType: PropTypes.shape({}).isRequired,
-    visibleFilterTags: PropTypes.arrayOf,
+    visibleFilterTags: PropTypes.arrayOf(PropTypes.number),
     selectedFilters: PropTypes.arrayOf(PropTypes.number),
-    visibleRecipeCount: PropTypes.number.isRequired,
-    noRecipes: PropTypes.bool.isRequired,
+    visibleRecipeCount: PropTypes.number,
+    noRecipes: PropTypes.bool,
     startingTagId: PropTypes.string.isRequired,
     selectedTag: PropTypes.shape({}).isRequired,
     priorities: PropTypes.shape({}).isRequired,
@@ -47,9 +46,11 @@ class RecipeList extends React.Component {
   static defaultProps = {
     recipesLoaded: false,
     loading: true,
+    noRecipes: true,
+    selectedFilters: [],
     selectedRecipes: [],
     visibleFilterTags: [],
-    selectedFilters: [],
+    visibleRecipeCount: 0,
   }
 
   constructor(props) {
@@ -118,6 +119,8 @@ class RecipeList extends React.Component {
       updateRecipeTag,
       selectedFilters,
     } = this.props
+    console.log('selectedTag')
+    console.log(selectedTag)
     if (loading) {
       return (<div> {'Loading...'} </div>)
     } else if (this.noRecipes || noRecipes) {
