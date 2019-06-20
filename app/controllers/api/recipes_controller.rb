@@ -15,6 +15,8 @@ module Api
     def show
       recipe = Recipe.find_by_id(params.permit(:id)[:id])
       if recipe&.tags&.first
+        # Fetch all the universal recipe tags like ingredients, but also user
+        # tags like ratings.
         detail = RecipeDetail.call(recipe: recipe, current_user: current_user)
         grouped_detail = GroupRecipeDetail.call(recipe_details: detail.result)
         render json: grouped_detail.result.first.merge(recipe.as_json)
@@ -44,11 +46,18 @@ module Api
       end
 
       def all_recipe_json
-        recipe_json = Recipe.all.sort_by(&:name).as_json(only: %i[id name])
+        # Used by drop down header to search all recipes a user has access to.
+        recipe_json = Recipe.all.joins(:accesses).
+                      where(user_id: current_user&.id).
+                      or(status: 'PUBLIC').
+                      sort_by(&:name).as_json(only: %i[id name])
         recipe_json.map { |r| { 'Label' => r['name'], 'Value' => r['id'] } }
       end
 
       def filter_tags(recipes)
+        # Return tags associated with the recipe but also those tags' parents
+        # to allow for less specific filtering, i.e. allowing a recipe containing
+        # 'apples' to be returned when filtering by 'fruit'.
         result = recipes.each_with_object({}) do |r, tags|
           tags[r.tag_id] = r.tag_name
           tags[r.parent_tag_id] = r.parent_tag

@@ -1,5 +1,27 @@
 # frozen_string_literal: true
 
+# Tags are how recipes are grouped and filtered. Types of tags include ingredient,
+# recipe author (source), ratings, etc. By using a single table for all of these
+# attributes, the filtering implementation on the front end is very simple. It
+# also allows the creation of new types of tags through the product, without
+# requiring code changes.
+
+# Tags can associate with recipes, but they can also associate with other tags.
+# For instance, 'egg white' is an ingredient, which is tagged by 'egg', which is an
+# ingredient type, which is tagged by 'dairy', which is an ingredient category.
+# But 'egg white', 'egg', and 'dairy' are all tags. This allows the user to filter by
+# 'dairy', for instance, and see all the recipes that contain the 'dairy' tag, but
+# also the 'egg' and 'egg white' tag.
+
+# Adminitedly, this strategy results in a data model that has the tags class
+# contain a lot of associations, which has a lot of undesired complexity.
+# Although complex, the data model allows for arbitrary and flexible grouping
+# of recipes which I find valuable as I explore the ideal uses for the data.
+# I also learned some interesting things about rails associations along the way.
+# If I were to implement this app differently, I would consider STI, but I'd be more
+# interested in using seperate tables for each tag type, and having the tables
+# share a sequence for the primary id, which would allow for the filtering to
+# still be simple on the front end.
 class Tag < ApplicationRecord
   include AssociatedRecipesService
   include AssociatedTagsService
