@@ -47,9 +47,9 @@ module Api
 
       def all_recipe_json
         # Used by drop down header to search all recipes a user has access to.
-        recipe_json = Recipe.all.joins(:accesses).
-                      where(user_id: current_user&.id).
-                      or(status: 'PUBLIC').
+        # binding.pry
+        recipe_json = Recipe.joins(:access).
+                      where(["accesses.user_id = ? OR accesses.status = 'PUBLIC'", current_user&.id]).
                       sort_by(&:name).as_json(only: %i[id name])
         recipe_json.map { |r| { 'Label' => r['name'], 'Value' => r['id'] } }
       end

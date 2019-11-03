@@ -143,4 +143,19 @@ describe Api::RecipesController, type: :controller do
       expect(body['filter_tags'].size).to eq(6)
     end
   end
+
+  describe 'GET - index (all recipes dropdown)' do
+    before do
+      sign_in user
+      get :index,
+          params: {},
+          format: 'json'
+    end
+
+    it 'returns recipe names' do
+      body = JSON.parse(response.body)
+      expect(body['recipes'].size).to eq(2)
+      expect(body['recipes'].first.keys.size).to eq(2)
+    end
+  end
 end
