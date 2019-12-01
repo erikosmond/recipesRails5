@@ -90,12 +90,12 @@ class IngredientTypeFilter extends React.Component {
 }
 
 IngredientTypeFilter.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   classes: PropTypes.shape().isRequired,
-  childTags: PropTypes.shape({}),
+  childTags: PropTypes.arrayOf(PropTypes.number),
   handleFilter: PropTypes.func.isRequired,
   selectedFilters: PropTypes.arrayOf(PropTypes.number),
-  visibleTags: PropTypes.arrayOf.isRequired,
+  visibleTags: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   tagNameById: PropTypes.func.isRequired,
   selectable: PropTypes.bool,
   label: PropTypes.string,

@@ -25,7 +25,7 @@ class RecipeList extends React.Component {
       id: PropTypes.number,
     }).isRequired,
     tagsByType: PropTypes.shape({}).isRequired,
-    visibleFilterTags: PropTypes.arrayOf(PropTypes.number),
+    visibleFilterTags: PropTypes.arrayOf(PropTypes.shape({})),
     selectedFilters: PropTypes.arrayOf(PropTypes.number),
     visibleRecipeCount: PropTypes.number,
     noRecipes: PropTypes.bool,
@@ -34,7 +34,7 @@ class RecipeList extends React.Component {
     priorities: PropTypes.shape({}).isRequired,
     ratings: PropTypes.shape({}).isRequired,
     location: PropTypes.shape({
-      search: PropTypes.func,
+      search: PropTypes.string,
     }).isRequired,
     match: PropTypes.shape({
       params: PropTypes.shape({
@@ -58,24 +58,25 @@ class RecipeList extends React.Component {
     this.noRecipes = false
   }
 
-  componentDidMount() {
-    const {
-      loadRecipes,
-      loadTagInfo,
-      startingTagId,
-      match,
-    } = this.props
-    const { tagId } = match.params
-    if (tagId) {
-      loadRecipes(tagId)
-      loadTagInfo(tagId)
-    } else if (startingTagId) {
-      loadRecipes(startingTagId)
-      loadTagInfo(startingTagId)
-    } else {
-      this.noRecipes = true
-    }
-  }
+  // TODO: This is getting called dozens of times
+  // componentDidMount() {
+  //   const {
+  //     loadRecipes,
+  //     loadTagInfo,
+  //     startingTagId,
+  //     match,
+  //   } = this.props
+  //   const { tagId } = match.params
+  //   if (tagId) {
+  //     loadRecipes(tagId)
+  //     loadTagInfo(tagId)
+  //   } else if (startingTagId) {
+  //     loadRecipes(startingTagId)
+  //     loadTagInfo(startingTagId)
+  //   } else {
+  //     this.noRecipes = true
+  //   }
+  // }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.location !== this.props.location) {
@@ -119,8 +120,6 @@ class RecipeList extends React.Component {
       updateRecipeTag,
       selectedFilters,
     } = this.props
-    console.log('selectedTag')
-    console.log(selectedTag)
     if (loading) {
       return (<div> {'Loading...'} </div>)
     } else if (this.noRecipes || noRecipes) {

@@ -68,11 +68,15 @@ class FilterChips extends React.Component {
 }
 
 FilterChips.propTypes = {
-  classes: PropTypes.shape.isRequired,
+  classes: PropTypes.shape({}).isRequired,
   handleFilter: PropTypes.func.isRequired,
-  allTags: PropTypes.shape.isRequired,
-  selectedFilters: PropTypes.arrayOf.isRequired,
-  selectedTag: PropTypes.shape().isRequired,
+  allTags: PropTypes.shape({}).isRequired,
+  selectedFilters: PropTypes.arrayOf(PropTypes.shape({})),
+  selectedTag: PropTypes.shape({}).isRequired,
+}
+
+FilterChips.defaultProps = {
+  selectedFilters: []
 }
 
 export default withStyles(styles)(FilterChips)

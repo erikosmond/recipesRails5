@@ -54,8 +54,8 @@ export default FilterByIngredients
 FilterByIngredients.propTypes = {
   handleFilter: PropTypes.func.isRequired,
   selectedFilters: PropTypes.arrayOf(PropTypes.number),
-  visibleTags: PropTypes.arrayOf(PropTypes.number).isRequired,
-  allTags: PropTypes.shape({ id: PropTypes.number.isRequired }).isRequired,
+  visibleTags: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  allTags: PropTypes.shape({}).isRequired,
   allTagTypes: PropTypes.shape({}).isRequired,
   tagGroups: PropTypes.shape({}).isRequired,
   tagsByType: PropTypes.shape({}).isRequired,

@@ -52,7 +52,7 @@ const RecipeHeaderActions = (props) => {
 
 RecipeHeaderActions.propTypes = {
   classes: PropTypes.shape({
-    actions: PropTypes.shape({}).isRequired,
+    actions: PropTypes.string.isRequired,
   }).isRequired,
   ratings: PropTypes.shape({}).isRequired,
   priorities: PropTypes.shape({}).isRequired,

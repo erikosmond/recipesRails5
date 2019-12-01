@@ -98,12 +98,12 @@ class IngredientFamilyFilter extends React.Component {
 }
 
 IngredientFamilyFilter.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   classes: PropTypes.shape().isRequired,
   childTags: PropTypes.shape({}),
   handleFilter: PropTypes.func.isRequired,
   selectedFilters: PropTypes.arrayOf(PropTypes.number),
-  visibleTags: PropTypes.arrayOf.isRequired,
+  visibleTags: PropTypes.shape({}).isRequired,
   tagNameById: PropTypes.func.isRequired,
 }
 

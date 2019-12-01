@@ -1,6 +1,6 @@
 import { put, call, select } from 'redux-saga/effects'
 // import { startSubmit, stopSubmit, getFormValues } from 'redux-form'
-import { takeLatest, takeEvery } from 'redux-saga'
+import { takeLatest, takeEvery } from 'redux-saga/effects'
 import { callApi } from 'services/rest'
 import {
   selectedFilterService,
@@ -63,7 +63,7 @@ export default function recipesReducer(state = initialState, action = {}) {
     case LOAD_TAG_INFO:
       return {
         ...state,
-        selectedTag: '',
+        selectedTag: {},
         loading: true,
       }
     case LOAD_RECIPES_SUCCESS:

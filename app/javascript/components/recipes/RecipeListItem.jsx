@@ -87,10 +87,10 @@ RecipeListItem.propTypes = {
   recipe: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
-    ingredients: PropTypes.string.isRequired,
+    ingredients: PropTypes.shape({}).isRequired,
   }),
   classes: PropTypes.shape({
-    card: PropTypes.shape({}).isRequired,
+    card: PropTypes.string.isRequired,
   }).isRequired,
   ratings: PropTypes.shape({}).isRequired,
   priorities: PropTypes.shape({}).isRequired,

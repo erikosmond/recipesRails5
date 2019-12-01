@@ -21,7 +21,7 @@ RecipeInstructions.propTypes = {
   recipe: PropTypes.shape({
     id: PropTypes.number,
     name: PropTypes.string.isRequired,
-    ingredients: PropTypes.string.isRequired,
+    ingredients: PropTypes.shape({}).isRequired,
   }).isRequired,
 }
 

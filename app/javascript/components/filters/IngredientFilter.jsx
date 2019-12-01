@@ -26,7 +26,7 @@ class IngredientFilter extends React.Component {
           <Checkbox
             checked={selectedFilters.indexOf(id) > -1}
             onChange={this.handleChange(id)}
-            value={id}
+            value={"#{id}"}
           />
         }
         label={label}

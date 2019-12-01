@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
-import RecipeList from 'components/recipes/RecipeList'
+import RecipeListSkeleton from 'components/recipes/RecipeListSkeleton'
 
 import {
   loadRecipes,
@@ -38,4 +38,4 @@ export default withRouter(connect(
     clearFilters,
     updateRecipeTag,
   },
-)(RecipeList))
+)(RecipeListSkeleton))
