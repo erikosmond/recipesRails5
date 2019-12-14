@@ -7,45 +7,20 @@ import { allIngredients } from 'services/recipes'
 
 class Recipe extends React.Component {
   static propTypes = {
-    loadRecipe: PropTypes.func.isRequired,
     recipe: PropTypes.shape({
       id: PropTypes.number,
       name: PropTypes.string.isRequired,
-      ingredients: PropTypes.string.isRequired,
+      ingredients: PropTypes.shape({}).isRequired,
     }),
-    noRecipe: PropTypes.bool.isRequired,
-    location: PropTypes.shape().isRequired,
-    match: PropTypes.shape({
-      params: PropTypes.shape({
-        recipeId: PropTypes.string,
-      }),
-    }).isRequired,
+    noRecipe: PropTypes.bool,
   }
 
   static defaultProps = {
     recipe: {},
   }
 
-  componentDidMount() {
-    const { loadRecipe, match } = this.props
-    const { recipeId } = match.params
-    loadRecipe(recipeId)
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.location !== this.props.location) {
-      const { recipeId } = nextProps.match.params
-      if (recipeId) {
-        nextProps.loadRecipe(recipeId)
-      }
-    }
-  }
-
   render() {
     const { recipe, noRecipe } = this.props
-    if (!recipe || !recipe.name) {
-      return null
-    }
     if (noRecipe) {
       return (
         <div>

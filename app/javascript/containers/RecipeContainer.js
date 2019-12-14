@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
-import Recipe from 'components/recipes/Recipe'
+import RecipeSkeleton from 'components/recipes/RecipeSkeleton'
 
 import { loadRecipe } from 'bundles/recipes'
 
@@ -13,4 +13,4 @@ export default withRouter(connect(
   {
     loadRecipe,
   },
-)(Recipe))
+)(RecipeSkeleton))

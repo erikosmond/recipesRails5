@@ -25,7 +25,7 @@ class RecipeList extends React.Component {
       id: PropTypes.number,
     }).isRequired,
     tagsByType: PropTypes.shape({}).isRequired,
-    visibleFilterTags: PropTypes.arrayOf(PropTypes.shape({})),
+    visibleFilterTags: PropTypes.shape({}),
     selectedFilters: PropTypes.arrayOf(PropTypes.number),
     visibleRecipeCount: PropTypes.number,
     noRecipes: PropTypes.bool,
@@ -49,7 +49,7 @@ class RecipeList extends React.Component {
     noRecipes: true,
     selectedFilters: [],
     selectedRecipes: [],
-    visibleFilterTags: [],
+    visibleFilterTags: {},
     visibleRecipeCount: 0,
   }
 

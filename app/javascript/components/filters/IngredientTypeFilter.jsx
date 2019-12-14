@@ -95,7 +95,7 @@ IngredientTypeFilter.propTypes = {
   childTags: PropTypes.arrayOf(PropTypes.number),
   handleFilter: PropTypes.func.isRequired,
   selectedFilters: PropTypes.arrayOf(PropTypes.number),
-  visibleTags: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+  visibleTags: PropTypes.shape().isRequired,
   tagNameById: PropTypes.func.isRequired,
   selectable: PropTypes.bool,
   label: PropTypes.string,

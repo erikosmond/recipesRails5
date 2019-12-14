@@ -42,7 +42,7 @@ const initialState = {
   selectedFilters: [],
   selectedTag: {},
   recipeOptions: [],
-  visibleFilterTags: [],
+  visibleFilterTags: {},
   allTags: {},
   tagGroups: {},
   recipesLoaded: false,

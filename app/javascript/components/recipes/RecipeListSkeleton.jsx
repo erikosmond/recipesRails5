@@ -70,7 +70,6 @@ RecipeListSkeleton.propTypes = {
       id: PropTypes.number,
     }),
     tagsByType: PropTypes.shape({}),
-    // visibleFilterTags: PropTypes.arrayOf(PropTypes.number),
     visibleFilterTags: PropTypes.shape({}),
     selectedFilters: PropTypes.arrayOf(PropTypes.number),
     visibleRecipeCount: PropTypes.number,

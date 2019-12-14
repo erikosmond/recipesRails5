@@ -10,7 +10,7 @@ import {
 
 import styled from 'styled-components'
 
-import Recipe from 'containers/RecipeContainer'
+import RecipeSkeleton from 'containers/RecipeContainer'
 import RecipeForm from 'containers/RecipeFormContainer'
 import RecipeList from 'containers/RecipeListContainer'
 import RecipeHeader from 'containers/RecipeHeaderContainer'
@@ -39,7 +39,7 @@ const Home = () => (
           />
           <Route
             path="/recipes/:recipeId"
-            component={Recipe}
+            component={RecipeSkeleton}
           />
           <Route
             path="/"
