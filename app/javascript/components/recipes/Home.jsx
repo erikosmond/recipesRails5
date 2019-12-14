@@ -10,6 +10,7 @@ import {
 
 import styled from 'styled-components'
 
+import CommentModal from 'containers/CommentModalContainer'
 import RecipeSkeleton from 'containers/RecipeContainer'
 import RecipeForm from 'containers/RecipeFormContainer'
 import RecipeList from 'containers/RecipeListContainer'
@@ -23,6 +24,7 @@ const Home = () => (
   <Router>
     <div>
       <RecipeHeader />
+      <CommentModal />
       <StyledContent>
         <Switch>
           <Route

@@ -2,10 +2,11 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
 import RecipeHeaderAction from 'components/recipes/RecipeHeaderAction'
+import RecipeHeaderComment from 'components/recipes/RecipeHeaderComment'
 
 const styles = () => ({
   actions: {
-    display: 'inline-flex',
+    // display: 'inline-flex', // uncomment this for horizontal alignment of icons
   },
 })
 
@@ -30,6 +31,14 @@ const RecipeHeaderActions = (props) => {
   } = props
   return (
     <div className={classes.actions}>
+      <RecipeHeaderComment
+        label="Comment"
+        iconSvgPath={commentIcon}
+        options={ratings}
+        selectedOption={rating}
+        recipeId={recipeId}
+        updateRecipeTag={updateRecipeTag}
+      />
       <RecipeHeaderAction
         label="Rating"
         iconSvgPath={starIcon}
