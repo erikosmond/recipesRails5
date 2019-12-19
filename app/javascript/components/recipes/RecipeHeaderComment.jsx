@@ -7,10 +7,22 @@ class RecipeHeaderComment extends React.Component {
     // state = {
     //   anchorEl: null,
     // };
+
+    constructor(props) {
+      super(props)
+      this.handleClick = this.handleClick.bind(this)
+    }
   
     handleClick = (event) => {
+      const { handleCommentModal, commentRecipeId, commentTagSelectionId, commentBody } = this.props
+      handleCommentModal({
+        commentRecipeId,
+        commentTagSelectionId,
+        commentBody,
+        commentModalOpen: true,
+      })
         // open modal here - inject comment and recipe_id to modal
-      this.setState({ anchorEl: event.currentTarget })
+      // this.setState({ anchorEl: event.currentTarget })
     };
 
     render() {
@@ -43,8 +55,7 @@ class RecipeHeaderComment extends React.Component {
       iconSvgPath: PropTypes.string.isRequired,
       comment: PropTypes.string,
       recipeId: PropTypes.number.isRequired,
-      updateRecipeTag: PropTypes.func.isRequired,
-      // update this to updateComment function
+      handleCommentModal: PropTypes.func.isRequired,
     }
     
     RecipeHeaderComment.defaultProps = {

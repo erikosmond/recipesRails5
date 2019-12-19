@@ -11,6 +11,7 @@ class RecipeList extends React.Component {
   static propTypes = {
     loadRecipes: PropTypes.func.isRequired,
     loadTagInfo: PropTypes.func.isRequired,
+    handleCommentModal: PropTypes.func.isRequired,
     handleFilter: PropTypes.func.isRequired,
     clearFilters: PropTypes.func.isRequired,
     updateRecipeTag: PropTypes.func.isRequired,
@@ -58,26 +59,6 @@ class RecipeList extends React.Component {
     this.noRecipes = false
   }
 
-  // TODO: This is getting called dozens of times
-  // componentDidMount() {
-  //   const {
-  //     loadRecipes,
-  //     loadTagInfo,
-  //     startingTagId,
-  //     match,
-  //   } = this.props
-  //   const { tagId } = match.params
-  //   if (tagId) {
-  //     loadRecipes(tagId)
-  //     loadTagInfo(tagId)
-  //   } else if (startingTagId) {
-  //     loadRecipes(startingTagId)
-  //     loadTagInfo(startingTagId)
-  //   } else {
-  //     this.noRecipes = true
-  //   }
-  // }
-
   componentWillReceiveProps(nextProps) {
     if (nextProps.location !== this.props.location) {
       nextProps.clearFilters()
@@ -112,6 +93,7 @@ class RecipeList extends React.Component {
       visibleFilterTags,
       allTags,
       tagGroups,
+      handleCommentModal,
       handleFilter,
       allTagTypes,
       tagsByType,
@@ -164,6 +146,7 @@ class RecipeList extends React.Component {
               ratings={ratings}
               priorities={priorities}
               updateRecipeTag={updateRecipeTag}
+              handleCommentModal={handleCommentModal}
             />
           ))}
         </PaperContent>

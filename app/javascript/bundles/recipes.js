@@ -33,6 +33,7 @@ const UPDATE_RECIPE_TAG = 'recipes/updateRecipeTag'
 const UPDATE_RECIPE_TAG_SUCCESS = 'recipes/updateRecipeTagSuccess'
 const LOAD_RECIPE_FORM_DATA = 'recipes/loadRecipeFormData'
 const LOAD_RECIPE_FORM_DATA_SUCCESS = 'recipes/loadRecipeFormDataSuccess'
+const HANDLE_COMMENT_MODAL = 'recipes/handleModal'
 // const INCREMENT_VISIBLE_RECIPE_COUNT = 'recipes/incrementVisibleRecipeCount'
 const SET_VISIBLE_RECIPE_COUNT = 'recipes/setVisibleRecipeCount'
 
@@ -50,6 +51,7 @@ const initialState = {
   noTags: false,
   loading: true,
   visibleRecipeCount: 0,
+  openModal: false,
 }
 
 export default function recipesReducer(state = initialState, action = {}) {
@@ -152,6 +154,14 @@ export default function recipesReducer(state = initialState, action = {}) {
       return {
         ...state,
         visibleRecipeCount: action.payload,
+      }
+    case HANDLE_COMMENT_MODAL:
+      return {
+        ...state,
+        commentModalOpen: action.payload.commentModalOpen,
+        commentRecipeId: action.payload.commentRecipeId,
+        commentTagSelectionId: action.payload.commentTagSelectionId,
+        commentBody: action.payload.commentBody,
       }
     // case INCREMENT_VISIBLE_RECIPE_COUNT:
     //   debugger
@@ -387,6 +397,13 @@ function setVisibleRecipeCount(count) {
   return {
     type: SET_VISIBLE_RECIPE_COUNT,
     payload: count,
+  }
+}
+
+export function handleCommentModal(payload) {
+  return {
+    payload,
+    type: HANDLE_COMMENT_MODAL,
   }
 }
 

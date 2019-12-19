@@ -28,6 +28,7 @@ const RecipeHeaderActions = (props) => {
     priority,
     recipeId,
     updateRecipeTag,
+    handleCommentModal,
   } = props
   return (
     <div className={classes.actions}>
@@ -38,6 +39,7 @@ const RecipeHeaderActions = (props) => {
         selectedOption={rating}
         recipeId={recipeId}
         updateRecipeTag={updateRecipeTag}
+        handleCommentModal={handleCommentModal}
       />
       <RecipeHeaderAction
         label="Rating"
@@ -73,6 +75,7 @@ RecipeHeaderActions.propTypes = {
   }),
   recipeId: PropTypes.number.isRequired,
   updateRecipeTag: PropTypes.func.isRequired,
+  handleCommentModal: PropTypes.func.isRequired,
 }
 
 RecipeHeaderActions.defaultProps = {

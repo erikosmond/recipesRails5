@@ -3,14 +3,16 @@ import { withRouter } from 'react-router-dom'
 
 import CommentModal from 'components/recipes/CommentModal'
 
-import { loadRecipe } from 'bundles/recipes'
+import { handleCommentModal } from 'bundles/recipes'
 
 export default withRouter(connect(
   state => ({
-    recipe: state.recipesReducer.recipe,
-    noRecipe: state.recipesReducer.noRecipe,
+    commentModalOpen: state.recipesReducer.commentModalOpen,
+    commentRecipeId: state.recipesReducer.commentRecipeId,
+    commentTagSelectionId: state.recipesReducer.commentTagSelectionId,
+    commentBody: state.recipesReducer.commentBody,
   }),
   {
-    loadRecipe,
+    handleCommentModal,
   },
 )(CommentModal))

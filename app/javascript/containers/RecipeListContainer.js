@@ -6,6 +6,7 @@ import RecipeListSkeleton from 'components/recipes/RecipeListSkeleton'
 import {
   loadRecipes,
   loadTagInfo,
+  handleCommentModal,
   handleFilter,
   loadAllTags,
   clearFilters,
@@ -37,5 +38,6 @@ export default withRouter(connect(
     handleFilter,
     clearFilters,
     updateRecipeTag,
+    handleCommentModal,
   },
 )(RecipeListSkeleton))
