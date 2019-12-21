@@ -8,26 +8,17 @@ function rand() {
 }
 
 function getModalStyle() {
-  const top = 50 + rand();
-  const left = 50 + rand();
-
   return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
+    position: 'absolute',
+    top: '20%',
+    left: '30%',
+    backgroundColor: 'white',
+    border: '2px solid #000',
+    boxShadow: 5,
+    padding: 3,
+    width: 400,
   };
 }
-
-// const useStyles = makeStyles(theme => ({
-//   paper: {
-//     position: 'absolute',
-//     width: 400,
-//     backgroundColor: theme.palette.background.paper,
-//     border: '2px solid #000',
-//     boxShadow: theme.shadows[5],
-//     padding: theme.spacing(2, 4, 3),
-//   },
-// }));
 
 export default function CommentModal(props) {
   const {
@@ -35,19 +26,21 @@ export default function CommentModal(props) {
     commentRecipeId,
     commentTagSelectionId,
     commentBody,
-    handleCommentModal
+    handleCommentModal,
+    recipeOptions,
   } = props
-  // const classes = useStyles();
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = React.useState(getModalStyle);
-  // const [open, setOpen] = React.useState(false);
 
-  // const handleOpen = () => {
-  //   setOpen(true);
-  // };
+  const recipeNameFromId = (recipeOptions, id) => {
+    for (var i = 0; i < recipeOptions.length; i++) {
+      if (recipeOptions[i].value === id) {
+        return recipeOptions[i].label
+      }
+    }
+  }
 
   const handleClose = () => {
-    // setOpen(false);
     handleCommentModal({
       commentRecipeId,
       commentTagSelectionId,
@@ -56,28 +49,19 @@ export default function CommentModal(props) {
     })
   };
 
-  // componentWillReceiveProps(nextProps) {
-  //   this.setState(state => ({ ...state, nextProps.ModalOpen }))
-  // }
-
   return (
     <div>
-      {/* <button type="button" onClick={handleOpen}>
-        Open Modal
-      </button> */}
       <Modal
         aria-labelledby="recipe-comment"
         aria-describedby="simple-modal-description"
         open={commentModalOpen}
         onClose={handleClose}
       >
-        {/* <div style={modalStyle} className={classes.paper}> */}
         <div style={modalStyle}>
-          <h2 id="simple-modal-title">Text in a modal</h2>
+          <h2 id="simple-modal-title">{`${recipeNameFromId(recipeOptions, commentRecipeId)}`}</h2>
           <p id="simple-modal-description">
             Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
           </p>
-          {/* <SimpleModal /> */}
         </div>
       </Modal>
     </div>
@@ -89,7 +73,9 @@ CommentModal.propTypes = {
   commentRecipeId: PropTypes.number,
   commentTagSelectionId: PropTypes.number,
   commentBody: PropTypes.string,
+  recipeOptions: PropTypes.arrayOf(PropTypes.shape({})),
   handleCommentModal: PropTypes.func.isRequired,
+  allTags: PropTypes.shape({})
 }
 
 CommentModal.defaultProps = {
@@ -97,4 +83,5 @@ CommentModal.defaultProps = {
   commentRecipeId: null,
   commentTagSelectionId: null,
   commentBody: '',
+  recipeOptions: [],
 }

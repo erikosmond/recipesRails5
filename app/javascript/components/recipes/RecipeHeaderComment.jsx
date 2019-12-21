@@ -14,9 +14,9 @@ class RecipeHeaderComment extends React.Component {
     }
   
     handleClick = (event) => {
-      const { handleCommentModal, commentRecipeId, commentTagSelectionId, commentBody } = this.props
+      const { handleCommentModal, recipeId, commentTagSelectionId, commentBody } = this.props
       handleCommentModal({
-        commentRecipeId,
+        commentRecipeId: recipeId,
         commentTagSelectionId,
         commentBody,
         commentModalOpen: true,

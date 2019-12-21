@@ -11,6 +11,7 @@ export default withRouter(connect(
     commentRecipeId: state.recipesReducer.commentRecipeId,
     commentTagSelectionId: state.recipesReducer.commentTagSelectionId,
     commentBody: state.recipesReducer.commentBody,
+    recipeOptions: state.recipesReducer.recipeOptions,
   }),
   {
     handleCommentModal,
