@@ -28,7 +28,7 @@ export default function CommentModal(props) {
     submitRecipeComment,
   } = props
   // getModalStyle is not a pure function, we roll the style only on the first render
-  const [modalStyle] = React.useState(getModalStyle);
+  // const [modalStyle] = React.useState(getModalStyle);
 
   const recipeNameFromId = (recipeOptions, id) => {
     for (var i = 0; i < recipeOptions.length; i++) {
@@ -55,7 +55,7 @@ export default function CommentModal(props) {
         open={commentModalOpen}
         onClose={handleClose}
       >
-        <div style={modalStyle}>
+        <div style={getModalStyle()}>
           <h2 id="simple-modal-title">{`${recipeNameFromId(recipeOptions, commentRecipeId)}`}</h2>
           <CommentForm 
             handleCommentModal={handleCommentModal}

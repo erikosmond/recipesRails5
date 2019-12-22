@@ -38,7 +38,7 @@ services:
     depends_on:
       - web
     volumes:
-      - './:/etc/letsencrypt'
+      - '../letsencrypt/:/etc/letsencrypt'
     ports:
       - 80:80
       - 443:443
