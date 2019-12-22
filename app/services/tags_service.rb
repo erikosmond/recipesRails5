@@ -2,6 +2,17 @@
 
 # methods mostly used to build tag heirarchy to populate filtering component.
 module TagsService
+  COMMENT_TAG_NAME = 'Comment'
+
+  def comment_tag
+    tag = Tag.find_or_initialize_by(name: COMMENT_TAG_NAME)
+    return tag if tag.persisted?
+
+    tag_type = TagType.find_or_create_by(name: COMMENT_TAG_NAME)
+    tag.tag_type = tag_type
+    tag.tap(&:save).reload
+  end
+
   def all_tags_with_hierarchy(current_user)
     tag = Tag.first
     all_tags = true

@@ -14,11 +14,11 @@ class RecipeHeaderComment extends React.Component {
     }
   
     handleClick = (event) => {
-      const { handleCommentModal, recipeId, commentTagSelectionId, commentBody } = this.props
+      const { handleCommentModal, recipeId, recipeComment } = this.props
       handleCommentModal({
         commentRecipeId: recipeId,
-        commentTagSelectionId,
-        commentBody,
+        commentTagSelectionId: recipeComment.id,
+        commentBody: recipeComment.body,
         commentModalOpen: true,
       })
         // open modal here - inject comment and recipe_id to modal
@@ -53,12 +53,13 @@ class RecipeHeaderComment extends React.Component {
     RecipeHeaderComment.propTypes = {
       label: PropTypes.string.isRequired,
       iconSvgPath: PropTypes.string.isRequired,
-      comment: PropTypes.string,
+      // comment: PropTypes.string,
       recipeId: PropTypes.number.isRequired,
+      recipeComment: PropTypes.shape({}),
       handleCommentModal: PropTypes.func.isRequired,
     }
     
     RecipeHeaderComment.defaultProps = {
-      comment: '',
+      recipeComment: {},
     }
     export default RecipeHeaderComment

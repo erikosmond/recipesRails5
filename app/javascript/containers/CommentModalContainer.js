@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom'
 
 import CommentModal from 'components/recipes/CommentModal'
 
-import { handleCommentModal } from 'bundles/recipes'
+import { handleCommentModal, submitRecipeComment } from 'bundles/recipes'
 
 export default withRouter(connect(
   state => ({
@@ -15,5 +15,6 @@ export default withRouter(connect(
   }),
   {
     handleCommentModal,
+    submitRecipeComment,
   },
 )(CommentModal))

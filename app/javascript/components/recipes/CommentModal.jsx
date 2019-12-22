@@ -1,11 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types'
+import CommentForm from 'components/recipes/CommentForm'
 // import { makeStyles } from '@material-ui/core/styles';
-import Modal from '@material-ui/core/Modal';
-
-function rand() {
-  return Math.round(Math.random() * 20) - 10;
-}
+import Modal from '@material-ui/core/Modal'
 
 function getModalStyle() {
   return {
@@ -28,6 +25,7 @@ export default function CommentModal(props) {
     commentBody,
     handleCommentModal,
     recipeOptions,
+    submitRecipeComment,
   } = props
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = React.useState(getModalStyle);
@@ -59,9 +57,13 @@ export default function CommentModal(props) {
       >
         <div style={modalStyle}>
           <h2 id="simple-modal-title">{`${recipeNameFromId(recipeOptions, commentRecipeId)}`}</h2>
-          <p id="simple-modal-description">
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </p>
+          <CommentForm 
+            handleCommentModal={handleCommentModal}
+            commentRecipeId={commentRecipeId}
+            commentTagSelectionId={commentTagSelectionId}
+            commentBody={commentBody}
+            submitRecipeComment={submitRecipeComment}
+          />
         </div>
       </Modal>
     </div>
@@ -75,7 +77,7 @@ CommentModal.propTypes = {
   commentBody: PropTypes.string,
   recipeOptions: PropTypes.arrayOf(PropTypes.shape({})),
   handleCommentModal: PropTypes.func.isRequired,
-  allTags: PropTypes.shape({})
+  submitRecipeComment: PropTypes.func.isRequired,
 }
 
 CommentModal.defaultProps = {

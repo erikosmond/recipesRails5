@@ -34,6 +34,8 @@ const UPDATE_RECIPE_TAG_SUCCESS = 'recipes/updateRecipeTagSuccess'
 const LOAD_RECIPE_FORM_DATA = 'recipes/loadRecipeFormData'
 const LOAD_RECIPE_FORM_DATA_SUCCESS = 'recipes/loadRecipeFormDataSuccess'
 const HANDLE_COMMENT_MODAL = 'recipes/handleModal'
+const SUBMIT_RECIPE_COMMENT='recipes/submitRecipeComment'
+const UPDATE_RECIPE_COMMENT_SUCCESS='recipes/updateRecipeCommentSuccess'
 // const INCREMENT_VISIBLE_RECIPE_COUNT = 'recipes/incrementVisibleRecipeCount'
 const SET_VISIBLE_RECIPE_COUNT = 'recipes/setVisibleRecipeCount'
 
@@ -150,6 +152,11 @@ export default function recipesReducer(state = initialState, action = {}) {
         ...state,
         selectedRecipes: state.selectedRecipes.map(r => tagSelectionReducer(r, { ...action })),
       }
+    case UPDATE_RECIPE_COMMENT_SUCCESS:
+      return {
+        ...state,
+        selectedRecipes: state.selectedRecipes.map(r => commentReducer(r, { ...action })),
+      }
     case SET_VISIBLE_RECIPE_COUNT:
       return {
         ...state,
@@ -183,11 +190,30 @@ function tagSelectionReducer(recipe, action) {
       taggableId,
       tagType,
       tagId,
+      id,
     },
   } = action
   if (taggableType === 'Recipe') {
     if (recipe.id === taggableId) {
-      return { ...recipe, [tagType]: { tagId } }
+      return { ...recipe, [tagType]: { tagId, id } }
+    }
+  }
+  return recipe
+}
+
+function commentReducer(recipe, action) {
+  const {
+    payload: {
+      taggableType,
+      taggableId,
+      tagType,
+      body,
+      id,
+    },
+  } = action
+  if (taggableType === 'Recipe') {
+    if (recipe.id === taggableId) {
+      return { ...recipe, [tagType]: { body, id } }
     }
   }
   return recipe
@@ -350,6 +376,18 @@ export function handleFilterSuccess(selectedRecipes, selectedFilters, visibleFil
   }
 }
 
+export function submitRecipeComment(body, recipeId, tagSelectionId) {
+  return {
+    type: SUBMIT_RECIPE_COMMENT,
+    payload: {
+      tagSelectionId,
+      body,
+      taggableId: recipeId,
+      taggableType: 'Recipe',
+    },
+  }
+}
+
 export function updateRecipeTag(recipeId, tagId, tagType, tagSelectionId) {
   return {
     type: UPDATE_RECIPE_TAG,
@@ -363,7 +401,7 @@ export function updateRecipeTag(recipeId, tagId, tagType, tagSelectionId) {
   }
 }
 
-export function updateTagSelectionSuccess(taggableType, taggableId, tagType, tagId) {
+export function updateTagSelectionSuccess(taggableType, taggableId, tagType, tagId, id) {
   return {
     type: UPDATE_RECIPE_TAG_SUCCESS,
     payload: {
@@ -371,6 +409,21 @@ export function updateTagSelectionSuccess(taggableType, taggableId, tagType, tag
       taggableId,
       tagType,
       tagId,
+      id,
+    },
+  }
+}
+
+export function updateRecipeCommentSuccess(taggableType, taggableId, tagType, tagId, body, id) {
+  return {
+    type: UPDATE_RECIPE_COMMENT_SUCCESS,
+    payload: {
+      taggableType,
+      taggableId,
+      tagType,
+      tagId,
+      body,
+      id,
     },
   }
 }
@@ -540,9 +593,43 @@ export function* updateTagSelectionTask({
   }
   const result = yield call(callApi, url, params)
   if (result.success) {
-    yield put(updateTagSelectionSuccess(taggableType, taggableId, mapping[tagType], tagId))
+    yield put(updateTagSelectionSuccess(taggableType, taggableId, mapping[tagType], tagId, result.data.id))
   } else {
     console.log('Unable to update recipe')
+  }
+}
+
+export function* submitRecipeCommentTask({
+  payload: {
+    tagSelectionId,
+    body,
+    taggableId,
+    taggableType,
+  },
+}) {
+  const selectRecipes = store => store.recipesReducer
+  const recipesState = yield select(selectRecipes)
+  const { commentTagId } = recipesState
+  const method = tagSelectionId ? 'PUT' : 'POST'
+  const id = tagSelectionId ? `/${tagSelectionId}` : ''
+  const url = `/api/tag_selections${id}`
+  const params = {
+    method,
+    data: {
+      tagSelection: {
+        body,
+        taggableId,
+        taggableType,
+        tagId: commentTagId,
+      },
+      id: tagSelectionId,
+    },
+  }
+  const result = yield call(callApi, url, params)
+  if (result.success) {
+    yield put(updateRecipeCommentSuccess(taggableType, taggableId, 'newComment', commentTagId, body, result.data.id))
+  } else {
+    console.log('Unable to save comment')
   }
 }
 /* recipes */
@@ -556,4 +643,5 @@ export function* recipesSaga() {
   yield takeLatest(LOAD_ALL_TAGS, loadAllTagsTask)
   yield takeEvery(LOAD_INGREDIENT_OPTIONS, loadIngredientOptionsTask)
   yield takeLatest(UPDATE_RECIPE_TAG, updateTagSelectionTask)
+  yield takeLatest(SUBMIT_RECIPE_COMMENT, submitRecipeCommentTask)
 }

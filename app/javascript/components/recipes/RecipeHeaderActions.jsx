@@ -27,6 +27,7 @@ const RecipeHeaderActions = (props) => {
     rating,
     priority,
     recipeId,
+    recipeComment,
     updateRecipeTag,
     handleCommentModal,
   } = props
@@ -38,6 +39,7 @@ const RecipeHeaderActions = (props) => {
         options={ratings}
         selectedOption={rating}
         recipeId={recipeId}
+        recipeComment={recipeComment}
         updateRecipeTag={updateRecipeTag}
         handleCommentModal={handleCommentModal}
       />
@@ -74,6 +76,7 @@ RecipeHeaderActions.propTypes = {
     tagId: PropTypes.number,
   }),
   recipeId: PropTypes.number.isRequired,
+  recipeComment: PropTypes.shape({}),
   updateRecipeTag: PropTypes.func.isRequired,
   handleCommentModal: PropTypes.func.isRequired,
 }
@@ -81,5 +84,6 @@ RecipeHeaderActions.propTypes = {
 RecipeHeaderActions.defaultProps = {
   rating: undefined,
   priority: undefined,
+  recipeComment: {},
 }
 export default withStyles(styles)(RecipeHeaderActions)
