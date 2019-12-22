@@ -86,7 +86,7 @@ class RecipeHeaderAction extends React.Component {
 RecipeHeaderAction.propTypes = {
   label: PropTypes.string.isRequired,
   iconSvgPath: PropTypes.string.isRequired,
-  options: PropTypes.arrayOf(PropTypes.string).isRequired,
+  options: PropTypes.shape({}).isRequired,
   selectedOption: PropTypes.shape({}),
   recipeId: PropTypes.number.isRequired,
   updateRecipeTag: PropTypes.func.isRequired,

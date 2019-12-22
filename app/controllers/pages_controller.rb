@@ -8,6 +8,7 @@ class PagesController < ApplicationController
     rating_tags = TagType.find_by_name('Rating').tags
     priority_tags = TagType.find_by_name('Priority').tags
     @home_tag_id = starting_tag.id
+    @comment_tag_id = Tag.comment_tag.id
     @all_tags = all_tags
     @all_tag_types = all_types
     @tag_groups = Tag.ingredient_group_hierarchy_filters(current_user)

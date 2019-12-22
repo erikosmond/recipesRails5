@@ -1,3 +1,8 @@
+# frozen_string_literal: true
+
+# child_tags is a simple view in the database: `select * from tags`
+# due to the fact that a tag can belong to other tags, the rails SQL generation
+# breaks when trying to join a table with the same name multiple times.
 class ChildTag < Tag
   self.table_name = 'child_tags'
 

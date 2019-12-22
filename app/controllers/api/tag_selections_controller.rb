@@ -24,7 +24,7 @@ module Api
     private
 
       def tag_selection_params
-        allowed_columns = %i[tag_id taggable_type taggable_id]
+        allowed_columns = %i[tag_id taggable_type taggable_id body]
         params.require(:tag_selection).permit allowed_columns
       end
   end

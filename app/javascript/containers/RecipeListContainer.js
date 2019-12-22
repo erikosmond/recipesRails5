@@ -1,11 +1,12 @@
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
-import RecipeList from 'components/recipes/RecipeList'
+import RecipeListSkeleton from 'components/recipes/RecipeListSkeleton'
 
 import {
   loadRecipes,
   loadTagInfo,
+  handleCommentModal,
   handleFilter,
   loadAllTags,
   clearFilters,
@@ -21,12 +22,14 @@ export default withRouter(connect(
     startingTagId: state.recipesReducer.startingTagId,
     loading: state.recipesReducer.loading,
     visibleFilterTags: state.recipesReducer.visibleFilterTags,
+    visibleRecipeCount: state.recipesReducer.visibleRecipeCount,
     allTags: state.recipesReducer.allTags,
     tagGroups: state.recipesReducer.tagGroups,
     allTagTypes: state.recipesReducer.allTagTypes,
     tagsByType: state.recipesReducer.tagsByType,
     priorities: state.recipesReducer.priorities,
     ratings: state.recipesReducer.ratings,
+    selectedFilters: state.recipesReducer.selectedFilters,
   }),
   {
     loadRecipes,
@@ -35,5 +38,6 @@ export default withRouter(connect(
     handleFilter,
     clearFilters,
     updateRecipeTag,
+    handleCommentModal,
   },
-)(RecipeList))
+)(RecipeListSkeleton))

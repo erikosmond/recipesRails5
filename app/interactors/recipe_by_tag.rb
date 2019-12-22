@@ -40,7 +40,10 @@ class RecipeByTag
 
     def detail_sql(selected_tags, tag_selection_table_name)
       selected_tags.
-        select(recipes_with_detail_select + ["#{tag_selection_table_name}.id"]).
+        select(recipes_with_detail_select + [
+          "#{tag_selection_table_name}.id",
+          "#{tag_selection_table_name}.body"
+        ]).
         left_outer_joins(recipes_with_parent_detail_joins).
         where(
           "accesses.user_id =
@@ -50,7 +53,10 @@ class RecipeByTag
 
     def recipes_with_detail
       ts = TagSelection.
-           select(recipes_with_detail_select + ['tag_selections_recipes.id']).
+           select(recipes_with_detail_select + [
+             'tag_selections_recipes.id',
+             'tag_selections_recipes.body'
+            ]).
            left_outer_joins [
              :access,
              recipe: {

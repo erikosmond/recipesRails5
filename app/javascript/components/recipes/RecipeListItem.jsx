@@ -36,6 +36,7 @@ class RecipeListItem extends React.Component {
       ratings,
       priorities,
       updateRecipeTag,
+      handleCommentModal,
     } = this.props
     const ingredientNames = Object.values(allIngredients(recipe)).map(ingredient => (
       ingredient.tagName
@@ -55,7 +56,9 @@ class RecipeListItem extends React.Component {
               rating={recipe.newRating || (recipe.ratings && recipe.ratings[0])}
               priority={recipe.newPriority || (recipe.priorities && recipe.priorities[0])}
               recipeId={recipe.id}
+              recipeComment={recipe.newComment || (recipe.comments && recipe.comments[0]) || {}}
               updateRecipeTag={updateRecipeTag}
+              handleCommentModal={handleCommentModal}
             />
           }
         />
@@ -87,14 +90,15 @@ RecipeListItem.propTypes = {
   recipe: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
-    ingredients: PropTypes.string.isRequired,
+    ingredients: PropTypes.shape({}).isRequired,
   }),
   classes: PropTypes.shape({
-    card: PropTypes.shape({}).isRequired,
+    card: PropTypes.string.isRequired,
   }).isRequired,
   ratings: PropTypes.shape({}).isRequired,
   priorities: PropTypes.shape({}).isRequired,
   updateRecipeTag: PropTypes.func.isRequired,
+  handleCommentModal: PropTypes.func.isRequired,
 }
 
 RecipeListItem.defaultProps = {

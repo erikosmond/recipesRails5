@@ -42,6 +42,6 @@ export default HeaderDropdown
 HeaderDropdown.propTypes = {
   loadOptions: PropTypes.func.isRequired,
   updateHistory: PropTypes.func.isRequired,
-  dropdownOptions: PropTypes.shape.isRequired,
+  dropdownOptions: PropTypes.arrayOf(PropTypes.shape({name: PropTypes.string, id: PropTypes.number})).isRequired,
   placeholder: PropTypes.string.isRequired,
 }

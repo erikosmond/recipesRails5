@@ -1,17 +1,17 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import FilterByIngredients from 'components/filters/FilterByIngredients'
+import FilterChips from 'components/filters/FilterChips'
 import RecipeListItem from 'components/recipes/RecipeListItem'
 import RelatedTags from 'components/recipes/RelatedTags'
-import Paper from '@material-ui/core/Paper'
 import PaperContent from '../styled/PaperContent'
 import PaperSidebar from '../styled/PaperSidebar'
-
 
 class RecipeList extends React.Component {
   static propTypes = {
     loadRecipes: PropTypes.func.isRequired,
     loadTagInfo: PropTypes.func.isRequired,
+    handleCommentModal: PropTypes.func.isRequired,
     handleFilter: PropTypes.func.isRequired,
     clearFilters: PropTypes.func.isRequired,
     updateRecipeTag: PropTypes.func.isRequired,
@@ -20,20 +20,22 @@ class RecipeList extends React.Component {
     loading: PropTypes.bool,
     tagGroups: PropTypes.shape({}).isRequired,
     allTags: PropTypes.shape({
-      id: PropTypes.number.isRequired,
+      id: PropTypes.number,
     }).isRequired,
     allTagTypes: PropTypes.shape({
-      id: PropTypes.number.isRequired,
+      id: PropTypes.number,
     }).isRequired,
     tagsByType: PropTypes.shape({}).isRequired,
-    visibleFilterTags: PropTypes.arrayOf,
-    noRecipes: PropTypes.bool.isRequired,
+    visibleFilterTags: PropTypes.shape({}),
+    selectedFilters: PropTypes.arrayOf(PropTypes.number),
+    visibleRecipeCount: PropTypes.number,
+    noRecipes: PropTypes.bool,
     startingTagId: PropTypes.string.isRequired,
     selectedTag: PropTypes.shape({}).isRequired,
     priorities: PropTypes.shape({}).isRequired,
     ratings: PropTypes.shape({}).isRequired,
     location: PropTypes.shape({
-      search: PropTypes.func,
+      search: PropTypes.string,
     }).isRequired,
     match: PropTypes.shape({
       params: PropTypes.shape({
@@ -45,32 +47,16 @@ class RecipeList extends React.Component {
   static defaultProps = {
     recipesLoaded: false,
     loading: true,
+    noRecipes: true,
+    selectedFilters: [],
     selectedRecipes: [],
-    visibleFilterTags: [],
+    visibleFilterTags: {},
+    visibleRecipeCount: 0,
   }
 
   constructor(props) {
     super(props)
     this.noRecipes = false
-  }
-
-  componentDidMount() {
-    const {
-      loadRecipes,
-      loadTagInfo,
-      startingTagId,
-      match,
-    } = this.props
-    const { tagId } = match.params
-    if (tagId) {
-      loadRecipes(tagId)
-      loadTagInfo(tagId)
-    } else if (startingTagId) {
-      loadRecipes(startingTagId)
-      loadTagInfo(startingTagId)
-    } else {
-      this.noRecipes = true
-    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -88,6 +74,15 @@ class RecipeList extends React.Component {
     this.props.clearFilters()
   }
 
+  renderHeaderWithCount() {
+    const { selectedRecipes, visibleRecipeCount } = this.props
+    const selectedRecipeCount = selectedRecipes.length
+    const prefix = selectedRecipeCount === visibleRecipeCount ? '' : `${visibleRecipeCount} of `
+    return (
+      <h2> Recipes ({prefix + selectedRecipeCount}) </h2>
+    )
+  }
+
   render() {
     const {
       recipesLoaded,
@@ -98,12 +93,14 @@ class RecipeList extends React.Component {
       visibleFilterTags,
       allTags,
       tagGroups,
+      handleCommentModal,
       handleFilter,
       allTagTypes,
       tagsByType,
       ratings,
       priorities,
       updateRecipeTag,
+      selectedFilters,
     } = this.props
     if (loading) {
       return (<div> {'Loading...'} </div>)
@@ -122,10 +119,18 @@ class RecipeList extends React.Component {
           </div>
         }
 
+        <FilterChips
+          allTags={allTags}
+          selectedFilters={selectedFilters}
+          handleFilter={handleFilter}
+          selectedTag={selectedTag}
+        />
+
         <FilterByIngredients
           visibleTags={visibleFilterTags}
           allTags={allTags}
           tagGroups={tagGroups}
+          selectedFilters={selectedFilters}
           handleFilter={handleFilter}
           allTagTypes={allTagTypes}
           tagsByType={tagsByType}
@@ -133,7 +138,7 @@ class RecipeList extends React.Component {
 
 
         <PaperContent>
-          <h2> Recipes ({selectedRecipes.length}) </h2>
+          {this.renderHeaderWithCount()}
           {selectedRecipes.map(r => (
             <RecipeListItem
               key={r.id}
@@ -141,6 +146,7 @@ class RecipeList extends React.Component {
               ratings={ratings}
               priorities={priorities}
               updateRecipeTag={updateRecipeTag}
+              handleCommentModal={handleCommentModal}
             />
           ))}
         </PaperContent>
