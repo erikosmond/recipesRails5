@@ -30,8 +30,6 @@ class RecipeListSkeleton extends React.Component {
         props.ratings !== undefined && Object.keys(props.ratings).length > 0 &&
         props.allTags !== undefined && Object.keys(props.allTags).length > 0 &&
         props.allTagTypes !== undefined && Object.keys(props.allTagTypes).length > 0 &&
-        // props.ingredientOptions !== undefined &&
-        // props.categoryOptions !== undefined &&
         props.selectedRecipes !== undefined &&
         props.visibleRecipeCount !== undefined && 
         props.selectedTag !== undefined

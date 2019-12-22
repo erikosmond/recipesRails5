@@ -170,12 +170,6 @@ export default function recipesReducer(state = initialState, action = {}) {
         commentTagSelectionId: action.payload.commentTagSelectionId,
         commentBody: action.payload.commentBody,
       }
-    // case INCREMENT_VISIBLE_RECIPE_COUNT:
-    //   debugger
-    //   return {
-    //     ...state,
-    //     visibleRecipeCount: state.visibleRecipeCount + 1,
-    //   }
     default:
       return state
   }
@@ -434,17 +428,6 @@ export function loadRecipeFormData() {
     payload: {},
   }
 }
-
-// function incrementVisibleRecipeCount(increment) {
-//   debugger
-//   if (increment) {
-//     return {
-//       type: INCREMENT_VISIBLE_RECIPE_COUNT,
-//       payload: {},
-//     }
-//   }
-//   return {}
-// }
 
 function setVisibleRecipeCount(count) {
   return {

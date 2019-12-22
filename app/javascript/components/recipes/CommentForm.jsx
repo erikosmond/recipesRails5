@@ -29,14 +29,12 @@ class CommentForm extends React.Component {
       const placeholder = 'What did you think of this recipe?'
       return (
         <form onSubmit={this.handleSubmit}>
-          <label>
-            Comments:
-          </label>
           <textarea 
             value={this.state.value}
             placeholder={placeholder}
             onChange={this.handleChange} 
           />
+          <br />
           <input type="submit" value="Submit" />
         </form>
       );

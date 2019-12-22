@@ -9,8 +9,6 @@ const RelatedTags = ({ tags }) => {
         {Object.keys(tags).map(k => (
           <div key={tags[k]}>
             <Link key={k} to={`/tags/${k}/recipes`}> {tags[k]} </Link>
-          {/* <div>
-             <Link to={`/tags/${k}/recipes`}> {tags[k]} </Link> */}
             <br/>
           </div>
         ))}
