@@ -10,7 +10,9 @@ import {
   handleFilter,
   loadAllTags,
   clearFilters,
+  resetPagedCount,
   updateRecipeTag,
+  showMoreRecipes,
 } from 'bundles/recipes'
 
 export default withRouter(connect(
@@ -30,6 +32,7 @@ export default withRouter(connect(
     priorities: state.recipesReducer.priorities,
     ratings: state.recipesReducer.ratings,
     selectedFilters: state.recipesReducer.selectedFilters,
+    pagedRecipeCount: state.recipesReducer.pagedRecipeCount,
   }),
   {
     loadRecipes,
@@ -37,7 +40,9 @@ export default withRouter(connect(
     loadTagInfo,
     handleFilter,
     clearFilters,
+    resetPagedCount,
     updateRecipeTag,
     handleCommentModal,
+    showMoreRecipes,
   },
 )(RecipeListSkeleton))

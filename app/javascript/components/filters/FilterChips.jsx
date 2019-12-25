@@ -71,7 +71,7 @@ FilterChips.propTypes = {
   classes: PropTypes.shape({}).isRequired,
   handleFilter: PropTypes.func.isRequired,
   allTags: PropTypes.shape({}).isRequired,
-  selectedFilters: PropTypes.arrayOf(PropTypes.shape({})),
+  selectedFilters: PropTypes.arrayOf(PropTypes.number),
   selectedTag: PropTypes.shape({}).isRequired,
 }
 

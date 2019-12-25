@@ -14,6 +14,7 @@ class RecipeList extends React.Component {
     handleCommentModal: PropTypes.func.isRequired,
     handleFilter: PropTypes.func.isRequired,
     clearFilters: PropTypes.func.isRequired,
+    resetPagedCount: PropTypes.func.isRequired,
     updateRecipeTag: PropTypes.func.isRequired,
     selectedRecipes: PropTypes.arrayOf(PropTypes.shape({})),
     recipesLoaded: PropTypes.bool,
@@ -29,6 +30,8 @@ class RecipeList extends React.Component {
     visibleFilterTags: PropTypes.shape({}),
     selectedFilters: PropTypes.arrayOf(PropTypes.number),
     visibleRecipeCount: PropTypes.number,
+    pagedRecipeCount: PropTypes.number,
+    showMoreRecipes: PropTypes.func.isRequired,
     noRecipes: PropTypes.bool,
     startingTagId: PropTypes.string.isRequired,
     selectedTag: PropTypes.shape({}).isRequired,
@@ -52,11 +55,14 @@ class RecipeList extends React.Component {
     selectedRecipes: [],
     visibleFilterTags: {},
     visibleRecipeCount: 0,
+    pagedRecipeCount: 10,
   }
 
   constructor(props) {
     super(props)
     this.noRecipes = false
+    this.handleShowMoreRecipes = this.handleShowMoreRecipes.bind(this)
+    this.displayShown = this.displayShown.bind(this)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -71,7 +77,14 @@ class RecipeList extends React.Component {
   }
 
   componentWillUnmount() {
-    this.props.clearFilters()
+    const { clearFilters, resetPagedCount } = this.props
+    clearFilters()
+    resetPagedCount()
+  }
+
+  handleShowMoreRecipes() {
+    const { pagedRecipeCount, showMoreRecipes } = this.props
+    showMoreRecipes(pagedRecipeCount)
   }
 
   renderHeaderWithCount() {
@@ -81,6 +94,21 @@ class RecipeList extends React.Component {
     return (
       <h2> Recipes ({prefix + selectedRecipeCount}) </h2>
     )
+  }
+
+  renderShowMoreRecipes() {
+    const { pagedRecipeCount, visibleRecipeCount } = this.props
+    if (visibleRecipeCount && visibleRecipeCount > pagedRecipeCount) {
+      return (
+        <button onClick={this.handleShowMoreRecipes} >Show more</button>
+      )
+    }
+  }
+
+  displayShown(recipe) {
+    if (recipe.hidden !== true) {
+      return recipe
+    }
   }
 
   render() {
@@ -94,6 +122,7 @@ class RecipeList extends React.Component {
       allTags,
       tagGroups,
       handleCommentModal,
+      pagedRecipeCount,
       handleFilter,
       allTagTypes,
       tagsByType,
@@ -139,7 +168,7 @@ class RecipeList extends React.Component {
 
         <PaperContent>
           {this.renderHeaderWithCount()}
-          {selectedRecipes.map(r => (
+          {selectedRecipes.filter(this.displayShown).splice(0, pagedRecipeCount).map(r => (
             <RecipeListItem
               key={r.id}
               recipe={r}
@@ -149,6 +178,7 @@ class RecipeList extends React.Component {
               handleCommentModal={handleCommentModal}
             />
           ))}
+          {this.renderShowMoreRecipes()}
         </PaperContent>
 
         <PaperSidebar>

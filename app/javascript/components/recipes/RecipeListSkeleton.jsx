@@ -36,11 +36,6 @@ class RecipeListSkeleton extends React.Component {
     }
 
     render() {
-        const {
-          recipesLoaded,
-          selectedTag,
-          loading,
-        } = this.props
         if (this.recipesReady(this.props)) {
             return (<RecipeList
                 {...this.props}
@@ -56,6 +51,7 @@ RecipeListSkeleton.propTypes = {
     loadTagInfo: PropTypes.func.isRequired,
     handleFilter: PropTypes.func.isRequired,
     clearFilters: PropTypes.func.isRequired,
+    resetPagedCount: PropTypes.func.isRequired,
     updateRecipeTag: PropTypes.func.isRequired,
     selectedRecipes: PropTypes.arrayOf(PropTypes.shape({})),
     recipesLoaded: PropTypes.bool,
@@ -73,6 +69,7 @@ RecipeListSkeleton.propTypes = {
     visibleRecipeCount: PropTypes.number,
     noRecipes: PropTypes.bool,
     startingTagId: PropTypes.string.isRequired,
+    showMoreRecipes: PropTypes.func.isRequired,
     selectedTag: PropTypes.shape({}),
     priorities: PropTypes.shape({}),
     ratings: PropTypes.shape({}),
