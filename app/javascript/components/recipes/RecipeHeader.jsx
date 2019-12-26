@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import AccountMenu from './AccountMenu'
 import HeaderDropdown from './HeaderDropdown'
 
 const StyledHeader = styled.div`
@@ -10,6 +11,7 @@ const StyledHeader = styled.div`
   background-color: white;
   z-index: 1;
 `
+
 
 const RecipeHeader = (props) => {
   const {
@@ -49,6 +51,7 @@ const RecipeHeader = (props) => {
         placeholder="More"
         updateHistory={updateTags}
       />
+      <AccountMenu />
     </StyledHeader>
   )
 }
