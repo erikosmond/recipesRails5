@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# Fetch all tags related to a given recipe. This includes ingredients, vessels,
-# sources, etc.
 class TagSelectionFactory
   include Interactor
 
@@ -21,6 +19,8 @@ class TagSelectionFactory
 
     def create(params)
       context.tag_selection = TagSelection.create!(params)
+      context.tag_selection_access = AccessService.
+        create_access!(context.user.id, context.tag_selection)
     end
 
     def update(params)

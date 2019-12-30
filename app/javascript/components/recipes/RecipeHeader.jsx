@@ -21,6 +21,7 @@ const RecipeHeader = (props) => {
     ingredientOptions,
     categoryOptions,
     history,
+    firstName,
   } = props
 
   const updateTags = (selectedOption) => {
@@ -51,7 +52,9 @@ const RecipeHeader = (props) => {
         placeholder="More"
         updateHistory={updateTags}
       />
-      <AccountMenu />
+      <AccountMenu 
+        firstName={firstName}
+      />
     </StyledHeader>
   )
 }
@@ -60,6 +63,7 @@ export default RecipeHeader
 
 RecipeHeader.propTypes = {
   loadRecipeOptions: PropTypes.func.isRequired,
+  firstName: PropTypes.string,
   recipeOptions: PropTypes.arrayOf(PropTypes.shape({name: PropTypes.string, id: PropTypes.number})),
   loadIngredientOptions: PropTypes.func.isRequired,
   ingredientOptions: PropTypes.arrayOf(PropTypes.shape({name: PropTypes.string, id: PropTypes.number})),
@@ -73,4 +77,5 @@ RecipeHeader.defaultProps = {
   recipeOptions: [],
   ingredientOptions: [],
   categoryOptions: [],
+  firstName: '',
 }

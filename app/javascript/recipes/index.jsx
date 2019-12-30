@@ -20,6 +20,7 @@ const myStore = {
   recipesReducer: {
     startingTagId: home.dataset.startingTagId,
     commentTagId: home.dataset.commentTagId,
+    firstName: home.dataset.firstName,
     allTags: JSON.parse(home.dataset.allTags),
     allTagTypes: JSON.parse(home.dataset.allTagTypes),
     tagGroups: JSON.parse(home.dataset.tagGroups),

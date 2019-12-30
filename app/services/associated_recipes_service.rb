@@ -5,6 +5,7 @@ module AssociatedRecipesService
   def recipes_with_parent_detail_joins
     [
       { tag: [:tag_type, parent_tags: [:tag_type, parent_tags: :tag_type]] },
+      :access,
       :tag_attributes,
       :modifications,
       selected_recipe: :access
