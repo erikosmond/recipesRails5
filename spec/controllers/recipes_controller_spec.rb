@@ -9,14 +9,20 @@ describe Api::RecipesController, type: :controller do
   include_context 'recipes'
   let!(:user) { create(:user) }
   let!(:different_user) { create(:user) }
+  let!(:no_data_user) { create(:user) }
   let!(:recipe) { create(:recipe) }
   let!(:rating_type) { create(:tag_type, name: 'Rating') }
+  let!(:menu_type) { create(:tag_type, name: 'Been Made') }
   let!(:ingredient) { create(:tag, tag_type: tag_type_ingredient) }
   let!(:rating) { create(:tag, name: 'rating', tag_type: rating_type) }
+  let!(:menu_tag) { create(:tag, name: 'menu', tag_type: menu_type) }
   let!(:tag_selection_ing) { create(:tag_selection, tag: ingredient, taggable: recipe) }
   let!(:tag_selection_rating) { create(:tag_selection, tag: rating, taggable: recipe) }
-  let!(:access_ing) { create(:access, accessible: tag_selection_ing, user: user) }
+  let!(:tag_selection_menu) { create(:tag_selection, tag: menu_tag, taggable: recipe) }
+  # let!(:access_ing) { create(:access, accessible: tag_selection_ing, user: user) }
+  let!(:access_ing) { create(:access, accessible: tag_selection_ing, user: user, status: 'PUBLIC') }
   let!(:access_rating) { create(:access, accessible: tag_selection_rating, user: different_user, status: 'PRIVATE') }
+  let!(:access_rating) { create(:access, accessible: tag_selection_menu, user: user, status: 'PRIVATE') }
   let(:tag_subject) { create(:tag, name: 'Rice', tag_type: tag_type_ingredient_type) }
 
   describe 'GET - show' do
@@ -102,6 +108,24 @@ describe Api::RecipesController, type: :controller do
       body = JSON.parse(response.body)
       expect(body['recipes'].size).to eq(2)
       expect(body['filter_tags'] - filter_array).to eq([])
+      expect(response.status).to eq(200)
+    end
+  end
+
+  describe 'GET - index for user with no recipe associations' do
+    let(:tag_subject) { create(:tag, name: 'Chamomile', tag_type: tag_type_modifiction_type) }
+    let!(:mod_selection) { create(:tag_selection, tag: tag_subject, taggable: tag_selection1)}
+
+    before do
+      sign_in no_data_user
+      get :index,
+          params: { tag_id: menu_tag.id },
+          format: 'json'
+    end
+
+    it 'returns a 200' do
+      body = JSON.parse(response.body)
+      expect(body['recipes'].size).to eq(0)
       expect(response.status).to eq(200)
     end
   end

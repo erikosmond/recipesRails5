@@ -8,10 +8,11 @@ class BuildTagHierarchy
     hierarchy = Tag.
                 select(tag_hierarchy_select).
                 left_outer_joins(tag_hierarchy_join).
-                where(predicate).
+                where(accesses_predicate).
                 order('tags.id, child_tags.id, child_tags_tags.id')
 
     context.tags_with_hierarchy = filter_tags(hierarchy)
+    
     context.sister_tags = sister_tags
   end
 
@@ -20,13 +21,21 @@ class BuildTagHierarchy
     def sister_tags
       sisters = context.tag.parent_tags.flat_map(&:child_tags)
       sisters.reject! { |s| s.id == context.tag.id }
-      sisters.presence || friends
+
+      accessible_sisters = TagSelection.joins(:access).where(tag_id: sisters.pluck(:id)).where(accesses_predicate)
+      if accessible_sisters.first
+        accessible_sisters&.map(&:tag)
+      else
+        friends
+      end
     end
 
     def friends
       return [] if context.tag.tag_type_id == TagType.ingredient_id
 
-      context.tag.tag_type.tags.reject { |f| f.id == context.tag.id }
+      friends = context.tag.tag_type.tags.reject { |f| f.id == context.tag.id }
+      accessible_friends = TagSelection.joins(:access).where(tag_id: friends.pluck(:id)).where(accesses_predicate)
+      accessible_friends.first ? accessible_friends.map(&:tag) : []
     end
 
     def filter_tags(hierarchy)
@@ -75,7 +84,7 @@ class BuildTagHierarchy
       ]
     end
 
-    def predicate
+    def accesses_predicate
       if ingredient_tag?
         ''
       else

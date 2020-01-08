@@ -5,7 +5,6 @@ class TagsByType
   include Interactor
 
   def call
-    # binding.pry
     tag_type = context.tag_type
     type_ids = tag_types(tag_type).pluck(:id)
     tag_json =

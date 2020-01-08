@@ -9,7 +9,6 @@ module Api
         params: tag_selection_params,
         user: current_user
       )
-      # binding.pry
       render json: result.tag_selection
     end
 
