@@ -17,7 +17,9 @@ class HeaderDropdown extends React.Component {
 
   handleChange = (selectedOption) => {
     const { updateHistory } = this.props
-    updateHistory(selectedOption.value)
+    if (selectedOption && selectedOption.value) {
+      updateHistory(selectedOption.value)
+    }
   }
 
   render() {
