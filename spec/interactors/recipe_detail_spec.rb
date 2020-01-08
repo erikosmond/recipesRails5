@@ -7,8 +7,6 @@ RSpec.describe RecipeDetail, type: :interactor do
   describe '.call' do
     include_context 'recipes'
     let(:tag_subject) { create(:tag, name: 'Marinara', tag_type: tag_type_ingredient_type) }
-    let!(:access2b) { create(:access, user: user, accessible: tag_selection2b, status: 'PRIVATE') }
-    let!(:access2c) { create(:access, user: non_active_user, accessible: tag_selection2c, status: 'PRIVATE') }
 
     let(:result) do
       RecipeDetail.call(
@@ -17,14 +15,27 @@ RSpec.describe RecipeDetail, type: :interactor do
       ).result
     end
 
+    before do
+      access3a.update_attribute(:status, 'PRIVATE')
+      access3b.update_attribute(:status, 'PRIVATE')
+    end
+
+    after do
+      access3a.update_attribute(:status, 'PUBLIC')
+      access3b.update_attribute(:status, 'PUBLIC')
+    end
+
     it "returns correct number of recipe's details" do
-      expect(result.size).to eq 2
+      expect(result.size).to eq 3
     end
     it 'returns correct first tag name' do
       expect(result.first.tag_name).to eq 'Marinara'
     end
     it 'returns correct second tag name' do
       expect(result.second.tag_name).to eq 'salt'
+    end
+    it 'returns correct third tag name' do
+      expect(result.third.tag_name).to eq 'pepper'
     end
     it 'returns correct second tag modification' do
       expect(result.second.modifications.first.name).to eq 'chili infused'

@@ -58,7 +58,6 @@ class RecipeByTag
              'tag_selections_recipes.body'
             ]).
            left_outer_joins [
-             :access,
              recipe: {
                tag_selections: recipes_with_parent_detail_joins
              }

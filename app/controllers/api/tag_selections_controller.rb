@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 module Api
-  # Used to assign tags like rating and priority to a given recipe.
+  # Used to assign tags like rating, priority, comments to a given recipe.
   class TagSelectionsController < ApplicationController
     def create
       result = TagSelectionFactory.call(
         action: :create,
-        params: tag_selection_params
+        params: tag_selection_params,
+        user: current_user
       )
       render json: result.tag_selection
     end
@@ -16,7 +17,8 @@ module Api
       result = TagSelectionFactory.call(
         action: :update,
         tag_selection: tag_selection,
-        params: tag_selection_params
+        params: tag_selection_params,
+        user: current_user
       )
       render json: result.tag_selection
     end

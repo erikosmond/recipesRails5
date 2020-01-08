@@ -150,6 +150,9 @@ export default function recipesReducer(state = initialState, action = {}) {
       return {
         ...state,
         selectedFilters: [],
+        visibleRecipeCount: 0,
+        selectedRecipeCount: 0,
+        selectedRecipes: [],
       }
     case UPDATE_RECIPE_TAG_SUCCESS:
       return {

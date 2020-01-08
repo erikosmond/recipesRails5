@@ -62,8 +62,6 @@ class TagSelection < ApplicationRecord
 
   accepts_nested_attributes_for :tag_attributes
 
-  # TODO: create been_made tag_selection if creating a rating tag_selection
-
   def no_self_assignment
     errors.add('Does not make sense to assign tag to itself') if taggable == tag
   end
