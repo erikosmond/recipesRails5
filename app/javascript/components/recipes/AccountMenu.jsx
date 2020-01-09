@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import IconButton from '@material-ui/core/IconButton'
 import styled from 'styled-components'
 import Menu from '@material-ui/core/Menu'
@@ -33,6 +34,7 @@ class AccountMenu extends React.Component {
   render() {
     const { anchorEl } = this.state
     const open = Boolean(anchorEl)
+    const { firstName } = this.props
 
     return (
       <StyledIcon>
@@ -60,6 +62,10 @@ class AccountMenu extends React.Component {
         >
         <MenuItem
         >
+            {`Welcome ${firstName}`}
+        </MenuItem>
+        <MenuItem
+        >
           <a href="/users/sign_out"> Sign Out </a>
         </MenuItem>
         ))}
@@ -67,6 +73,14 @@ class AccountMenu extends React.Component {
     </StyledIcon>
     )
   }
+}
+
+AccountMenu.propTypes = {
+    firstName: PropTypes.string
+}
+
+AccountMenu.defaultProps = {
+    firstName: ''
 }
 
 export default AccountMenu
