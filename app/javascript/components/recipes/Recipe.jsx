@@ -13,10 +13,16 @@ class Recipe extends React.Component {
       ingredients: PropTypes.shape({}).isRequired,
     }),
     noRecipe: PropTypes.bool,
+    clearRecipe: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     recipe: {},
+  }
+
+  componentWillUnmount() {
+    const { clearRecipe } = this.props
+    clearRecipe()
   }
 
   render() {

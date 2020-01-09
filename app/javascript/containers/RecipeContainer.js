@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom'
 
 import RecipeSkeleton from 'components/recipes/RecipeSkeleton'
 
-import { loadRecipe } from 'bundles/recipes'
+import { loadRecipe, clearRecipe } from 'bundles/recipes'
 
 export default withRouter(connect(
   state => ({
@@ -12,5 +12,6 @@ export default withRouter(connect(
   }),
   {
     loadRecipe,
+    clearRecipe,
   },
 )(RecipeSkeleton))
