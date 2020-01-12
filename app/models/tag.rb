@@ -105,7 +105,7 @@ class Tag < ApplicationRecord
            through: :parent_taggings,
            source: 'tag'
 
-  has_one :access, as: :accessible
+  has_one :access, as: :accessible, dependent: :destroy
 
   validates :name, presence: true
   validates_uniqueness_of :name, scope: :tag_type

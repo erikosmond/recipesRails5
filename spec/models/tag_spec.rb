@@ -172,6 +172,7 @@ describe Tag, type: :model do
       end
       it 'returns no recipes for ingredients' do
         result = RecipeByTag.call(tag: tag_subject, current_user: non_active_user).result
+        binding.pry
         expect(result.map { |r| r['id'] } - private_ids).to eq([tag_selection1a.id])
       end
     end

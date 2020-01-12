@@ -8,7 +8,7 @@ class Recipe < ApplicationRecord
            inverse_of: :taggable
   has_many :tags, through: :tag_selections, source: :tag, inverse_of: :recipes
 
-  has_one :access, as: :accessible
+  has_one :access, as: :accessible, dependent: :destroy
 
   has_one :ingredient, class_name: 'Tag'
 

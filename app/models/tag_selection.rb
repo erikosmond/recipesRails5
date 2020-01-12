@@ -11,7 +11,7 @@ class TagSelection < ApplicationRecord
            dependent: :destroy
   has_many :modifications, through: :modification_selections, source: :tag
 
-  has_one :access, as: :accessible
+  has_one :access, as: :accessible, dependent: :destroy
 
   belongs_to :tag,
              inverse_of: :tag_selections

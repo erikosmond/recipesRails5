@@ -1,11 +1,13 @@
 class AccessService
   def self.create_access!(user_id, subject, status = 'PRIVATE')
     if subject.respond_to?(:access)
-      Access.create!(
+      a = Access.find_or_create_by(
         user_id: user_id,
-        accessible: subject,
-        status: status
+        accessible: subject
       )
+      a.status = status
+      a.save
+      a.reload
     else
       raise ArgumentError,
             "Cannot create Access record for class #{subject.class.name}"

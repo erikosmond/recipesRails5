@@ -58,6 +58,7 @@ class RecipeByTag
              'tag_selections_recipes.body'
             ]).
            left_outer_joins [
+             :access,
              recipe: {
                tag_selections: recipes_with_parent_detail_joins
              }
@@ -66,18 +67,26 @@ class RecipeByTag
     end
 
     def add_predicates(tag_selections)
-      tag_selections.
+      ts = tag_selections.
         where("tag_selections.tag_id = #{context.tag.id}").
         where('tag_selections.id IS NOT NULL').
         where('recipes.id IS NOT NULL').
-        where('tag_selections_recipes.id IS NOT NULL').
-        where('accesses_selected_recipes.id IS NOT NULL').
+        where('tag_selections_recipes.id IS NOT NULL')
+      add_access_predicates(ts)
+    end
+
+    def add_access_predicates(ts)
+        ts.where('accesses_selected_recipes.id IS NOT NULL').
         where('accesses.id IS NOT NULL').
+        where('accesses_tag_selections.id IS NOT NULL').
         where("accesses_selected_recipes.user_id = #{context.current_user&.id} OR
                accesses_selected_recipes.status = 'PUBLIC'").
         where(
           "accesses.user_id =
           #{context.current_user&.id} OR accesses.status = 'PUBLIC'"
+        ).
+        where("accesses_tag_selections.user_id =  #{context.current_user&.id} OR 
+          accesses_tag_selections.status = 'PUBLIC'"
         )
     end
 end
