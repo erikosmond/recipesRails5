@@ -69,6 +69,8 @@ class RecipeByTag
     def add_predicates(tag_selections)
       ts = tag_selections.
         where("tag_selections.tag_id = #{context.tag.id}").
+        where("tag_selections.taggable_type = 'Recipe'").
+        where("tag_selections_recipes.taggable_type = 'Recipe'").
         where('tag_selections.id IS NOT NULL').
         where('recipes.id IS NOT NULL').
         where('tag_selections_recipes.id IS NOT NULL')
