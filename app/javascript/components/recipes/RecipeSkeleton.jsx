@@ -11,6 +11,7 @@ class RecipeSkeleton extends React.Component {
       ingredients: PropTypes.shape({}),
     }),
     noRecipe: PropTypes.bool,
+    clearRecipe: PropTypes.func.isRequired,
     location: PropTypes.shape().isRequired,
     match: PropTypes.shape({
       params: PropTypes.shape({
@@ -39,7 +40,7 @@ class RecipeSkeleton extends React.Component {
   }
 
   render() {
-    const { recipe, noRecipe } = this.props
+    const { recipe, noRecipe, clearRecipe } = this.props
     if (!recipe || !recipe.name) {
       return null
     }
@@ -47,6 +48,7 @@ class RecipeSkeleton extends React.Component {
         <Recipe
             recipe={recipe}
             noRecipe={noRecipe}
+            clearRecipe={clearRecipe}
         />
     )
   }

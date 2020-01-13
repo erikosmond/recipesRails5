@@ -68,12 +68,13 @@ describe Api::RecipesController, type: :controller do
     it 'returns the recipe details' do
       body = JSON.parse(response.body)
       expect(body['recipes'].size).to eq(2)
-      expect(body['recipes'].first['name']).to eq('Pizza')
+      expect(body['recipes'].map{ |r| r['name'] } - ['Pizza', 'Chesnut Soup']).to eq([])
     end
     it 'returns the ingredients' do
       body = JSON.parse(response.body)
-      expect(body['recipes'].first['ingredients'][lemon_verbena.id.to_s]['tag_type']).to eq 'Ingredient'
-      expect(body['recipes'].first['ingredienttypes'].first['tag_name']).to eq('Rice')
+      pizza = body['recipes'].find { |r| r['name'] == 'Pizza' }
+      expect(pizza['ingredients'][lemon_verbena.id.to_s]['tag_type']).to eq 'Ingredient'
+      expect(pizza['ingredienttypes'].first['tag_name']).to eq('Rice')
     end
     it 'returns the filter tags' do
       body = JSON.parse(response.body)

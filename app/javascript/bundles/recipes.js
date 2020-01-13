@@ -39,6 +39,7 @@ const HANDLE_COMMENT_MODAL = 'recipes/handleModal'
 const SUBMIT_RECIPE_COMMENT='recipes/submitRecipeComment'
 const UPDATE_RECIPE_COMMENT_SUCCESS='recipes/updateRecipeCommentSuccess'
 const SHOW_MORE_RECIPES='recipes/showMoreRecipes'
+const CLEAR_RECIPE='recipes/clearRecipe'
 // const INCREMENT_VISIBLE_RECIPE_COUNT = 'recipes/incrementVisibleRecipeCount'
 const SET_VISIBLE_RECIPE_COUNT = 'recipes/setVisibleRecipeCount'
 
@@ -153,6 +154,12 @@ export default function recipesReducer(state = initialState, action = {}) {
         visibleRecipeCount: 0,
         selectedRecipeCount: 0,
         selectedRecipes: [],
+      }
+    case CLEAR_RECIPE:
+      return {
+        ...state,
+        recipe: null,
+        noRecipe: false,
       }
     case UPDATE_RECIPE_TAG_SUCCESS:
       return {
@@ -370,6 +377,12 @@ export function noTagsFound() {
 export function clearFilters() {
   return {
     type: CLEAR_FILTERS,
+  }
+}
+
+export function clearRecipe() {
+  return {
+    type: CLEAR_RECIPE,
   }
 }
 

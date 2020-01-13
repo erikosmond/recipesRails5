@@ -172,7 +172,7 @@ describe Tag, type: :model do
       end
       it 'returns no recipes for ingredients' do
         result = RecipeByTag.call(tag: tag_subject, current_user: non_active_user).result
-        expect(result.map { |r| r['id'] } - private_ids).to eq([tag_selection1a.id])
+        expect(result.map { |r| r['id'] } - private_ids).to eq([])
       end
     end
 
@@ -198,12 +198,10 @@ describe Tag, type: :model do
       let!(:tag_subject) { create(:tag, name: 'Verbena', tag_type: tag_type_ingredient_type) }
       let!(:result) { RecipeByTag.call(tag: tag_subject, current_user: user).result }
       let(:recipe_result) { GroupRecipeDetail.call(recipe_details: result).result }
-      let(:recipe_result2) { recipe_result.second }
+      # todo: make sure i always grab the same element out of the set of two
+      let(:recipe_result2) { recipe_result.find { |r| r['name'] == recipe2_name } }
       it 'returns only one valid row' do
         expect(recipe_result.size).to eq(2)
-      end
-      it 'returns recipe name' do
-        expect(recipe_result2['name']).to eq(recipe2_name)
       end
       it 'returns recipe description' do
         expect(recipe_result2['description']).to eq(recipe2_description)
