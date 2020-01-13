@@ -31,16 +31,8 @@ RSpec.describe RecipeByTag, type: :interactor do
     let!(:access_t3) { create(:access, user: other_user, accessible: ingredient_recipe2, status: 'PUBLIC') }
     let!(:access_t4) { create(:access, user: other_user, accessible: tag_selection4, status: 'PUBLIC') }
     let!(:access_t5) { create(:access, user: other_user, accessible: tag_selection5, status: 'PUBLIC') }
-    
-    # the tag selections below cause the bug 
-
-    # access below is other user tagging recipe 2 as been made (other user is the only user who has tagged recipe 2 as been made)
     let!(:access3) { create(:access, user: other_user, accessible: tag_selection3, status: 'PRIVATE') }
-
-    # access below is public for the first ingredient of the second recipe
     let!(:access_t6) { create(:access, user: other_user, accessible: tag_selection6, status: 'PUBLIC') }
-    
-    # access below is public for the second ingredient of the second recipe
     let!(:access_t7) { create(:access, user: other_user, accessible: tag_selection7, status: 'PUBLIC') }
     
     let!(:result) do
@@ -50,9 +42,8 @@ RSpec.describe RecipeByTag, type: :interactor do
       )
     end
     it 'returns recipes only for that user' do
-        # binding.pry
-        # result
         expect(GroupRecipeDetail.call(recipe_details: result.result).result.count).to eq 1
+        expect(GroupRecipeDetail.call(recipe_details: result.result).result.first['name']).to eq 'pho'
     end
   end
 end
