@@ -7,12 +7,12 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  attr_accessor :sign_up_code
-  validates :sign_up_code,
-            on: :create,
-            presence: true,
-            inclusion: {
-              in: ENV['SIGNUP_CODES'].to_s.split(','),
-              message: 'Invalid signup code'
-            }
+  # attr_accessor :sign_up_code
+  # validates :sign_up_code,
+  #           on: :create,
+  #           presence: true,
+  #           inclusion: {
+  #             in: ENV['SIGNUP_CODES'].to_s.split(','),
+  #             message: 'Invalid signup code'
+  #           }
 end

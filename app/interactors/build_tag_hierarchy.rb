@@ -23,11 +23,12 @@ class BuildTagHierarchy
       sisters.reject! { |s| s.id == context.tag.id }
 
       accessible_sisters = TagSelection.joins(:access).where(tag_id: sisters.pluck(:id)).where(accesses_predicate)
-      if accessible_sisters.first
-        accessible_sisters&.map(&:tag)
-      else
-        friends
-      end
+      tags = if accessible_sisters.first
+               accessible_sisters&.map(&:tag)
+             else
+               friends
+             end
+      tags.reject { |t| TagType.ingredient_category_id == t.tag_type_id }
     end
 
     def friends
