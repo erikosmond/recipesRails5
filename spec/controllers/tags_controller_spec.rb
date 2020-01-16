@@ -117,7 +117,6 @@ describe Api::TagsController, type: :controller do
           'tags' => { nut.id.to_s => 'Nut' },
           'child_tags' => { almond.id.to_s => 'Almond' },
           'parent_tags' => { protein.id.to_s => 'Protein' },
-          'grandparent_tags' => { plants.id.to_s => 'plants' },
           'modification_tags' => { toasted.id.to_s => 'toasted', crushed.id.to_s => 'crushed' },
           'modified_tags' => {}
         }
@@ -141,7 +140,6 @@ describe Api::TagsController, type: :controller do
           'tags' => { protein.id.to_s => 'Protein' },
           'child_tags' => { nut.id.to_s => 'Nut' },
           'grandchild_tags' => { almond.id.to_s => 'Almond' },
-          'parent_tags' => { plants.id.to_s => 'plants' },
           'grandparent_tags' => {},
           'modification_tags' => {},
           'modified_tags' => {}

@@ -4,6 +4,7 @@
 class TagType < ApplicationRecord
   INGREDIENT_TYPES = %w[Ingredient IngredientType IngredientFamily].freeze
   TAG_TYPES = 'tag_types'
+  INGREDIENT_CATEGORY = 'IngredientCategory'
   INGREDIENT_FAMILY = 'IngredientFamily'
   INGREDIENT_TYPE = 'IngredientType'
   INGREDIENT_MODIFICATION = 'IngredientModification'
@@ -13,6 +14,12 @@ class TagType < ApplicationRecord
   has_many :tags, dependent: :destroy
 
   validates :name, presence: true, uniqueness: true
+
+  def self.ingredient_category_id
+    Rails.cache.fetch("#{TAG_TYPES}/category_id", expires_in: 1.year) do
+      TagType.find_by_name(INGREDIENT_CATEGORY).id
+    end
+  end
 
   def self.family_id
     Rails.cache.fetch("#{TAG_TYPES}/family_id", expires_in: 1.year) do

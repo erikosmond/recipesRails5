@@ -36,12 +36,20 @@ class GroupTags
       groups = %i[
         tag
         child_tag
-        parent_tag
-        grandparent_tag
         modification_tag
         modified_tag
       ]
-      groups << :grandchild_tag if context.tag.tag_type_id != TagType.type_id
+      groups << :grandchild_tag unless ingredient_type?
+      groups << :grandparent_tag unless ingredient_type?
+      groups << :parent_tag unless family_type?
       groups
+    end
+
+    def ingredient_type?
+      context.tag.tag_type_id == TagType.type_id
+    end
+
+    def family_type?
+      context.tag.tag_type_id == TagType.family_id
     end
 end
