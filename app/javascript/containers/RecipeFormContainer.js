@@ -1,9 +1,9 @@
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
-import RecipeForm from 'components/recipes/Recipe'
+import RecipeFormSkeleton from 'components/recipes/RecipeFormSkeleton'
 
-import { loadRecipeFormData } from 'bundles/recipes'
+import { loadRecipeFormData, handleRecipeSubmit } from 'bundles/recipes'
 
 export default withRouter(connect(
   state => ({
@@ -12,5 +12,6 @@ export default withRouter(connect(
   }),
   {
     loadRecipeFormData,
+    handleRecipeSubmit,
   },
-)(RecipeForm))
+)(RecipeFormSkeleton))

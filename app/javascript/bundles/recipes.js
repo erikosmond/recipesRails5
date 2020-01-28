@@ -28,6 +28,7 @@ const NO_RECIPE_FOUND = 'recipes/noRecipeFound'
 const NOT_LOADING = 'recipes/notLoading'
 const HANDLE_FILTER = 'recipes/handleFilter'
 const HANDLE_FILTER_SUCCESS = 'recipes/handleFilterSuccess'
+const HANDLE_RECIPE_SUBMIT = 'recipes/handleRecipeSubmit'
 const NO_TAGS = 'recipes/noTags'
 const CLEAR_FILTERS = 'recipes/clearFilters'
 const RESET_PAGED_COUNT = 'recipes/resetPagedCount'
@@ -486,6 +487,13 @@ export function handleCommentModal(payload) {
   }
 }
 
+export function handleRecipeSubmit(payload) {
+  return {
+    payload,
+    type: HANDLE_RECIPE_SUBMIT,
+  }
+}
+
 function countVisibleRecipes(visibleRecipes) {
   // use reduce instead of forEach
   let count = 0
@@ -574,6 +582,11 @@ export function* loadRecipeOptionsTask() {
   } else {
     yield put(notLoading())
   }
+}
+
+export function handleRecipeSubmitTask({ payload }) {
+  console.log('we are in the saga')
+  console.log(payload)
 }
 
 export function* loadIngredientOptionsTask({ payload }) {
@@ -671,4 +684,5 @@ export function* recipesSaga() {
   yield takeEvery(LOAD_INGREDIENT_OPTIONS, loadIngredientOptionsTask)
   yield takeLatest(UPDATE_RECIPE_TAG, updateTagSelectionTask)
   yield takeLatest(SUBMIT_RECIPE_COMMENT, submitRecipeCommentTask)
+  yield takeLatest(HANDLE_RECIPE_SUBMIT, handleRecipeSubmitTask)
 }

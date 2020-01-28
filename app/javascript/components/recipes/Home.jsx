@@ -12,7 +12,7 @@ import styled from 'styled-components'
 
 import CommentModal from 'containers/CommentModalContainer'
 import RecipeSkeleton from 'containers/RecipeContainer'
-import RecipeForm from 'containers/RecipeFormContainer'
+import RecipeFormSkeleton from 'containers/RecipeFormContainer'
 import RecipeList from 'containers/RecipeListContainer'
 import RecipeHeader from 'containers/RecipeHeaderContainer'
 
@@ -33,11 +33,11 @@ const Home = () => (
           />
           <Route
             path="/recipes/new"
-            component={RecipeForm}
+            component={RecipeFormSkeleton}
           />
           <Route
             path="/recipes/:recipeId/edit"
-            component={RecipeForm}
+            component={RecipeFormSkeleton}
           />
           <Route
             path="/recipes/:recipeId"
