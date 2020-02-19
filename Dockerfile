@@ -20,8 +20,9 @@ COPY Gemfile.lock /recipes/Gemfile.lock
 COPY package.json /recipes/package.json
 RUN bundle install
 COPY . /recipes
+RUN rails g react:install
 RUN bundle exec rake webpacker:install:react
 # RUN npm install
-RUN yarn add webpack
+RUN yarn add webpack@3.11.0
 RUN yarn install
 COPY . /recipes

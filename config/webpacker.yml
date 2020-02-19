@@ -31,6 +31,7 @@ default: &default
 development:
   <<: *default
   compile: false
+  check_yarn_integrity: false
 
   # Reference: https://webpack.js.org/configuration/dev-server/
   dev_server:
@@ -38,9 +39,9 @@ development:
     host: webpacker
     port: 3035
     public: 0.0.0.0:3035
-    hmr: true
+    # hmr: true
     # Inline should be set to true if using HMR
-    inline: true
+    # inline: true
     overlay: true
     compress: true
     disable_host_check: true
