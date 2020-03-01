@@ -36,11 +36,14 @@ rafikiTwist is a Ruby on Rails application which utilizes the React Javascript f
 
 `docker-compose up`
 
-`docker cp seed.sql:{db_container}/tmp/`
+`docker cp seed.sql {db_container}:/tmp/`
 
 `psql recipes_development < /tmp/seed.sql`
 
 update the pg_hba.conf to allow deploy user access to all databases from all hosts using a password
+
+`# IPv4 local connections:`
+`host    all             deploy          all                     password`
 
 ## Deployment
 
